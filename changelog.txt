@@ -1,0 +1,84 @@
+0.1:
+ - started making the game
+ - made some basic graphics
+ - added player's movement
+  - the player can control their jump height by releasing the jump button before reaching maximum height (jump brake)
+ - added basic collision detection
+ - added auto-tile blocks
+
+0.2:
+ added:
+  - scrolling camera
+  - added sprite font support (draw_sprite_text function)
+  - debug display and controls
+  - score counter
+  - hazards (spikes)
+ - falling down, touching hazards or the left border of the screen will kill the player
+ - huge collision detection improvements
+ 
+0.3:
+ - fixed collision detection bug that made the game freeze
+ - fixed camera speedup bugs
+ - fixed the player getting stuck to the right border of the screen
+ - fixed the player being able to get out of bounds using the top of the screen
+ - fixed the draw_sprite_text function (it was unsafe and could cause the game to crash)
+ - made an icon for the game
+ - made the "keyboard_string" extension and used it to implement cheat codes
+ - made the "custom loading screen" extension and customised the loading screen with it
+ - added alternative character outfits
+ - added jump buffering and coyote timing
+ - added new auto-tile ground blocks (bricks and clouds)
+ - improved the debug display and added some new debug tools
+ - greatly improved auto-tile blocks
+   - the visible blocks are no longer objects, they're tiles now
+   - invisible solid blocks that objects collide with automatically spawn in areas accessible by the player
+   - tiles connect with edges of the screen now
+ - shrinked the player character's collision box to be less than 16px tall (16px is the size of 1 block)
+ 
+0.4:
+  - added coins, each coin gives 50 points
+  - added a basic enemy
+    - walks forward and turns around upon touching a wall
+	- affected by gravity
+	- can kill the player
+	- can be killed by the player (by stomping)
+	- player bounces off the enemy after stomping it and receives a 100 point bonus
+	- if the player holds the jump button while stomping the enemy they'll bounce higher
+	- after being stomped it changes its sprite and disappears after a few moment
+  - added a filter editor that allows the player to change the game's colors
+    - this one's probably getting removed or hidden, it heavily impacts the game's performance (especially on firefox)
+	
+0.5:
+  - added pause (press enter to pause and unpause)
+  - improved the enemy's sprites
+  - fixed the colors on the ground tileset 
+  - started working on the world generator
+    - the world generator is going to use prefabs to generate the level
+	- the prefabs are stored as strings: 
+	  - "." means empty space 
+	  - "," means a the beginning of a new row of blocks
+	  - uppercase characters represent different kinds of blocks
+	  - lowercase characters represent interactive objects
+	
+  
+0.6:
+  - first """fully playable""" version of the game
+  - made changes to player's collision detection again
+    - the horizontal collision detection now uses code similar to the vertical one, until now it was much simpler, but it would bug out too often
+  - adjusted the "jump brake" to give the player more control over their jumps
+  - fixed player's ability to jump despite having a block directly above them
+  - countless tweaks to the camera's properties
+  - added a simple title screen
+  - added a simple game over screen
+  - spikes kill enemies now
+  - the prefab system has been improved from the last version
+  - the level is now infinite and randomly generated
+    - the world generator uses pre-made prefabs to generate the level
+	- new prefab gets deployed automatically when the camera is about to reach the end of already existing ones
+	- a 2 to 4 block gap is placed in between each prefab that's being deployed
+	- there aren't many prefabs for now, and the world generator itself is rather simple. it's going to be upgraded in upcoming versions
+  - the game gets rid of objects that fall behind the left border of the screen
+  - small changes and fixes that I've already forgotten about
+  
+	
+  

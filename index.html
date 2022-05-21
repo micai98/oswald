@@ -1,0 +1,56 @@
+<html lang='en'>
+	<head>
+	<title>kotek</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="pragma" content="no-cache" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0, width=device-width, height=device-height" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+	<meta charset="utf-8" />
+	<link rel="icon" href="favicon.ico" />
+	<link rel="stylesheet" href="style.css" />
+	<style>
+		#tululoogame canvas
+			{
+				width: 1280px;
+				image-rendering: pixelated;
+				image-rendering: crisp-edges;
+				
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				
+				transform: translate(-50%, -50%);
+			}
+	</style>
+</head>
+<body style="background: black; overflow: hidden; text-align: center">
+	<div id="tululoogame"></div>
+	<script type="text/javascript" src="game.js"></script>	
+	<main>
+		<table width="100%" style="font-size: 10px !important">
+			<tr><td>Dark mode</td><td>Colorize</td><td>Intensity</td><td>Hue</td><td></td></tr>
+			<tr>
+				<td style="user-select: none"><input type="checkbox" id="b_cssv_darkmode" onclick="cssvApplyFilter()" /></td>
+				<td style="user-select: none"><input type="checkbox" id="b_cssv_color" onclick="cssvApplyFilter()" /></td>
+				<td><input type="number" id="b_cssv_saturation" value="50" oninput="cssvApplyFilter()"/></td>
+				<td><input type="number" id="b_cssv_hue" value="50" oninput="cssvApplyFilter()"/></td>
+				<td><button onclick="tu_canvas.style.filter = ''">Disable filters</button></td>
+			</tr>
+		</table>
+		<div style="text-align:center; color: gray; font-size: 10px">Using any of these will make the game run SLOW, it's recommended to keep them disabled</div>
+		
+	</main>
+	<script>
+		var bCssvDarkmode = document.getElementById("b_cssv_darkmode");
+		var bCssvColor = document.getElementById("b_cssv_color");
+		var bCssvSaturation = document.getElementById("b_cssv_saturation");
+		var bCssvHue = document.getElementById("b_cssv_hue");
+		
+		// this is a mess, i dont care, this feature sucks anyways
+		function cssvApplyFilter() {
+			tu_canvas.style.filter = "invert(" + (b_cssv_darkmode.checked ? "100%" : "0%") + ") sepia(" + (b_cssv_color.checked ? "100%" : "0%") + ") saturate("  + (b_cssv_color.checked ? ((bCssvSaturation.value+100).toString()+"%") : "0%") + ") hue-rotate("+ (b_cssv_color.checked ? (bCssvHue.value.toString()+"deg") : "0deg") + ")";
+		}
+	</script>
+</body>
+</html>
