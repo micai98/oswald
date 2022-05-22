@@ -1,33 +1,48 @@
 <html lang='en'>
 	<head>
-	<title>kotek</title>
+	<title>OSWALD Beta</title>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="pragma" content="no-cache" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0, width=device-width, height=device-height" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 	<meta charset="utf-8" />
+	<meta name="description" content="OSWALD Beta" />
+	<meta name="author" content="micai" />
 	<link rel="icon" href="favicon.ico" />
 	<link rel="stylesheet" href="style.css" />
 	<style>
-		#tululoogame canvas
-			{
+		#tululoogame canvas {
 				width: 1280px;
 				image-rendering: pixelated;
 				image-rendering: crisp-edges;
-				
 				position: absolute;
 				top: 50%;
 				left: 50%;
-				
 				transform: translate(-50%, -50%);
 			}
+		
+		#changelog {
+			display: none;
+			background-color: #222222;
+			border: 1px solid #444444;
+			border-radius: 0.1rem;
+			position: absolute;
+			padding: 1rem;
+			text-align: center;
+			width: 80%;
+			height: 80%;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			
+		}
 	</style>
 </head>
 <body style="background: black; overflow: hidden; text-align: center">
-	<div id="tululoogame"></div>
-	<script type="text/javascript" src="game.js"></script>	
 	<main>
+		<div id="tululoogame"></div>
+		<script type="text/javascript" src="game.js"></script>	
 		<table width="100%" style="font-size: 10px !important">
 			<tr><td>Dark mode</td><td>Colorize</td><td>Intensity</td><td>Hue</td><td></td></tr>
 			<tr>
@@ -38,15 +53,134 @@
 				<td><button onclick="tu_canvas.style.filter = ''">Disable filters</button></td>
 			</tr>
 		</table>
-		<div style="text-align:center; color: gray; font-size: 10px">Using any of these will make the game run SLOW, it's recommended to keep them disabled</div>
-		
+		<div style="text-align:center; color: gray; font-size: 10px">Using any of these will make the game run SLOW, it's recommended to keep them disabled<br />
+		<a style="text-decoration: underline" onclick="bChangelog.style.display = 'block'">Show changelog</a></div>
 	</main>
+	<div id="changelog">
+		<textarea id="changelog_text" readonly style="width: 100%; height: 90%; resize: none; margin-bottom: 1rem">
+0.7:
+  - brought back old code for horizontal collision detection and tweaked its values, seems to be working for now 
+  - fixed the player's ability to clip through the ceiling while jumping off of a 1 block gap (yes that was possible, the fix is very ghetto right now but it works)
+  - made slight adjustments to the player's collision box
+  - added a new block: wooden block
+  - added a new terrain type: cave
+  - added some new prefabs and updated some existing ones
+  - added trampolines
+  - added 2 new player costumes
+  - added high score display to the hud
+    - it flashes when the player ties or beats the high score
+  - character costumes are now stored in a dictionary-like variable
+  - the character costume, last score and high score are now saved to local web storage
+  - updated the title screen
+    - cheat codes can now be entered there
+	- current character costume is displayed 
+	- added high score display
+  - cleaned up some mess in world generator's code
+
+
+
+0.6:
+  - first """fully playable""" version of the game
+  - made changes to player's collision detection again
+    - the horizontal collision detection now uses code similar to the vertical one, until now it was much simpler, but it would bug out too often
+  - adjusted the "jump brake" to give the player more control over their jumps
+  - fixed player's ability to jump despite having a block directly above them
+  - countless tweaks to the camera's properties
+  - added a simple title screen
+  - added a simple game over screen
+  - spikes kill enemies now
+  - enemies don't update while they're not visible on the screen
+  - the prefab system has been improved from the last version
+  - the level is now infinite and randomly generated
+    - the world generator uses pre-made prefabs to generate the level
+	- new prefab gets deployed automatically when the camera is about to reach the end of already existing ones
+	- a 2 to 4 block gap is placed in between each prefab that's being deployed
+	- there aren't many prefabs for now, and the world generator itself is rather simple. it's going to be upgraded in upcoming versions
+  - the game gets rid of objects that fall behind the left border of the screen
+  - small changes and fixes that I've already forgotten about
+
+
+
+0.5:
+  - added pause (press enter to pause and unpause)
+  - improved the enemy's sprites
+  - fixed the colors on the ground tileset 
+  - started working on the world generator
+    - the world generator is going to use prefabs to generate the level
+	- the prefabs are stored as strings: 
+	  - "." means empty space 
+	  - "," means a the beginning of a new row of blocks
+	  - uppercase characters represent different kinds of blocks
+	  - lowercase characters represent interactive objects
+	
+	
+	
+0.4:
+  - added coins, each coin gives 50 points
+  - added a basic enemy
+    - walks forward and turns around upon touching a wall
+	- affected by gravity
+	- can kill the player
+	- can be killed by the player (by stomping)
+	- player bounces off the enemy after stomping it and receives a 100 point bonus
+	- if the player holds the jump button while stomping the enemy they'll bounce higher
+	- after being stomped it changes its sprite and disappears after a few moment
+  - added a filter editor that allows the player to change the game's colors
+    - this one's probably getting removed or hidden, it heavily impacts the game's performance (especially on firefox)
+
+
+
+0.3:
+ - fixed collision detection bug that made the game freeze
+ - fixed camera speedup bugs
+ - fixed the player getting stuck to the right border of the screen
+ - fixed the player being able to get out of bounds using the top of the screen
+ - fixed the draw_sprite_text function (it was unsafe and could cause the game to crash)
+ - made an icon for the game
+ - made the "keyboard_string" extension and used it to implement cheat codes
+ - made the "custom loading screen" extension and customised the loading screen with it
+ - added alternative character outfits
+ - added jump buffering and coyote timing
+ - added new auto-tile ground blocks (bricks and clouds)
+ - improved the debug display and added some new debug tools
+ - greatly improved auto-tile blocks
+   - the visible blocks are no longer objects, they're tiles now
+   - invisible solid blocks that objects collide with automatically spawn in areas accessible by the player
+   - tiles connect with edges of the screen now
+ - shrinked the player character's collision box to be less than 16px tall (16px is the size of 1 block)
+ 
+ 
+ 
+0.2:
+ added:
+  - scrolling camera
+  - added sprite font support (draw_sprite_text function)
+  - debug display and controls
+  - score counter
+  - hazards (spikes)
+ - falling down, touching hazards or the left border of the screen will kill the player
+ - huge collision detection improvements
+
+
+
+0.1:
+ - started making the game
+ - made some basic graphics
+ - added player's movement
+  - the player can control their jump height by releasing the jump button before reaching maximum height (jump brake)
+ - added basic collision detection
+ - added auto-tile blocks
+		</textarea>
+		<button onclick="bChangelog.style.display = 'none'">Close</button>
+	</div>
 	<script>
 		var bCssvDarkmode = document.getElementById("b_cssv_darkmode");
 		var bCssvColor = document.getElementById("b_cssv_color");
 		var bCssvSaturation = document.getElementById("b_cssv_saturation");
 		var bCssvHue = document.getElementById("b_cssv_hue");
-		
+		var bChangelog = document.getElementById("changelog");
+		var bChangelogText = document.getElementById("changelog_text");
+	
 		// this is a mess, i dont care, this feature sucks anyways
 		function cssvApplyFilter() {
 			tu_canvas.style.filter = "invert(" + (b_cssv_darkmode.checked ? "100%" : "0%") + ") sepia(" + (b_cssv_color.checked ? "100%" : "0%") + ") saturate("  + (b_cssv_color.checked ? ((bCssvSaturation.value+100).toString()+"%") : "0%") + ") hue-rotate("+ (b_cssv_color.checked ? (bCssvHue.value.toString()+"deg") : "0deg") + ")";

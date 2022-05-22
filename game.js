@@ -1413,7 +1413,6 @@ function tu_preloader() {
 
 
 
-
 /***********************************************************************
  * SPRITES
  ***********************************************************************/
@@ -1426,7 +1425,7 @@ __sprite_init__(this, col_16x, 16, 16, 0, 0, 'Box', 8, 0, 16, 0, 16, ['img/col_1
 }; var col_16x = new __col_16x();
 
 function __s_kot() { 
-__sprite_init__(this, s_kot, 16, 22, 8, 11, 'Box', 8, 3, 13, 7, 22, ['img/s_kot_0.png','img/s_kot_1.png','img/s_kot_2.png','img/s_kot_3.png']);
+__sprite_init__(this, s_kot, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_0.png','img/s_kot_1.png','img/s_kot_2.png','img/s_kot_3.png']);
 }; var s_kot = new __s_kot();
 
 function __s_ground() { 
@@ -1450,19 +1449,19 @@ __sprite_init__(this, s_spikes, 16, 16, 0, 0, 'Box', 8, 4, 12, 4, 12, ['img/s_sp
 }; var s_spikes = new __s_spikes();
 
 function __s_kot_sak_old() { 
-__sprite_init__(this, s_kot_sak_old, 16, 22, 8, 11, 'Box', 8, 3, 13, 7, 22, ['img/s_kot_sak_old_0.png','img/s_kot_sak_old_1.png','img/s_kot_sak_old_2.png','img/s_kot_sak_old_3.png']);
+__sprite_init__(this, s_kot_sak_old, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_sak_old_0.png','img/s_kot_sak_old_1.png','img/s_kot_sak_old_2.png','img/s_kot_sak_old_3.png']);
 }; var s_kot_sak_old = new __s_kot_sak_old();
 
 function __s_kot_tall() { 
-__sprite_init__(this, s_kot_tall, 16, 22, 8, 11, 'Box', 8, 3, 13, 7, 22, ['img/s_kot_tall_0.png','img/s_kot_tall_1.png','img/s_kot_tall_2.png','img/s_kot_tall_3.png']);
+__sprite_init__(this, s_kot_tall, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_tall_0.png','img/s_kot_tall_1.png','img/s_kot_tall_2.png','img/s_kot_tall_3.png']);
 }; var s_kot_tall = new __s_kot_tall();
 
 function __s_kot_fat() { 
-__sprite_init__(this, s_kot_fat, 16, 22, 8, 11, 'Box', 8, 3, 13, 7, 22, ['img/s_kot_fat_0.png','img/s_kot_fat_1.png','img/s_kot_fat_2.png','img/s_kot_fat_3.png']);
+__sprite_init__(this, s_kot_fat, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_fat_0.png','img/s_kot_fat_1.png','img/s_kot_fat_2.png','img/s_kot_fat_3.png']);
 }; var s_kot_fat = new __s_kot_fat();
 
 function __s_kot_sak() { 
-__sprite_init__(this, s_kot_sak, 16, 22, 8, 11, 'Box', 8, 3, 13, 7, 22, ['img/s_kot_sak_0.png','img/s_kot_sak_1.png','img/s_kot_sak_2.png','img/s_kot_sak_3.png']);
+__sprite_init__(this, s_kot_sak, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_sak_0.png','img/s_kot_sak_1.png','img/s_kot_sak_2.png','img/s_kot_sak_3.png']);
 }; var s_kot_sak = new __s_kot_sak();
 
 function __s_dev_no() { 
@@ -1493,6 +1492,26 @@ function __s_dev_unknown() {
 __sprite_init__(this, s_dev_unknown, 16, 16, 0, 0, 'Box', 8, 0, 16, 0, 16, ['img/s_dev_unknown_0.png']);
 }; var s_dev_unknown = new __s_dev_unknown();
 
+function __s_woodenblock() { 
+__sprite_init__(this, s_woodenblock, 16, 16, 0, 0, 'Box', 8, 0, 16, 0, 16, ['img/s_woodenblock_0.png']);
+}; var s_woodenblock = new __s_woodenblock();
+
+function __s_cave() { 
+__sprite_init__(this, s_cave, 16, 16, 0, 0, 'Box', 8, 0, 16, 0, 16, ['img/s_cave_0.png']);
+}; var s_cave = new __s_cave();
+
+function __s_trampoline() { 
+__sprite_init__(this, s_trampoline, 16, 24, 0, 8, 'Box', 8, 0, 16, 8, 24, ['img/s_trampoline_0.png','img/s_trampoline_1.png','img/s_trampoline_2.png','img/s_trampoline_3.png']);
+}; var s_trampoline = new __s_trampoline();
+
+function __s_kot_girl() { 
+__sprite_init__(this, s_kot_girl, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_girl_0.png','img/s_kot_girl_1.png','img/s_kot_girl_2.png','img/s_kot_girl_3.png']);
+}; var s_kot_girl = new __s_kot_girl();
+
+function __s_kot_hat() { 
+__sprite_init__(this, s_kot_hat, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_hat_0.png','img/s_kot_hat_1.png','img/s_kot_hat_2.png','img/s_kot_hat_3.png']);
+}; var s_kot_hat = new __s_kot_hat();
+
 
 
 /***********************************************************************
@@ -1519,6 +1538,12 @@ __background_init__(this, ts_cloud, 'img/s_cloud_mono.png')}; var ts_cloud = new
 
 function __bg_dev_grid() { 
 __background_init__(this, bg_dev_grid, 'img/bg_dev_grid.png')}; var bg_dev_grid = new __bg_dev_grid();
+
+function __ts_woodenblock() { 
+__background_init__(this, ts_woodenblock, 'img/ts_woodenblock.png')}; var ts_woodenblock = new __ts_woodenblock();
+
+function __ts_cave() { 
+__background_init__(this, ts_cave, 'img/ts_cave_mono_strip16.png')}; var ts_cave = new __ts_cave();
 
 
 
@@ -1605,6 +1630,7 @@ this.coyote = 0;
 this.coyote_max = 5;
 this.jumpbuffer = 0;
 this.jumpbuffer_max = 5;
+this.jumpbrake_disabled = false;
 this.sprite_dir = 1;
 this.xsafe = x;
 this.ysafe = y;
@@ -1616,6 +1642,7 @@ this.accel = 1;
 this.friction = 0.8;
 this.jumppower = 8;
 this.jumpbrake = 0.6;
+this.jumptrampoline = 1.6;
 this.vx_max = 3;
 this.vy_max = 3;
 this.gravity = 0.5;
@@ -1626,10 +1653,10 @@ this.enemy_bounce_high = 1;
 this.die = function() {
 	if(!this.dead) {
 		last_score = hud_object.score;
+		highscore_update();
 		this.dead = true;
 	}
-	//hud_object.reset_score();
-}
+};
 }
 };
 this.on_destroy = on_destroy_i;
@@ -1649,12 +1676,12 @@ if(keyboard_check_pressed(k_up)) {
 	this.jumpbuffer = this.jumpbuffer_max;
 }
 
-if(this.jumpbuffer > 0 && place_meeting(x, y-4, o_dev_solid) == null && (this.grounded || (this.coyote > 0 && this.diry != -1))) {
+if(this.jumpbuffer > 0 && place_meeting(x, y-8, o_dev_solid) == null && (this.grounded || (this.coyote > 0 && this.diry != -1))) {
 	this.jumpbuffer = 0;
 	this.vy = -this.jumppower;
 }
 
-if(keyboard_check_released(k_up) && this.diry == -1 ) {
+if(keyboard_check_released(k_up) && this.diry == -1 && !this.jumpbrake_disabled ) {
 	this.vy *= this.jumpbrake;
 }
 
@@ -1686,20 +1713,6 @@ if(this.vx > this.vx_max) this.vx = this.vx_max;
 if(this.vx < -this.vx_max) this.vx = -this.vx_max;
 
 // - Collision detection -
-// Horizontal
-if(place_meeting(x+this.vx, y, o_dev_solid) != null && dirx != 0) {
-	this.vx *= 0.8;
-	while(place_meeting(x+this.vx, y, o_dev_solid) != null) {
-		this.vx -= this.dirx;
-	}
-	x += this.vx;
-	this.vx = 0;
-}
-
-if(place_meeting(x+this.keyx, y, o_dev_solid) != null) {
-    vx = 0;
-}
-
 // Vertical
 if(place_meeting(x, y+this.vy, o_dev_solid) != null && diry != 0) {
 	while(place_meeting(x, y+this.vy, o_dev_solid) != null) {
@@ -1709,9 +1722,19 @@ if(place_meeting(x, y+this.vy, o_dev_solid) != null && diry != 0) {
 	this.vy = 0
 }
 
+// Horizontal
+if(place_meeting(x+this.vx, y, o_dev_solid) != null || place_meeting(x+this.vx, y, o_trampoline)) {
+	this.vx *= 0.1;
+}
+
+if(place_meeting(x+this.keyx, y, o_dev_solid) != null || place_meeting(x+this.vx, y, o_trampoline)) {
+    vx = 0;
+}
+
 // Check if the player's touching the ground
 if(place_meeting(x, y+1, o_dev_solid) != null) {
 	this.grounded = true;
+	this.jumpbrake_disabled = false;
 } else {
 	this.grounded = false;
 }
@@ -1746,6 +1769,7 @@ if(y < -10) y = -10;
 //if(y+11 > room_height) { y = room_height-11; this.grounded = true }
 if(keyboard_check(vk_ctrl)) x = camera_object.x;
 
+
 // Dying conditions
 
 
@@ -1776,6 +1800,14 @@ if(!other.dead) {
 	}
 }
 }
+this.other = this.place_meeting(this.x, this.y, o_trampoline);
+if(this.other != null) {
+if(y < other.y) {
+	this.vy = -this.jumppower * this.jumptrampoline;
+	this.jumpbrake_disabled = true;
+	other.image_speed = 0.5;
+}
+}
 }
 };
 this.on_roomstart = on_roomstart_i;
@@ -1788,7 +1820,7 @@ with(this) {
 if(!this.dead) draw_sprite_ext(player_character, image_index, ceil(x), ceil(y), 1*this.sprite_dir, 1, 0, 1);
 
 if(debug) {
-	draw_sprite_text(room_viewport_x+8, room_viewport_y+24, "X: " + x.toFixed(2).toString() + " Y: " + y.toFixed(2).toString() + " J: " + this.jumpbuffer.toString() + " C: " + this.coyote.toString());
+	draw_sprite_text(room_viewport_x+8, room_viewport_y+24, "X: " + x.toFixed(2).toString() + " Y: " + y.toFixed(2).toString() + " J: " + this.jumpbuffer.toString() + " C: " + this.coyote.toString() + (this.jumpbrake_disabled ? " BD" : ""));
 	//draw_sprite_text(ceil(x), ceil(y)-24, this.vy.toFixed(3).toString());
 }
 
@@ -1889,13 +1921,13 @@ this.reset_score = function() {
 this.on_destroy = on_destroy_i;
 this.on_step = function() {
 with(this) {
-if(!player_object.dead) {
-	if(this.tick >= 30) {
-		this.score += 1;
+if(this.tick >= 30) {
+		if(!player_object.dead) this.score += 1;
 		this.tick = 0;
 	}
-	this.tick += 1;
+this.tick += 1;
 	
+if(!player_object.dead) {
 	if(keyboard_check_pressed(k_pause)) {
 		if(!this.pausepressed) tu_paused = true;
 		this.pausepressed = true;
@@ -1913,21 +1945,7 @@ if(!player_object.dead) {
 };
 this.on_end_step = function() {
 with(this) {
-// Ch
-
-this.chc = keyboard_string.toLowerCase();
-
-// debug
-if(this.chc.endsWith("dbg")) { keyboard_string =  ""; debug = !debug  }
-if(this.chc.endsWith("cls")) keyboard_string = "";
-if(this.chc.endsWith("res")) { keyboard_string = ""; room_goto(room_current); }
-
-// fun
-if(this.chc.endsWith("strawberrymilk")) player_character = s_kot_sak;
-if(this.chc.endsWith("strawberrymilj")) player_character = s_kot_sak_old;
-if(this.chc.endsWith("fatman")) player_character = s_kot_fat;
-if(this.chc.endsWith("bigguy")) player_character = s_kot_tall;
-if(this.chc.endsWith("oswald")) player_character = s_kot;
+ccheck();
 }
 };
 this.on_collision = on_collision_i;
@@ -1939,9 +1957,11 @@ if (this.visible == 1) {
 __handle_sprite__(this);
 with(this) {
 this.zeros = 9;
-this.score_str = score.toString()
+this.score_str = this.score.toString()
+this.hiscore_str = high_score.toString()
 
 draw_sprite_text(room_viewport_x + 8, room_viewport_y + 8 ,  "0".repeat(this.zeros-this.score_str.length)+score_str);
+
 
 if(tu_paused) {
 	draw_set_color(255, 255, 255);
@@ -1953,6 +1973,11 @@ if(player_object.dead) {
 	draw_set_color(255, 255, 255);
 	draw_rectangle(room_viewport_x + 120, room_viewport_y + 72, room_viewport_x + 192, room_viewport_y + 80, false);
 	draw_sprite_text(room_viewport_x + 120, room_viewport_y + 72, "GAME OVER");
+	if(last_score == high_score) {
+		if(this.tick < 15) draw_sprite_text(room_viewport_x + 216, room_viewport_y + 8 ,  "HI "+ "0".repeat(this.zeros-this.hiscore_str.length)+hiscore_str);
+	} else draw_sprite_text(room_viewport_x + 216, room_viewport_y + 8 ,  "HI "+ "0".repeat(this.zeros-this.hiscore_str.length)+hiscore_str);
+} else {
+	draw_sprite_text(room_viewport_x + 216, room_viewport_y + 8 ,  "HI "+ "0".repeat(this.zeros-this.hiscore_str.length)+hiscore_str);
 }
 }
 }
@@ -2225,26 +2250,21 @@ if (this.visible == 1) {
 __handle_sprite__(this);
 with(this) {
 draw_sprite_ext(sprite_index, image_index, ceil(x), ceil(y), 1*this.sprite_dir, 1, 0, 1);
-
-if(debug) {
-	//draw_sprite_text(x-24, y-12, y.toFixed(3).toString())
-}
 }
 }
 };
 }; var o_enemy_rat = new __o_enemy_rat();
 
-function __o_prefab_spawner() {
-__instance_init__(this, o_prefab_spawner, null, 1, 0, s_dev_cube, 1, 12);
+function __o_world_generator() {
+__instance_init__(this, o_world_generator, null, 1, 0, s_dev_cube, 1, 12);
 this.on_creation = function() {
 with(this) {
 prefab_len_total = 0;
 prefab_len_last = 0;
 
-prefab_deploy(0, 0, pr_spawnpoint);
+prefab_deploy(0, 0, pr_spawnpoint, 3);
 
 this.next_prefab;
-this.previous_prefab = pr_spawnpoint;
 
 /*
 prefab_deploy_empty(2);
@@ -2262,16 +2282,11 @@ this.on_destroy = on_destroy_i;
 this.on_step = function() {
 with(this) {
 if(camera_object.x + 160 > prefab_len_total*16) {
-	if(prefab_last_empty) {
-		do {
-			this.next_prefab = prefab_list[Math.floor(Math.random()*prefab_list.length)];
-		} while(this.next_prefab == this.previous_prefab);
-		this.previous_prefab = this.next_prefab;
-		prefab_deploy(prefab_len_total, 0, this.next_prefab);
-	}
-	else {
-		prefab_deploy_empty(choose(2,3,4));
-	}
+	do {
+		this.next_prefab = prefab_list[Math.floor(Math.random()*prefab_list.length)];
+	} while(this.next_prefab == previous_prefab);
+	previous_prefab = this.next_prefab;
+	prefab_deploy(prefab_len_total, 0, this.next_prefab, choose(2,3,4));
 }
 }
 };
@@ -2290,7 +2305,7 @@ if(debug) {
 }
 }
 };
-}; var o_prefab_spawner = new __o_prefab_spawner();
+}; var o_world_generator = new __o_world_generator();
 
 function __o_deploy_spawn() {
 __instance_init__(this, o_deploy_spawn, null, 0, 0, s_dev_cube, 1, 13);
@@ -2340,6 +2355,8 @@ with(this) {
 if(keyboard_check_pressed(vk_enter)) {
 	room_goto_next();
 }
+
+ccheck();
 }
 };
 this.on_end_step = on_end_step_i;
@@ -2351,10 +2368,11 @@ this.on_draw = function() {
 if (this.visible == 1) {
 __handle_sprite__(this);
 with(this) {
-draw_sprite_text(8, 8, "OSWALD public beta type thing");
+draw_sprite_text(8, 8, "OSWALD Beta");
 draw_sprite_text(8, 16, "by micai   ver. " + game_meta_version);
 
 draw_sprite_text(8, 32, "Your last score: " + last_score.toString());
+draw_sprite_text(8, 40, "Your high score: " + high_score.toString());
 
 draw_sprite_text(8, 64, "Move with ARROW KEYS");
 draw_sprite_text(8, 72, "Hold UP to jump higher");
@@ -2376,6 +2394,7 @@ this.on_step = function() {
 with(this) {
 x += 1;
 if(x > room_width+16) { x = -16 };
+sprite_index = player_character;
 }
 };
 this.on_end_step = on_end_step_i;
@@ -2385,6 +2404,101 @@ this.on_roomend = on_roomend_i;
 this.on_animationend = on_animationend_i;
 this.on_draw = on_draw_i;
 }; var o_dev_cat_demo = new __o_dev_cat_demo();
+
+function __o_bl_woodenblock() {
+__instance_init__(this, o_bl_woodenblock, null, 0, 0, s_woodenblock, 1, 82);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = function() {
+with(this) {
+tile_add(ts_woodenblock, 0, 0, 16, 16, x, y, 1);
+instance_create(x, y, o_dev_solid);
+instance_destroy();
+}
+};
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_bl_woodenblock = new __o_bl_woodenblock();
+
+function __o_bl_cave() {
+__instance_init__(this, o_bl_cave, null, 0, 0, s_cave, 1, 83);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = function() {
+with(this) {
+image_speed = 0;
+image_index = 0;
+
+this.ver = 0;
+this.hor = 0;
+this.bls = 16;
+
+if(y == 0) instance_create(x, y-bls, object_index);
+if(y == room_height-bls) instance_create(x, y+bls, object_index);
+
+if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
+if(place_meeting(x, y-this.bls, object_index))
+{
+    if(this.ver == 1){this.ver = 2}
+    else{this.ver = 3}
+}
+
+
+if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
+if(place_meeting(x-this.bls, y, object_index))
+{
+    if(this.hor == 1){this.hor = 2}
+    else{this.hor = 3}
+}
+
+image_index = 4*this.ver + this.hor;
+tile_add(ts_cave, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
+if(!(y + 16 >= room_height && image_index == 14)) {
+	if(image_index != 10) instance_create(x, y, o_dev_solid);
+}
+
+instance_destroy();
+}
+};
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_bl_cave = new __o_bl_cave();
+
+function __o_trampoline() {
+__instance_init__(this, o_trampoline, null, 1, 0, s_trampoline, 1, 84);
+this.on_creation = function() {
+with(this) {
+image_speed = 0;
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = function() {
+with(this) {
+if(x < room_viewport_x-32) instance_destroy();
+}
+};
+this.on_end_step = on_end_step_i;
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = function() {
+if(this.image_index >= this.image_number - 1) {
+with(this) {
+image_index = 0;
+image_speed = 0;
+}
+}
+};
+this.on_draw = on_draw_i;
+}; var o_trampoline = new __o_trampoline();
 
 
 
@@ -2462,7 +2576,7 @@ this.objects = [
 [{o:o_kot, x:80, y:96}],
 [{o:o_camera, x:80, y:0}],
 [{o:o_hud, x:0, y:16}],
-[{o:o_prefab_spawner, x:0, y:0}]];
+[{o:o_world_generator, x:0, y:0}]];
 this.start = function() {
 __room_start__(this, sc_demo , 100000, 160, 60, 255, 255, 255, null, 0, 0, 0, 320, 160, o_camera, 320, 160);
 };
@@ -2545,14 +2659,29 @@ tu_room_to_go = sc_init;
 /***********************************************************************
  * CUSTOM GLOBAL VARIABLES
  ***********************************************************************/
-var last_score = 0;
+var last_score = load_web_integer("la");
+if(!last_score) last_score = 0;
+var high_score = load_web_integer("hi");
+if(!high_score) high_score = 0;
 
 
 var player_object;
+var player_character;
 var camera_object;
 var hud_object;
 
-var player_character = s_kot;
+var player_costumes = {
+	"default": s_kot,
+	"fat": s_kot_fat,
+	"tall": s_kot_tall,
+	"girl": s_kot_girl,
+	"hat": s_kot_hat,
+	"sak1": s_kot_sak,
+	"sak2": s_kot_sak_old
+};
+
+if(!change_costume(load_web_string("costume"))) player_character = s_kot;
+
 var character_spawn_offset_x = 4;
 var character_spawn_offset_y = 2;
 
@@ -2571,7 +2700,7 @@ var camera_speedup_speed = 0.05;
 var camera_speedup_maxspeed = 2.4;
 
 var game_meta_author = "micai";
-var game_meta_version = "0.6";
+var game_meta_version = "0.7";
 var debug = true;
 
 tu_preloader_showtext = false;
@@ -2588,13 +2717,15 @@ tu_canvas_css = "background: rgb(255, 255, 255); border: 0;";
 // - - PREFAB SYSTEM - - 
 var prefab_len_last = 0;
 var prefab_len_total = 0;
-var prefab_last_empty = false;
+var previous_prefab;
 
 var prefab_chars = {
 	// blocks
 	"G": o_bl_ground,
 	"B": o_bl_brick,
 	"C": o_bl_cloud,
+	"R": o_bl_cave,
+	"W": o_bl_woodenblock,
 	
 	// enemies
 	"r": o_enemy_rat,
@@ -2602,10 +2733,10 @@ var prefab_chars = {
 	
 	// bonus
 	"c": o_coin,
-	"h": o_coin, // replace with heart once implemented
-}
+	"t": o_trampoline
+};
 
-function prefab_deploy(px, py, prefab) { 
+function prefab_deploy(px, py, prefab, gap = 0) { 
 	console.time("Prefab deploy time");
 	var len = prefab.length;
 	var cx = 0;
@@ -2625,17 +2756,12 @@ function prefab_deploy(px, py, prefab) {
 			cx += 1;
 		}
 	}
+	prefab_len_last += gap;
 	prefab_len_total += prefab_len_last;
 	prefab_last_empty = false;
-	instance_create(prefab_len_total*16, 0, o_debug_line);
+	previous_prefab = prefab;
+	//instance_create(prefab_len_total*16, 0, o_debug_line);
 	console.timeEnd("Prefab deploy time");
-}
-
-function prefab_deploy_empty(width) {
-	prefab_len_total += width;
-	prefab_len_last = width;
-	prefab_last_empty = true;
-	instance_create(prefab_len_total*16, 0, o_debug_line);
 }
 
 // Prefabs
@@ -2667,7 +2793,7 @@ GGGGGGGGGGGG,\
 var pr_simple2 = "\
 ................GGG,\
 ................GGG,\
-...................,\
+,\
 ,\
 ,\
 ........c.c.....GGG,\
@@ -2691,6 +2817,19 @@ GGG....GGG....GGG,\
 ";
 
 var pr_simple4 = "\
+,\
+..........c.....c,\
+,\
+,\
+,\
+.................GGG,\
+.................GGG,\
+.................GGG,\
+.........t.......GGG,\
+GGGGGGGGGGG......GGG..\
+";
+
+var pr_simple5 = "\
 ,,,,\
 ....................r,\
 ..............sGGGGGG..........r,\
@@ -2698,6 +2837,19 @@ var pr_simple4 = "\
 .sGGGGGGGGG...GGGGGGG....GGGGGGG,\
 .GGGGGGGGGG...GGGGGGG....GGGGGGG,\
 .GGGGGGGGGG...GGGGGGG....GGGGGGG,\
+";
+
+var pr_simple6 = "\
+,\
+,\
+,\
+,\
+,\
+..........c,\
+,\
+........W...W,\
+GGGGG...W...W...GGGGG,\
+GGGGG...W...W...GGGGG,\
 ";
 
 var pr_castle1 = "\
@@ -2714,16 +2866,16 @@ BBB...BBB...BBBBBBBBBBB...BBB...BBB,\
 ";
 
 var pr_castle2 = "\
-BBBBBBBBBBBBBBBBBBBBB,\
+BBBBBBBBBBBBBBBBBBB,\
+,\
+......B.....B,\
+....BBBBBBBBBBB,\
 ,\
 ,\
-....BBBBBBBBBBBBB,\
-,\
-,\
-.........c.c,\
-BBBBBBssBBBBBssBBBBBB,\
-BBBBBBBBBBBBBBBBBBBBB,\
-BBBBBBBBBBBBBBBBBBBBB,\
+.........c,\
+BBBBBBssBBBssBBBBBB,\
+BBBBBBBBBBBBBBBBBBB,\
+BBBBBBBBBBBBBBBBBBB,\
 ";
 
 var pr_castle3 = "\
@@ -2739,20 +2891,72 @@ BBBBBB....BB....BB....BB....BB,\
 BBBBBB....BB....BB....BB....BB,\
 ";
 
+var pr_castle4 = "\
+.............BBBBBBBBBB,\
+.............BBBc,\
+.............BBB,\
+.............BBB..BBBBB,\
+.............BBB...cBBB,\
+.............BBB....BBB...BBB,\
+.............BBBBB..BBB...BBB,\
+....................BBB...BBB...BBB,\
+BBB.................BBB...BBB...BBB,\
+BBB...BBB...BBBBBBBBBBB...BBB...BBB,\
+";
+
+var pr_cave1 = "\
+RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
+RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
+............RRRRRRR,\
+................RRR,\
+...........r..........RR......c,\
+..........RR..........RR,\
+.c..c.RRRRRRss..c.....RR,\
+RRRRRRRRRRRRRRRRRRR...RR...RR...RR,\
+RRRRRRRRRRRRRRRRRRR...RR...RR...RR,\
+RRRRRRRRRRRRRRRRRRR...RR...RR...RR,\
+";
+
+var pr_cave2 = "\
+............RRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
+..................cRRR................RRR,\
+...................RRR........c.......RRR,\
+............RRRRR..RRR.........RRRR...RRR,\
+............RRRc...RRR........cRRRR...RRR,\
+......RRR...RRR....RRR.........RRRR,\
+......RRR...RRR..RRRRR........cRRRR,\
+RRR...RRR...RRR................RRRR....c,\
+RRR...RRR...RRR...............tRRRR...RRR,\
+RRR...RRR...RRRRRRRRRRRR..RRRRRRRRR...RRR,\
+";
+
 var pr_clouds1 = "\
 ,\
 ,\
 ..........................................r,\
 .....................................CCCCCCC,\
 .....................r,\
-CC............CCCCCCCCC,\
-CC...CCCCCC...CCCCCCCCC........................CCC,\
-.....CCCCCC.................CCCCCCCCC....cc....CCC,\
+......c..c....CCCCCCCCC,\
+CC...CCCCCC...CCCCCCCCC.......c...c............CCC,\
+CC...CCCCCC.................CCCCCCCCC....cc....CCC,\
 ............................CCCCCCCCC...CCCC,\
 ,\
 ";
 
-var prefab_list = [pr_simple1, pr_simple2, pr_simple3, pr_simple4, pr_castle1, pr_castle2, pr_castle3, pr_clouds1];
+var pr_clouds2 = "\
+,\
+,\
+,\
+,\
+..............................CC,\
+......CC................CC....CC.,\
+CC....CC....CC....CC....CC,\
+CC..........CC....CC,\
+,\
+,\
+";
+
+var prefab_list = [pr_simple1, pr_simple2, pr_simple3, pr_simple4, pr_simple5, pr_simple6, pr_castle1, pr_castle2, pr_castle3, pr_castle4, pr_cave2, pr_cave1, pr_clouds1, pr_clouds2];
 
 var test_prefab = "\
 BBrBGG....,\
@@ -2768,6 +2972,38 @@ for (i = 0; i < text.length+1; i += 1) {
 }
 function newent(bx, by, ent) { 
 instance_create(bx*16, by*16, ent);
+}
+function ccheck() { 
+this.chc = keyboard_string.toLowerCase();
+
+// debug
+if(this.chc.endsWith("dbg")) { keyboard_string =  ""; debug = !debug  }
+if(this.chc.endsWith("cls")) keyboard_string = "";
+if(this.chc.endsWith("res")) { keyboard_string = ""; room_goto(room_current); }
+
+// characters
+if(this.chc.endsWith("strawberrymilk")) change_costume("sak1");
+if(this.chc.endsWith("strawberrymilj")) change_costume("sak2");
+if(this.chc.endsWith("fatman")) change_costume("fat");
+if(this.chc.endsWith("bigguy")) change_costume("tall");
+if(this.chc.endsWith("oswald")) change_costume("default");
+if(this.chc.endsWith("imissmywife")) change_costume("girl");
+if(this.chc.endsWith("howdy")) change_costume("hat");
+}
+function highscore_update() { 
+save_web_integer("la", last_score);
+if(last_score > high_score) { 
+	high_score = last_score;
+	save_web_integer("hi", high_score);
+}
+}
+function change_costume(costume) { 
+if(costume in player_costumes) {
+	player_character = player_costumes[costume];
+	save_web_string("costume", costume);
+	return true;
+}
+return false;
 }
 
 
