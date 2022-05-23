@@ -1517,6 +1517,26 @@ __sprite_init__(this, s_kot_hat, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_
 /***********************************************************************
  * SOUNDS
  ***********************************************************************/
+function __snd_jump() { 
+__audio_init__(this, snd_jump, '', '', 'aud/jump.ogg');
+}; var snd_jump = new __snd_jump();
+
+function __snd_coin() { 
+__audio_init__(this, snd_coin, '', '', 'aud/coin.ogg');
+}; var snd_coin = new __snd_coin();
+
+function __snd_stomp() { 
+__audio_init__(this, snd_stomp, '', '', 'aud/stomp.ogg');
+}; var snd_stomp = new __snd_stomp();
+
+function __snd_dead() { 
+__audio_init__(this, snd_dead, '', '', 'aud/dead.ogg');
+}; var snd_dead = new __snd_dead();
+
+function __snd_trampoline() { 
+__audio_init__(this, snd_trampoline, '', '', 'aud/trampoline.ogg');
+}; var snd_trampoline = new __snd_trampoline();
+
 
 
 /***********************************************************************
@@ -1652,6 +1672,8 @@ this.enemy_bounce_high = 1;
 // Functions
 this.die = function() {
 	if(!this.dead) {
+		instance_create(x, y, o_kot_dead);
+		sound_c_play(snd_dead);
 		last_score = hud_object.score;
 		highscore_update();
 		this.dead = true;
@@ -1672,16 +1694,18 @@ if(this.vy < 0) { this.diry = -1 }
 
 // - Controls and movement -
 // Jumping
-if(keyboard_check_pressed(k_up)) {
+if(input_pressed(k_up, k_jump, vk_w)) {
+	game_started = true;
 	this.jumpbuffer = this.jumpbuffer_max;
 }
 
 if(this.jumpbuffer > 0 && place_meeting(x, y-8, o_dev_solid) == null && (this.grounded || (this.coyote > 0 && this.diry != -1))) {
 	this.jumpbuffer = 0;
 	this.vy = -this.jumppower;
+	sound_c_play(snd_jump);
 }
 
-if(keyboard_check_released(k_up) && this.diry == -1 && !this.jumpbrake_disabled ) {
+if(input_released(k_up, k_jump, vk_w) && this.diry == -1 && !this.jumpbrake_disabled ) {
 	this.vy *= this.jumpbrake;
 }
 
@@ -1696,8 +1720,9 @@ if(!this.grounded) {
 }
 
 // Horizontal movement
-this.keyx = (keyboard_check(k_right) - keyboard_check(k_left));
+this.keyx = (input_down_int(k_right, vk_d) - input_down_int(k_left, vk_a));
 if(keyx != 0) {
+	game_started = true;
 	this.sprite_dir = this.keyx;
 	this.vx += this.accel * this.keyx;
 	if(this.grounded) image_speed = 0.25;
@@ -1785,13 +1810,15 @@ with(this) {
 this.other = this.place_meeting(this.x, this.y, o_coin);
 if(this.other != null) {
 other.instance_destroy();
+sound_c_play(snd_coin);
 hud_object.score += 50;
 }
 this.other = this.place_meeting(this.x, this.y, o_enemy_rat);
 if(this.other != null) {
-if(!other.dead) {
+if(!other.dead && !this.dead) {
 	if(this.vy > 0) {
 		other.die();
+		sound_c_play(snd_stomp);
 		hud_object.score += 100;
 		if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
 		else this.vy = -(this.jumppower * this.enemy_bounce);
@@ -1803,6 +1830,7 @@ if(!other.dead) {
 this.other = this.place_meeting(this.x, this.y, o_trampoline);
 if(this.other != null) {
 if(y < other.y) {
+	sound_c_play(snd_trampoline);
 	this.vy = -this.jumppower * this.jumptrampoline;
 	this.jumpbrake_disabled = true;
 	other.image_speed = 0.5;
@@ -1817,7 +1845,7 @@ this.on_draw = function() {
 if (this.visible == 1) {
 __handle_sprite__(this);
 with(this) {
-if(!this.dead) draw_sprite_ext(player_character, image_index, ceil(x), ceil(y), 1*this.sprite_dir, 1, 0, 1);
+if(!this.dead) draw_sprite_ext(player_character, image_index, ceil(x), ceil(y), this.sprite_dir, 1, 0, 1);
 
 if(debug) {
 	draw_sprite_text(room_viewport_x+8, room_viewport_y+24, "X: " + x.toFixed(2).toString() + " Y: " + y.toFixed(2).toString() + " J: " + this.jumpbuffer.toString() + " C: " + this.coyote.toString() + (this.jumpbrake_disabled ? " BD" : ""));
@@ -1847,27 +1875,31 @@ this.reset = function() {
 	this.interval = camera_speedup_interval;
 	this.increment = camera_speedup_increment;
 }
-
-if(x+1000 > room_width) {
-	room_width += 2000;
-}
 }
 };
 this.on_destroy = on_destroy_i;
 this.on_step = function() {
 with(this) {
+if(!game_started) return;
+
 if(!player_object.dead) this.x += this.vx;
 
 if(this.tick >= this.interval) {
-	if(vx < camera_speedup_maxspeed) vx += camera_speedup_speed;
+	vx += camera_speedup_speed;
 	this.tick = 0;
 	this.interval += this.increment;
 	this.increment += camera_speedup_increment;
 }
 
+if(vx > camera_speedup_maxspeed) vx = camera_speedup_maxspeed;
+
 this.tick += 1;
 
-// debug
+if(x+2000 > room_width) {
+	room_width += 4000;
+}
+
+/* debug
 if(keyboard_check(vk_a)) {
 	x -= this.vx*4;
 }
@@ -1880,7 +1912,7 @@ if(keyboard_check(vk_s)) {
 if(keyboard_check(vk_d)) {
 	x += this.vx*2;
 }
-
+*/
 }
 };
 this.on_end_step = on_end_step_i;
@@ -1911,6 +1943,7 @@ this.pausepressed = false;
 this.chc = "";
 this.score = 0;
 this.tick = 0;
+game_started = false;
 
 this.reset_score = function() {
 	this.score = 0;
@@ -1921,6 +1954,8 @@ this.reset_score = function() {
 this.on_destroy = on_destroy_i;
 this.on_step = function() {
 with(this) {
+if(!game_started) return;
+
 if(this.tick >= 30) {
 		if(!player_object.dead) this.score += 1;
 		this.tick = 0;
@@ -1937,7 +1972,7 @@ if(!player_object.dead) {
 		this.pausepressed = false;
 	}
 } else {
-	if(keyboard_check_released(k_pause)) {
+	if(input_released(k_jump, k_pause)) {
 		room_goto_first();
 	}
 }
@@ -1946,6 +1981,8 @@ if(!player_object.dead) {
 this.on_end_step = function() {
 with(this) {
 ccheck();
+if(keyboard_check_pressed(vk_f2)) sound_enabled = !sound_enabled;
+if(keyboard_check_pressed(vk_f11)) debug = !debug;
 }
 };
 this.on_collision = on_collision_i;
@@ -1962,6 +1999,11 @@ this.hiscore_str = high_score.toString()
 
 draw_sprite_text(room_viewport_x + 8, room_viewport_y + 8 ,  "0".repeat(this.zeros-this.score_str.length)+score_str);
 
+if(debug) {
+	draw_set_color(255, 255, 255);
+	draw_sprite_text(room_viewport_x + 8, room_viewport_y + 138, "v. " + game_meta_version);
+	draw_sprite_text(room_viewport_x + 8, room_viewport_y + 146, "by micai");
+}
 
 if(tu_paused) {
 	draw_set_color(255, 255, 255);
@@ -1996,14 +2038,13 @@ this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
-/*
 if(!this.bound) {
 if(place_meeting(x, y+16, o_dev_solid)) image_index = 0;
 else if(place_meeting(x, y-16, o_dev_solid)) image_index = 1;
-else if(place_meeting(x+16, y, o_dev_solid)) image_index = 2;
-else if(place_meeting(x-16, y, o_dev_solid)) image_index = 3;
+//else if(place_meeting(x+16, y, o_dev_solid)) image_index = 2;
+//else if(place_meeting(x-16, y, o_dev_solid)) image_index = 3;
 this.bound = true;
-}*/
+}
 }
 };
 this.on_collision = on_collision_i;
@@ -2383,7 +2424,7 @@ draw_sprite_text(8, 88, "Press ENTER to start");
 }; var o_dev_mainmenu = new __o_dev_mainmenu();
 
 function __o_dev_cat_demo() {
-__instance_init__(this, o_dev_cat_demo, null, 1, 0, s_kot, 1, 20);
+__instance_init__(this, o_dev_cat_demo, null, 1, 0, s_kot, 1, 19);
 this.on_creation = function() {
 with(this) {
 image_speed = 0.1;
@@ -2406,7 +2447,7 @@ this.on_draw = on_draw_i;
 }; var o_dev_cat_demo = new __o_dev_cat_demo();
 
 function __o_bl_woodenblock() {
-__instance_init__(this, o_bl_woodenblock, null, 0, 0, s_woodenblock, 1, 82);
+__instance_init__(this, o_bl_woodenblock, null, 0, 0, s_woodenblock, 1, 80);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -2425,7 +2466,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_woodenblock = new __o_bl_woodenblock();
 
 function __o_bl_cave() {
-__instance_init__(this, o_bl_cave, null, 0, 0, s_cave, 1, 83);
+__instance_init__(this, o_bl_cave, null, 0, 0, s_cave, 1, 81);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -2473,7 +2514,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_cave = new __o_bl_cave();
 
 function __o_trampoline() {
-__instance_init__(this, o_trampoline, null, 1, 0, s_trampoline, 1, 84);
+__instance_init__(this, o_trampoline, null, 1, 0, s_trampoline, 1, 82);
 this.on_creation = function() {
 with(this) {
 image_speed = 0;
@@ -2500,6 +2541,37 @@ image_speed = 0;
 this.on_draw = on_draw_i;
 }; var o_trampoline = new __o_trampoline();
 
+function __o_kot_dead() {
+__instance_init__(this, o_kot_dead, null, 1, 0, s_kot, 1, 84);
+this.on_creation = function() {
+with(this) {
+this.vy = -12;
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = function() {
+with(this) {
+y += this.vy;
+if(this.vy < -1) this.vy *= 0.8;
+else this.vy += 0.5;
+if(y > room_width + 16) instance_destroy();
+}
+};
+this.on_end_step = on_end_step_i;
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = function() {
+if (this.visible == 1) {
+__handle_sprite__(this);
+with(this) {
+draw_sprite_ext(player_character, 0, ceil(x), ceil(y), player_object.sprite_dir, -1, 0, 1);
+}
+}
+};
+}; var o_kot_dead = new __o_kot_dead();
+
 
 
 /***********************************************************************
@@ -2509,80 +2581,31 @@ function __sc_init() {
 this.tiles = [
 [1000000,
 [ts_brick,
-[0,0,1,1,16,48]],
-[ts_ground,
-[96,0,16,16,0,128],
-[96,0,16,16,16,128],
-[96,0,16,16,32,128],
-[96,0,16,16,48,128],
-[96,0,16,16,64,128],
-[96,0,16,16,80,128],
-[96,0,16,16,96,128],
-[96,0,16,16,112,128],
-[96,0,16,16,128,128],
-[96,0,16,16,144,128],
-[96,0,16,16,160,128],
-[96,0,16,16,176,128],
-[96,0,16,16,192,128],
-[96,0,16,16,208,128],
-[96,0,16,16,224,128],
-[96,0,16,16,240,128],
-[96,0,16,16,256,128],
-[96,0,16,16,272,128],
-[96,0,16,16,288,128],
-[96,0,16,16,304,128],
-[160,0,16,16,16,144],
-[160,0,16,16,32,144],
-[160,0,16,16,48,144],
-[160,0,16,16,64,144],
-[160,0,16,16,80,144],
-[160,0,16,16,64,144],
-[160,0,16,16,48,144],
-[160,0,16,16,32,144],
-[160,0,16,16,16,144],
-[160,0,16,16,0,144],
-[160,0,16,16,16,144],
-[160,0,16,16,32,144],
-[160,0,16,16,48,144],
-[160,0,16,16,64,144],
-[160,0,16,16,80,144],
-[160,0,16,16,96,144],
-[160,0,16,16,112,144],
-[160,0,16,16,128,144],
-[160,0,16,16,144,144],
-[160,0,16,16,160,144],
-[160,0,16,16,176,144],
-[160,0,16,16,192,144],
-[160,0,16,16,208,144],
-[160,0,16,16,224,144],
-[160,0,16,16,240,144],
-[160,0,16,16,256,144],
-[160,0,16,16,272,144],
-[160,0,16,16,288,144],
-[160,0,16,16,304,144]]]];
+[0,0,1,1,16,48]]]];
 this.objects = [
-[{o:o_dev_mainmenu, x:0, y:0}],
-[{o:o_dev_cat_demo, x:48, y:117}]];
+[{o:o_hud, x:0, y:0}]];
 this.start = function() {
 __room_start__(this, sc_init, 320, 160, 60, 255, 255, 255, null, 0, 0, 0, 320, 160, null, 50, 50);
+
+room_goto_next();
 };
 }
 var sc_init = new __sc_init();
 tu_scenes.push(sc_init);
-function __sc_demo () { 
+function __sc_game() { 
 this.tiles = [
 ];
 this.objects = [
 [{o:o_kot, x:80, y:96}],
-[{o:o_camera, x:80, y:0}],
+[{o:o_camera, x:140, y:0}],
 [{o:o_hud, x:0, y:16}],
 [{o:o_world_generator, x:0, y:0}]];
 this.start = function() {
-__room_start__(this, sc_demo , 100000, 160, 60, 255, 255, 255, null, 0, 0, 0, 320, 160, o_camera, 320, 160);
+__room_start__(this, sc_game, 500000, 160, 60, 255, 255, 255, null, 0, 0, 0, 320, 160, o_camera, 320, 160);
 };
 }
-var sc_demo  = new __sc_demo ();
-tu_scenes.push(sc_demo );
+var sc_game = new __sc_game();
+tu_scenes.push(sc_game);
 function __sc_prototype() { 
 this.tiles = [
 ];
@@ -2665,6 +2688,7 @@ var high_score = load_web_integer("hi");
 if(!high_score) high_score = 0;
 
 
+var game_started = false;
 var player_object;
 var player_character;
 var camera_object;
@@ -2685,7 +2709,7 @@ if(!change_costume(load_web_string("costume"))) player_character = s_kot;
 var character_spawn_offset_x = 4;
 var character_spawn_offset_y = 2;
 
-
+var k_jump = vk_space;
 var k_up = vk_up;
 var k_left = vk_left;
 var k_right = vk_right;
@@ -2697,11 +2721,12 @@ tu_unpausekey = k_pause;
 var camera_speedup_interval = 110;
 var camera_speedup_increment = 4;
 var camera_speedup_speed = 0.05;
-var camera_speedup_maxspeed = 2.4;
+var camera_speedup_maxspeed = 2.3;
 
 var game_meta_author = "micai";
-var game_meta_version = "0.7";
-var debug = true;
+var game_meta_version = "0.8";
+var debug = false;
+var sound_enabled = true;
 
 tu_preloader_showtext = false;
 tu_preloader_bgcolor = "rgb(255, 255, 255)";
@@ -2904,6 +2929,19 @@ BBB.................BBB...BBB...BBB,\
 BBB...BBB...BBBBBBBBBBB...BBB...BBB,\
 ";
 
+var pr_castle5 = "\
+BBBBBBBBBBBBBBBBBBBBBBBBBBB,\
+......W......W......W,\
+......s......s......s,\
+.....................,\
+......c......c......c,\
+......s.............s,\
+......W......s......W,\
+......W......W......W,\
+BBBBBBBBBBBBBBBBBBBBBBBBBBB,\
+BBBBBBBBBBBBBBBBBBBBBBBBBBB,\
+";
+
 var pr_cave1 = "\
 RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
 RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
@@ -2918,16 +2956,29 @@ RRRRRRRRRRRRRRRRRRR...RR...RR...RR,\
 ";
 
 var pr_cave2 = "\
-............RRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
-..................cRRR................RRR,\
-...................RRR........c.......RRR,\
-............RRRRR..RRR.........RRRR...RRR,\
-............RRRc...RRR........cRRRR...RRR,\
-......RRR...RRR....RRR.........RRRR,\
-......RRR...RRR..RRRRR........cRRRR,\
-RRR...RRR...RRR................RRRR....c,\
-RRR...RRR...RRR...............tRRRR...RRR,\
-RRR...RRR...RRRRRRRRRRRR..RRRRRRRRR...RRR,\
+............RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
+..................cRRR......................RRR,\
+...................RRR..............c.......RRR,\
+............RRRRR..RRR...............RRRR...RRR,\
+............RRRc...RRR..............cRRRR...RRR,\
+......RRR...RRR....RRR...............RRRR,\
+......RRR...RRR..RRRRR..............cRRRR,\
+RRR...RRR...RRR............c.........RRRR....c,\
+RRR...RRR...RRR...........RRR.......tRRRR...RRR,\
+RRR...RRR...RRRRRRRRRRR...RRR...RRRRRRRRR...RRR,\
+";
+
+var pr_cave3 = "\
+RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
+......R......R,\
+......s......R,\
+.............s.......,\
+......c.............................c.,\
+......s......c.......................,\
+......R......s.......,\
+......R......R...........r....sRRRs...sRRRs,\
+RRRRRRRRRRRRRRRRRRRRRRRRRRR...RRRRR...RRRRR,\
+RRRRRRRRRRRRRRRRRRRRRRRRRRR...RRRRR...RRRRR,\
 ";
 
 var pr_clouds1 = "\
@@ -2956,7 +3007,7 @@ CC..........CC....CC,\
 ,\
 ";
 
-var prefab_list = [pr_simple1, pr_simple2, pr_simple3, pr_simple4, pr_simple5, pr_simple6, pr_castle1, pr_castle2, pr_castle3, pr_castle4, pr_cave2, pr_cave1, pr_clouds1, pr_clouds2];
+var prefab_list = [pr_simple1, pr_simple2, pr_simple3, pr_simple4, pr_simple5, pr_simple6, pr_castle1, pr_castle2, pr_castle3, pr_castle4, pr_castle5, pr_cave2, pr_cave1, pr_cave3, pr_clouds1, pr_clouds2];
 
 var test_prefab = "\
 BBrBGG....,\
@@ -3004,6 +3055,22 @@ if(costume in player_costumes) {
 	return true;
 }
 return false;
+}
+function input_pressed(k1=-1, k2=-1, k3=-1) { 
+return key_pressed[k1] || key_pressed[k2] || key_pressed[k3];
+}
+function input_released(k1=-1, k2=-1, k3=-1) { 
+return key_released[k1] || key_released[k2] || key_released[k3];
+}
+function input_down(k1=-1, k2=-1, k3=-1) { 
+return key_down[k1] || key_down[k2] || key_down[k3];
+}
+function input_down_int(k1=-1, k2=-1, k3=-1) { 
+if(key_down[k1] || key_down[k2] || key_down[k3]) return 1;
+return 0;
+}
+function sound_c_play(sound) { 
+if(sound_enabled) sound_play(sound);
 }
 
 

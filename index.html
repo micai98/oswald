@@ -53,11 +53,28 @@
 				<td><button onclick="tu_canvas.style.filter = ''">Disable filters</button></td>
 			</tr>
 		</table>
-		<div style="text-align:center; color: gray; font-size: 10px">Using any of these will make the game run SLOW, it's recommended to keep them disabled<br />
+		<div style="text-align:center; color: gray; font-size: 10px">This feature is buggy. Using any of these will make the game run SLOW, it's recommended to keep them disabled<br />
 		<a style="text-decoration: underline" onclick="bChangelog.style.display = 'block'">Show changelog</a></div>
 	</main>
 	<div id="changelog">
 		<textarea id="changelog_text" readonly style="width: 100%; height: 90%; resize: none; margin-bottom: 1rem">
+0.8:
+  - started to make the game look more like a finished product
+    - debug display is off by default (can be brought back up with the "dbg" code or F11 key)
+	- removed the title screen, the game now starts at the beginning of the level and waits for player's input to start scrolling and counting score
+  - removed debug camera controls
+  - player can now move with WASD and jump with spacebar
+  - player can no longer kill enemies while dead
+  - added a death animation for the player
+  - added sound effects (can be muted with F2)
+  - fixed a bug that caused scrolling speed to go above max
+  - reduced max scrolling speed from 2.4 to 2.3
+  - increased the main scene's width from 100000 to 500000
+  - the scene should now automatically extend when the player's close to reaching its end (i have no idea if this works)
+  - added 2 new prefabs
+
+
+
 0.7:
   - brought back old code for horizontal collision detection and tweaked its values, seems to be working for now 
   - fixed the player's ability to clip through the ceiling while jumping off of a 1 block gap (yes that was possible, the fix is very ghetto right now but it works)
