@@ -9,22 +9,17 @@ You can play the game here (runs in the browser): https://micai.netlify.app/oswa
 ![screenshot3](https://cdn.discordapp.com/attachments/667901505420132375/978039109438279761/scr3.png)
 
 
-Current version **0.7**:
-  - brought back old code for horizontal collision detection and tweaked its values, seems to be working for now 
-  - fixed the player's ability to clip through the ceiling while jumping off of a 1 block gap (yes that was possible, the fix is very ghetto right now but it works)
-  - made slight adjustments to the player's collision box
-  - added a new block: wooden block
-  - added a new terrain type: cave
-  - added some new prefabs and updated some existing ones
-  - added trampolines
-  - added 2 new player costumes
-  - added high score display to the hud
-    - it flashes when the player ties or beats the high score
-  - character costumes are now stored in a dictionary-like variable
-  - the character costume, last score and high score are now saved to local web storage
-  - updated the title screen
-    - cheat codes can now be entered there
-	- current character costume is displayed 
-	- added high score display
-  - cleaned up some mess in world generator's code
-  - made some new graphics, they can't be seen in the game yet
+0.8:
+  - started to make the game look more like a finished product
+    - debug display is off by default (can be brought back up with the "dbg" code or F11 key)
+	- removed the title screen, the game now starts at the beginning of the level and waits for player's input to start scrolling and counting score
+  - removed debug camera controls
+  - player can now move with WASD and jump with spacebar
+  - player can no longer kill enemies while dead
+  - added a death animation for the player
+  - added sound effects (can be muted with F2)
+  - fixed a bug that caused scrolling speed to go above max
+  - reduced max scrolling speed from 2.4 to 2.3
+  - increased the main scene's width from 100000 to 500000
+  - the scene should now automatically extend when the player's close to reaching its end (i have no idea if this works)
+  - added 2 new prefabs
