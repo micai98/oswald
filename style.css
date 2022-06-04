@@ -1,3 +1,94 @@
+/* oswald */
+#tululoogame canvas{
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+	position: absolute;
+	width: 1280px;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);	
+	max-width: initial !important;
+}
+		
+.window {
+	z-index: 100;
+	top: 50%;
+	left: 50%;
+	position: absolute;
+	transform: translate(-50%, -50%);	
+	
+	padding: 0.5rem;
+	
+	color: #dedede;
+	background-color: #222222;
+	border: 1px solid #373737;
+	border-radius: 0.25rem;
+	
+	box-shadow: 4px 4px rgba(0, 0, 0, .5);
+}
+
+.window header {
+	background-color: #333333;
+	padding: 0.5rem;
+	border-radius: 0.25rem;
+	display: flex;
+	justify-content: space-between;
+	user-select: none;
+	align-items: center;
+}
+
+.window header h1 {
+	margin: 0;
+	padding: 0;
+	font-size: 1.5rem;
+	width: 100%;
+	display: block;
+}
+
+.window label {
+	user-select: none;
+}
+
+.window header h1.close {
+	font-weight: normal;
+	color: #888888;
+	width: 1.5rem;
+}
+
+.window header h1.close:hover {
+	color: #AAAAAA;
+}
+
+.window section {
+	max-height: 75vh;
+	overflow: auto;
+	margin: 0.5rem 0 0.5rem 0;
+}
+
+.window article {
+	padding: 0.5rem;
+	margin-bottom: 1rem;
+}
+
+.row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+@media (max-width: 900px) {
+	.window header h1 {
+		font-size: 1.25rem;
+	}
+	
+	.row {
+		flex-direction: column;
+		margin-bottom: 1rem;
+	}
+}
+
+
+
 /* worst css ever made please don't use it it sucks */
 /* very basic */
 * {
@@ -9,8 +100,21 @@ html {
 	font-size: 16px;
 	
 	scrollbar-width: auto;
-	scrollbar-color: #474747 #222222;
+	scrollbar-color: #333333 #222222;
 }
+
+*::-webkit-scrollbar {
+    width: 8px;
+ }
+
+*::-webkit-scrollbar-track {
+	background: #222222;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: #333333;
+	border-radius: 0.25rem;
+ }
 
 body {
 	color: #dedede;
@@ -20,7 +124,7 @@ body {
 /* layout */
 main {
 	margin: auto;
-	max-width: 45rem;
+	/*max-width: 45rem;*/
 }
 
 footer {
@@ -104,6 +208,10 @@ input, button, textarea, select, .bigbutton {
 	
 	font-family: Verdana, sans-serif;
 	font-size: 1rem;
+}
+
+button {
+	user-select: none;
 }
 
 input[disabled], button[disabled], textarea[disabled], select[disabled] {

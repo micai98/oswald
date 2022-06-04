@@ -1,7 +1,103 @@
+0.9:
+  - added 3 new player costumes (made by Soup)
+  - reduced player's acceleration speed from 1 to 0.5
+  - player can now fall up to 1 block behind the screen's left border without dying
+  - repurposed the o_kot_dead object to serve as a death animation for more objects, such as vehicles (it's called o_corpse now)
+  - added an additional check for enemies under the player before world collision detection to prevent the player from clipping through enemies while falling at high speeds
+  - huge changes to player character's code
+    - the character now supports "modes"
+      - they can be used to adjust the character's properties and modify its movement options
+      - they also allow to change how the character behaves at any time and how it reacts to collisions with walls and entities
+    - added "external velocity": works similarly to normal velocity but is separate and not affected by friction, gravity nor speed limits
+  - added a vehicle using the new "mode" mechanic
+    - it's a helicopter that lets the player jump mid-air, bounces off the walls, and moves slightly faster than the player does on foot
+    - player enters it by finding a special collectible, and gets rid of it by passing a "no helicopters" sign
+ 
+  - added moving platforms
+    - they're a last minute addition I came up with randomly while making prefabs and I'm honestly surprised they work. they're a bit messy right now, I'll make things cleaner in further updates because I want to release this one already
+    - player has separate collision checks just for them, because the standard collision detection is hilariously unprepared for moving solids
+    - player moves along with the platform they stand on thanks to the newly added "external velocity" feature (platforms are in fact the reason that feature was added)
+    - player only collides with them while falling (and that means one way collisions are now supported)
+	
+  - fixed trampoline collisions
+  - trampolines can be attached to ceilings
+  - enemy rats can use trampolines
+  - enemy rat received an alternative death animation for death by hazards
+  
+  - added new enemies and hazards:
+    - helicopter rats
+    - missiles
+    - crushers
+    - cacti
+  
+  - added new terrain types:
+    - wood
+    - tree
+    - sand
+    - panel (unused for now)
+    - bigbrick
+  
+  - raised initial scrolling speed from 1.0 to 1.2
+  - scrolling speedup routine has two stages now:
+    - in stage one the interval between each speed up increases by 3 frames every time a speed up happens
+    - in stage two the interval increases by a much higher amount of frames, so the scrolling doesn't reach full speed too quickly
+  - the score reward for progressing through the level is much higher and depends on the current scrolling speed
+  - added expert mode (toggle with the pause key before the game starts)
+    - scrolling starts at a higher speed and speeds up 2 times faster
+    - some prefabs only spawn when expert mode is enabled
+ 
+  - huge changes to the world generator
+    - shorter spawnpoint prefab
+    - added prefab banks
+      - instead of picking random prefabs, the world generator picks a random prefab bank from the current rotation and deploys prefabs according to its settings
+      - each prefab bank has 5 lists of prefabs (optional lists will be skipped if empty):
+      - start: optional, one of start prefabs will be deployed right after the bank is loaded
+      - middle: the main part of the bank, the amount of middle prefabs deployed is random (minimum and maximum can be set in the bank's properties)
+      - end: optional, one of end prefabs will be deployed right after the last middle prefab
+      - hard: optional, same as middle but will only appear while playing on expert mode
+      - rare: optional, same as middle but way less likely to appear
+    - some banks get added to or removed from the rotation after a certain score is reached
+    - the rotation is split into four groups: very common, common, rare, very rare. each has a different chance of being used
+ 
+  - added new and improved old debug features
+    - brought back debug camera controls with new hotkeys (Z,X,C)
+    - improved the debug teleport (Left CTRL)
+    - a line is drawn to show the point beyond which collisions and entities despawn
+    - a marker is placed at the start of each prefab describing which part of the bank it belongs to
+    - prefab testing mode: when a prefab is set to the prefab_testing variable, it will always spawn right after the starter prefab, which is shorter when prefab testing is enabled
+    - prefab bank testing mode: same as prefab testing mode but for prefab banks
+    - pressing 1 toggles debug mode (F11 apparently didn't work on some browsers)
+    - pressing 2 toggles grid background
+    - holding 3 makes the player character leave trails on the screen, useful for tracking movement and testing prefabs
+    - pressing 4 toggles world collision display
+    - pressing 0 restarts the game
+ 
+  - updated the HTML
+    - ~ key brings up the settings menu
+    - the filter editor and the changelog can be accessed from there
+    - added a new setting to the filter editor
+    - added an option to change the scale of the game canvas
+    - added an option to save and load settings
+    - improved the filters' code (it's still bad)
+    - fixed filters not working after a game restart
+
+  - added HUGE THINGS
+  - added more sound effects
+  - fixed pausing (no more abrupt speedups after unpausing)
+  - fixed a rare score display crash that happened when the score was above 999999999
+  - deleted some unused files
+  - countless changes and additions to the prefab collection
+
+0.8.1 / 0.8.2:
+  - updated the font
+  - collision detection fixes 
+    - vertical collision isn't checked when there's no vertical movement, same applies to horizontal collision, this seems to have fixed some clipping issues
+  - other miscellaneous fixes and tweaks
+
 0.8:
   - started to make the game look more like a finished product
     - debug display is off by default (can be brought back up with the "dbg" code or F11 key)
-	- removed the title screen, the game now starts at the beginning of the level and waits for player's input to start scrolling and counting score
+    - removed the title screen, the game now starts at the beginning of the level and waits for player's input to start scrolling and counting score
   - removed debug camera controls
   - player can now move with WASD and jump with spacebar
   - player can no longer kill enemies while dead
@@ -30,9 +126,9 @@
   - the character costume, last score and high score are now saved to local web storage
   - updated the title screen
     - cheat codes can now be entered there
-	- current character costume is displayed 
-	- added high score display
-  - cleaned up some mess in world generator's code
+ - current character costume is displayed 
+ - added high score display
+    - cleaned up some mess in world generator's code
 
 
 
@@ -50,9 +146,9 @@
   - the prefab system has been improved from the last version
   - the level is now infinite and randomly generated
     - the world generator uses pre-made prefabs to generate the level
-	- new prefab gets deployed automatically when the camera is about to reach the end of already existing ones
-	- a 2 to 4 block gap is placed in between each prefab that's being deployed
-	- there aren't many prefabs for now, and the world generator itself is rather simple. it's going to be upgraded in upcoming versions
+    - new prefab gets deployed automatically when the camera is about to reach the end of already existing ones
+    - a 2 to 4 block gap is placed in between each prefab that's being deployed
+    - there aren't many prefabs for now, and the world generator itself is rather simple. it's going to be upgraded in upcoming versions
   - the game gets rid of objects that fall behind the left border of the screen
   - small changes and fixes that I've already forgotten about
 
@@ -64,24 +160,24 @@
   - fixed the colors on the ground tileset 
   - started working on the world generator
     - the world generator is going to use prefabs to generate the level
-	- the prefabs are stored as strings: 
-	  - "." means empty space 
-	  - "," means a the beginning of a new row of blocks
-	  - uppercase characters represent different kinds of blocks
-	  - lowercase characters represent interactive objects
-	
-	
-	
+ - the prefabs are stored as strings: 
+   - "." means empty space 
+   - "," means a the beginning of a new row of blocks
+   - uppercase characters represent different kinds of blocks
+   - lowercase characters represent interactive objects
+ 
+ 
+ 
 0.4:
   - added coins, each coin gives 50 points
   - added a basic enemy
     - walks forward and turns around upon touching a wall
-	- affected by gravity
-	- can kill the player
-	- can be killed by the player (by stomping)
-	- player bounces off the enemy after stomping it and receives a 100 point bonus
-	- if the player holds the jump button while stomping the enemy they'll bounce higher
-	- after being stomped it changes its sprite and disappears after a few moment
+  - affected by gravity
+  - can kill the player
+  - can be killed by the player (by stomping)
+  - player bounces off the enemy after stomping it and receives a 100 point bonus
+  - if the player holds the jump button while stomping the enemy they'll bounce higher
+  - after being stomped it changes its sprite and disappears after a few moment
   - added a filter editor that allows the player to change the game's colors
     - this one's probably getting removed or hidden, it heavily impacts the game's performance (especially on firefox)
 

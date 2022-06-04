@@ -1,5 +1,5 @@
 <html lang='en'>
-	<head>
+<head>
 	<title>OSWALD Beta</title>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="pragma" content="no-cache" />
@@ -7,61 +7,196 @@
 	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0, width=device-width, height=device-height" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 	<meta charset="utf-8" />
-	<meta name="description" content="OSWALD Beta" />
+	<meta name="description" content="OSWALD Beta - v. 0.9" />
 	<meta name="author" content="micai" />
+	<meta property="og:site_name" content="OSWALD Beta">
 	<link rel="icon" href="favicon.ico" />
 	<link rel="stylesheet" href="style.css" />
-	<style>
-		#tululoogame canvas {
-				width: 1280px;
-				image-rendering: pixelated;
-				image-rendering: crisp-edges;
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-			}
-		
-		#changelog {
-			display: none;
-			background-color: #222222;
-			border: 1px solid #444444;
-			border-radius: 0.1rem;
-			position: absolute;
-			padding: 1rem;
-			text-align: center;
-			width: 80%;
-			height: 80%;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			
-		}
-	</style>
+	
+	<meta property="og:title" content="OSWALD Beta"/>
+	<meta property="og:image" content="https://oswaldgame.netlify.app/image.png"/>
+	<meta property="og:description" content="OSWALD Beta v 0.9 - by micai"/>
+	<meta property="og:url" content="https://oswaldgame.netlify.app/"/>
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="627" />
+	<meta property="og:type" content="website"/>
 </head>
-<body style="background: black; overflow: hidden; text-align: center">
-	<main>
-		<div id="tululoogame"></div>
-		<script type="text/javascript" src="game.js"></script>	
-		<table width="100%" style="font-size: 10px !important">
-			<tr><td>Dark mode</td><td>Colorize</td><td>Intensity</td><td>Hue</td><td></td></tr>
-			<tr>
-				<td style="user-select: none"><input type="checkbox" id="b_cssv_darkmode" onclick="cssvApplyFilter()" /></td>
-				<td style="user-select: none"><input type="checkbox" id="b_cssv_color" onclick="cssvApplyFilter()" /></td>
-				<td><input type="number" id="b_cssv_saturation" value="50" oninput="cssvApplyFilter()"/></td>
-				<td><input type="number" id="b_cssv_hue" value="50" oninput="cssvApplyFilter()"/></td>
-				<td><button onclick="tu_canvas.style.filter = ''">Disable filters</button></td>
-			</tr>
-		</table>
-		<div style="text-align:center; color: gray; font-size: 10px">This feature is buggy. Using any of these will make the game run SLOW, it's recommended to keep them disabled<br />
-		<a style="text-decoration: underline" onclick="bChangelog.style.display = 'block'">Show changelog</a></div>
-	</main>
-	<div id="changelog">
-		<textarea id="changelog_text" readonly style="width: 100%; height: 90%; resize: none; margin-bottom: 1rem">
+<body style="background: black; overflow: hidden" onkeydown="if(event.key == '`') toggleDispconf();">
+	<!-- CANVAS --> 
+	<div id="tululoogame"></div>
+	
+	<!-- CONFIG DIALOG -->
+	<div id="w_dispconf" class="window" style="width: 50%; min-width: 20rem; display: none">
+		<header> <h1>Settings</h1> <h1 class="close" onclick="wDispconf.style.display = 'none'">✖</h1> </header>
+		<section>
+		<article>
+			<h3>Basic</h3>
+			<div class="row">
+				<p>Current settings</p>
+				<div>
+					<button onclick="dispconfSave()">Save</button>
+					<button onclick="dispconfLoad()">Load</button>
+				</div>
+			</div>
+			<div class="row">
+				<p>Scale</p>
+				<div>
+					<button onclick="tu_canvas.style.width = '320px'">1x</button>
+					<button onclick="tu_canvas.style.width = '640px'">2x</button>
+					<button onclick="tu_canvas.style.width = '1280px'">3x</button>
+					<button onclick="tu_canvas.style.width = '1920px'">4x</button>
+					<button onclick="tu_canvas.style.width = '100%'">Auto</button>
+				</div>
+			</div>
+		</article>
+		<article>
+			<h3>Filters</h3>
+			<div style="color: gray; font-size: 10px; margin-bottom: 1rem">
+				<b>NOTE: </b>filters may make the game run poorly, especially on Firefox and slower PCs<br />
+			</div>
+			<label><input type="checkbox" id="b_cssv_enable" onclick="cssvApplyFilter()" /> Enable</label><br /><br />
+			<label><input type="checkbox" id="b_cssv_darkmode" onclick="cssvApplyFilter()" /> Dark Mode</label><br /><br />
+			<label><input type="checkbox" id="b_cssv_color" onclick="cssvApplyFilter()" /> Colorize</label><br /><br />
+			<label><input type="checkbox" id="b_cssv_invert" onclick="cssvApplyFilter()" /> Invert</label><br /><br />
+			<div class="row">
+				<p>Saturation</p>
+				<div>
+					<button style="width: 2rem" onclick="bCssvSaturation.value = parseFloat(bCssvSaturation.value) - 5; cssvApplyFilter()">-</button>
+					<input type="number" style="width: 4rem" id="b_cssv_saturation" value="50" oninput="cssvApplyFilter()"/>
+					<button style="width: 2rem" onclick="bCssvSaturation.value = parseFloat(bCssvSaturation.value) + 5; cssvApplyFilter()">+</button>
+				</div>
+			</div>
+			<div class="row">
+				<p>Hue Rotate</p>
+				<div>
+					<button style="width: 2rem" onclick="bCssvHue.value = parseFloat(bCssvHue.value) - 5; cssvApplyFilter()">-</button>
+					<input type="number" style="width: 4rem" id="b_cssv_hue" value="50" oninput="cssvApplyFilter()"/>
+					<button style="width: 2rem" onclick="bCssvHue.value = parseFloat(bCssvHue.value) + 5; cssvApplyFilter()">+</button>
+				</div>
+			</div>
+		</article>
+		<article>
+			<h3>Credits</h3>
+			<p><b>OSWALD by micai</b> <br /><br />
+				Made with Tululoo Game Maker<br />
+				
+				Special thanks to: <br />
+				Soup, NI240SX, osdever, Mizu, MrDawn, Amanojakuchou
+			</p>
+			<div class="row">
+				<p>version 0.9</p>
+				<button onclick="wChangelog.style.display = 'block'">View changelog</button>
+			</div>
+		</article>
+		</section>
+	</div>
+
+	<!-- CHANGELOG DIALOG -->
+	<div id="w_changelog" class="window" style="width: 80%; min-width: 10rem; display: none">
+		<header> <h1>Changelog</h1> <h1 class="close" onclick="wChangelog.style.display = 'none'">✖</h1> </header>
+		<section style="overflow: hidden">
+		<article>
+		<textarea id="changelog_text" readonly style="width: 100%; height: 70vh; resize: none; margin-bottom: 1rem">
+0.9:
+  - added 3 new player costumes (made by Soup)
+  - reduced player's acceleration speed from 1 to 0.5
+  - player can now fall up to 1 block behind the screen's left border without dying
+  - repurposed the o_kot_dead object to serve as a death animation for more objects, such as vehicles (it's called o_corpse now)
+  - added an additional check for enemies under the player before world collision detection to prevent the player from clipping through enemies while falling at high speeds
+  - huge changes to player character's code
+    - the character now supports "modes"
+      - they can be used to adjust the character's properties and modify its movement options
+      - they also allow to change how the character behaves at any time and how it reacts to collisions with walls and entities
+    - added "external velocity": works similarly to normal velocity but is separate and not affected by friction, gravity nor speed limits
+  - added a vehicle using the new "mode" mechanic
+    - it's a helicopter that lets the player jump mid-air, bounces off the walls, and moves slightly faster than the player does on foot
+    - player enters it by finding a special collectible, and gets rid of it by passing a "no helicopters" sign
+ 
+  - added moving platforms
+    - they're a last minute addition I came up with randomly while making prefabs and I'm honestly surprised they work. they're a bit messy right now, I'll make things cleaner in further updates because I want to release this one already
+    - player has separate collision checks just for them, because the standard collision detection is hilariously unprepared for moving solids
+    - player moves along with the platform they stand on thanks to the newly added "external velocity" feature (platforms are in fact the reason that feature was added)
+    - player only collides with them while falling (and that means one way collisions are now supported)
+	
+  - fixed trampoline collisions
+  - trampolines can be attached to ceilings
+  - enemy rats can use trampolines
+  - enemy rat received an alternative death animation for death by hazards
+  
+  - added new enemies and hazards:
+    - helicopter rats
+    - missiles
+    - crushers
+    - cacti
+  
+  - added new terrain types:
+    - wood
+    - tree
+    - sand
+    - panel (unused for now)
+    - bigbrick
+  
+  - raised initial scrolling speed from 1.0 to 1.2
+  - scrolling speedup routine has two stages now:
+    - in stage one the interval between each speed up increases by 3 frames every time a speed up happens
+    - in stage two the interval increases by a much higher amount of frames, so the scrolling doesn't reach full speed too quickly
+  - the score reward for progressing through the level is much higher and depends on the current scrolling speed
+  - added expert mode (toggle with the pause key before the game starts)
+    - scrolling starts at a higher speed and speeds up 2 times faster
+    - some prefabs only spawn when expert mode is enabled
+ 
+  - huge changes to the world generator
+    - shorter spawnpoint prefab
+    - added prefab banks
+      - instead of picking random prefabs, the world generator picks a random prefab bank from the current rotation and deploys prefabs according to its settings
+      - each prefab bank has 5 lists of prefabs (optional lists will be skipped if empty):
+      - start: optional, one of start prefabs will be deployed right after the bank is loaded
+      - middle: the main part of the bank, the amount of middle prefabs deployed is random (minimum and maximum can be set in the bank's properties)
+      - end: optional, one of end prefabs will be deployed right after the last middle prefab
+      - hard: optional, same as middle but will only appear while playing on expert mode
+      - rare: optional, same as middle but way less likely to appear
+    - some banks get added to or removed from the rotation after a certain score is reached
+    - the rotation is split into four groups: very common, common, rare, very rare. each has a different chance of being used
+ 
+  - added new and improved old debug features
+    - brought back debug camera controls with new hotkeys (Z,X,C)
+    - improved the debug teleport (Left CTRL)
+    - a line is drawn to show the point beyond which collisions and entities despawn
+    - a marker is placed at the start of each prefab describing which part of the bank it belongs to
+    - prefab testing mode: when a prefab is set to the prefab_testing variable, it will always spawn right after the starter prefab, which is shorter when prefab testing is enabled
+    - prefab bank testing mode: same as prefab testing mode but for prefab banks
+    - pressing 1 toggles debug mode (F11 apparently didn't work on some browsers)
+    - pressing 2 toggles grid background
+    - holding 3 makes the player character leave trails on the screen, useful for tracking movement and testing prefabs
+    - pressing 4 toggles world collision display
+    - pressing 0 restarts the game
+ 
+  - updated the HTML
+    - ~ key brings up the settings menu
+    - the filter editor and the changelog can be accessed from there
+    - added a new setting to the filter editor
+    - added an option to change the scale of the game canvas
+    - added an option to save and load settings
+    - improved the filters' code (it's still bad)
+    - fixed filters not working after a game restart
+
+  - added HUGE THINGS
+  - added more sound effects
+  - fixed pausing (no more abrupt speedups after unpausing)
+  - fixed a rare score display crash that happened when the score was above 999999999
+  - deleted some unused files
+  - countless changes and additions to the prefab collection
+
+0.8.1 / 0.8.2:
+  - updated the font
+  - collision detection fixes 
+    - vertical collision isn't checked when there's no vertical movement, same applies to horizontal collision, this seems to have fixed some clipping issues
+  - other miscellaneous fixes and tweaks
+
 0.8:
   - started to make the game look more like a finished product
     - debug display is off by default (can be brought back up with the "dbg" code or F11 key)
-	- removed the title screen, the game now starts at the beginning of the level and waits for player's input to start scrolling and counting score
+    - removed the title screen, the game now starts at the beginning of the level and waits for player's input to start scrolling and counting score
   - removed debug camera controls
   - player can now move with WASD and jump with spacebar
   - player can no longer kill enemies while dead
@@ -72,8 +207,8 @@
   - increased the main scene's width from 100000 to 500000
   - the scene should now automatically extend when the player's close to reaching its end (i have no idea if this works)
   - added 2 new prefabs
-
-
+  
+  
 
 0.7:
   - brought back old code for horizontal collision detection and tweaked its values, seems to be working for now 
@@ -90,9 +225,9 @@
   - the character costume, last score and high score are now saved to local web storage
   - updated the title screen
     - cheat codes can now be entered there
-	- current character costume is displayed 
-	- added high score display
-  - cleaned up some mess in world generator's code
+ - current character costume is displayed 
+ - added high score display
+    - cleaned up some mess in world generator's code
 
 
 
@@ -110,9 +245,9 @@
   - the prefab system has been improved from the last version
   - the level is now infinite and randomly generated
     - the world generator uses pre-made prefabs to generate the level
-	- new prefab gets deployed automatically when the camera is about to reach the end of already existing ones
-	- a 2 to 4 block gap is placed in between each prefab that's being deployed
-	- there aren't many prefabs for now, and the world generator itself is rather simple. it's going to be upgraded in upcoming versions
+    - new prefab gets deployed automatically when the camera is about to reach the end of already existing ones
+    - a 2 to 4 block gap is placed in between each prefab that's being deployed
+    - there aren't many prefabs for now, and the world generator itself is rather simple. it's going to be upgraded in upcoming versions
   - the game gets rid of objects that fall behind the left border of the screen
   - small changes and fixes that I've already forgotten about
 
@@ -124,24 +259,24 @@
   - fixed the colors on the ground tileset 
   - started working on the world generator
     - the world generator is going to use prefabs to generate the level
-	- the prefabs are stored as strings: 
-	  - "." means empty space 
-	  - "," means a the beginning of a new row of blocks
-	  - uppercase characters represent different kinds of blocks
-	  - lowercase characters represent interactive objects
-	
-	
-	
+ - the prefabs are stored as strings: 
+   - "." means empty space 
+   - "," means a the beginning of a new row of blocks
+   - uppercase characters represent different kinds of blocks
+   - lowercase characters represent interactive objects
+ 
+ 
+ 
 0.4:
   - added coins, each coin gives 50 points
   - added a basic enemy
     - walks forward and turns around upon touching a wall
-	- affected by gravity
-	- can kill the player
-	- can be killed by the player (by stomping)
-	- player bounces off the enemy after stomping it and receives a 100 point bonus
-	- if the player holds the jump button while stomping the enemy they'll bounce higher
-	- after being stomped it changes its sprite and disappears after a few moment
+  - affected by gravity
+  - can kill the player
+  - can be killed by the player (by stomping)
+  - player bounces off the enemy after stomping it and receives a 100 point bonus
+  - if the player holds the jump button while stomping the enemy they'll bounce higher
+  - after being stomped it changes its sprite and disappears after a few moment
   - added a filter editor that allows the player to change the game's colors
     - this one's probably getting removed or hidden, it heavily impacts the game's performance (especially on firefox)
 
@@ -188,20 +323,66 @@
  - added basic collision detection
  - added auto-tile blocks
 		</textarea>
-		<button onclick="bChangelog.style.display = 'none'">Close</button>
+		<article>
+		</section>
 	</div>
+	
+	<!-- SCRIPTS -->
 	<script>
+		// windows
+		var wChangelog = document.getElementById("w_changelog");
+		var wDispconf = document.getElementById("w_dispconf");
+		function toggleDispconf() {
+			if(wDispconf.style.display == 'block') { 
+				wDispconf.style.display = 'none';
+			} else wDispconf.style.display = 'block';
+		}
+		
+		// buttons and inputs
+		var bCssvEnable = document.getElementById("b_cssv_enable");
 		var bCssvDarkmode = document.getElementById("b_cssv_darkmode");
+		var bCssvInvert = document.getElementById("b_cssv_invert");
 		var bCssvColor = document.getElementById("b_cssv_color");
 		var bCssvSaturation = document.getElementById("b_cssv_saturation");
 		var bCssvHue = document.getElementById("b_cssv_hue");
-		var bChangelog = document.getElementById("changelog");
-		var bChangelogText = document.getElementById("changelog_text");
-	
-		// this is a mess, i dont care, this feature sucks anyways
+		
+		
+		// filters - they're less of a mess now than they used to be, they still suck though
 		function cssvApplyFilter() {
-			tu_canvas.style.filter = "invert(" + (b_cssv_darkmode.checked ? "100%" : "0%") + ") sepia(" + (b_cssv_color.checked ? "100%" : "0%") + ") saturate("  + (b_cssv_color.checked ? ((bCssvSaturation.value+100).toString()+"%") : "0%") + ") hue-rotate("+ (b_cssv_color.checked ? (bCssvHue.value.toString()+"deg") : "0deg") + ")";
+			if(!bCssvEnable.checked) {
+				tu_canvas.style.filter = "";
+				return;
+			};
+			
+			let satstr = "";
+			if(bCssvColor.checked) satstr = "sepia(100%) saturate(" + (bCssvSaturation.value).toString() + "0%) hue-rotate(" + bCssvHue.value.toString() + "deg)";
+			
+			tu_canvas.style.filter = (bCssvDarkmode.checked ? "invert(100%) " : "") + satstr + (bCssvInvert.checked ? "invert(100%) " : "");
+		}
+		
+		function dispconfSave() {
+			localStorage["dispconf_width"] = tu_canvas.style.width;
+			localStorage["dispconf_cssvenable"] = bCssvEnable.checked;
+			localStorage["dispconf_cssvdarkmode"] = bCssvDarkmode.checked;
+			localStorage["dispconf_cssvinvert"] = bCssvInvert.checked;
+			localStorage["dispconf_cssvcolor"] = bCssvColor.checked;
+			localStorage["dispconf_cssvsaturation"] = bCssvSaturation.value;
+			localStorage["dispconf_cssvhue"] = bCssvHue.value;
+		}
+		
+		function dispconfLoad() {
+			if(localStorage["dispconf_width"]) tu_canvas.style.width = localStorage["dispconf_width"];
+			bCssvEnable.checked = (localStorage["dispconf_cssvenable"] === "true");
+			bCssvDarkmode.checked = (localStorage["dispconf_cssvdarkmode"] === "true");
+			bCssvInvert.checked = (localStorage["dispconf_cssvinvert"] === "true");
+			bCssvColor.checked = (localStorage["dispconf_cssvcolor"] === "true");
+			if(localStorage["dispconf_cssvsaturation"]) bCssvSaturation.value = localStorage["dispconf_cssvsaturation"];
+			if(localStorage["dispconf_cssvhue"]) bCssvHue.value = localStorage["dispconf_cssvhue"];
+			
+			cssvApplyFilter();
 		}
 	</script>
+	<!-- THE GAME -->
+	<script type="text/javascript" src="game.js"></script>	
 </body>
 </html>
