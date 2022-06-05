@@ -1536,6 +1536,10 @@ function __s_kot_soup() {
 __sprite_init__(this, s_kot_soup, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_soup_0.png','img/s_kot_soup_1.png','img/s_kot_soup_2.png','img/s_kot_soup_3.png']);
 }; var s_kot_soup = new __s_kot_soup();
 
+function __s_kot_troll() { 
+__sprite_init__(this, s_kot_troll, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_troll_0.png','img/s_kot_troll_1.png','img/s_kot_troll_2.png','img/s_kot_troll_3.png']);
+}; var s_kot_troll = new __s_kot_troll();
+
 function __s_debug_line() { 
 __sprite_init__(this, s_debug_line, 1, 160, 0, 0, 'Box', 0, 0, 1, 0, 160, ['img/s_debug_line_0.png']);
 }; var s_debug_line = new __s_debug_line();
@@ -4448,6 +4452,7 @@ var player_costumes = {
 	"agent": s_kot_agent,
 	"soup": s_kot_soup,
 	"burnt": s_kot_burnt,
+	"troll": s_kot_troll
 };
 
 if(!change_costume(load_web_string("costume"))) player_character = s_kot;
@@ -5641,6 +5646,7 @@ if(this.chc.endsWith("imissmywife")) change_costume("girl");
 if(this.chc.endsWith("howdy")) change_costume("hat");
 if(this.chc.endsWith("weeder")) change_costume("soup");
 if(this.chc.endsWith("agent")) change_costume("agent");
+if(this.chc.endsWith("troll")) change_costume("troll");
 if(this.chc.endsWith("chinesebbq")) { keyboard_string = ""; sound_play(snd_bong); change_costume("burnt") };
 }
 function highscore_update() { 
