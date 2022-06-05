@@ -1760,6 +1760,8 @@ y += character_spawn_offset_y;
 ystart += character_spawn_offset_y;
 
 // Variables
+this.distance_travelled = 0;
+
 this.vx = 0;
 this.vy = 0;
 this.vxe = 0;
@@ -2061,7 +2063,7 @@ if(place_meeting(x, y+1, o_dev_solid) != null && place_meeting(x, y+1, o_trampol
 
 // Collision with moving platforms
 let platform;
-if(vy > 0.01) platform = place_meeting(x, y+this.vy, o_platform);
+if(vy > 0.01) platform = place_meeting(x, y+this.vy+2, o_platform);
 if(platform != null && platform.y > y) {
 	this.mode.on_collision_v(this);
 	y = platform.y - sprite_index.yoffset + platform.vy;
@@ -2109,13 +2111,18 @@ with(this) {
 if(game_paused) return;
 this.mode.lateupdate(this);
 
+if(x > this.distance_travelled) { 
+	this.distance_travelled = x;
+	hud_object.score += floor(abs(player_object.vx*0.3));
+}
+
 // Dont let him go out of bounds
 if(x+4 > room_viewport_x+room_viewport_hborder) { vx = 0; x = xprevious }
 if(y < -10) y = -10;
 
 /* debug shit delete later */
 //if(y+11 > room_height) { y = room_height-11; this.grounded = true }
-if(keyboard_check(vk_ctrl)) { x = camera_object.x; y = camera_object.y+43; vx = 0; vy = 0; }
+if(keyboard_check(vk_ctrl) && debug) { x = camera_object.x; y = camera_object.y+43; vx = 0; vy = 0; }
 }
 };
 this.on_collision = function() {
@@ -2219,7 +2226,7 @@ if(!this.dead) {
 
 if(debug) {
 	draw_sprite_text(room_viewport_x+8, room_viewport_y+24, this.mode.name.toUpperCase() + " X: " + x.toFixed(2).toString() + " Y: " + y.toFixed(2).toString() + " J: " + this.jumpbuffer.toString() + " C: " + this.coyote.toString() + (this.jumpbrake_disabled ? " BD" : ""));
-	//draw_sprite_text(ceil(x)-4, ceil(y+vy)-4, this.vy.toString());
+	//draw_sprite_text(ceil(x)-4, ceil(y)-16, this.distance_travelled.toString());
 }
 }
 }
@@ -2273,6 +2280,7 @@ if(x+2000 > room_width) {
 }
 
  //debug
+if(debug) {
 if(keyboard_check(vk_z)) {
 	x -= this.vx*4;
 }
@@ -2283,6 +2291,7 @@ if(keyboard_check(vk_x)) {
 
 if(keyboard_check(vk_c)) {
 	x += this.vx*2;
+}
 }
 }
 };
@@ -2337,14 +2346,19 @@ if(!game_started) {
 if(game_paused) {
 	if(keyboard_check_pressed(k_pause)) game_paused = false;
 } else {
+	/*
 	if(this.tick >= 30) {
-		if(camera_object) this.score_add = floor(camera_object.vx*10)
+		if(camera_object) this.score_add = floor(camera_object.vx*10);
 		if(!player_object.dead) this.score += this.score_add;
 		this.tick = 0;
 	}
 	this.tick += 1;
+	*/
 	
 	if(!player_object.dead) {
+		//if(player_object.x > player_object.distance_travelled) this.score += floor(abs(player_object.vx*0.3));
+		
+		
 		if(keyboard_check_pressed(k_pause)) {
 			game_paused = true;
 			sound_c_play(snd_pause);
@@ -2836,11 +2850,12 @@ this.choose_bank = function() {
 	this.load_bank(this.next_bank);
 }
 
+this.add_bank(pbank_grass1, 0);
+this.add_bank(pbank_wood1, 0);
+
 if(prefab_bank_testing != null) {
 	this.load_bank(prefab_bank_testing);
-} else this.load_bank(prefab_bank_first);
-
-this.add_bank(prefab_bank_first);
+} else choose_bank();
 }
 };
 this.on_destroy = on_destroy_i;
@@ -2902,33 +2917,27 @@ if(this.tick > 1000) {
 	
 	switch(bigtick) {
 		case 1:
-			this.del_bank(pbank_beginner, 0);
-			this.add_bank(pbank_grass1, 0);
-			break;
-	
-		case 2:
 			this.add_bank(pbank_castle1, 0);
+			this.add_bank(pbank_heli1, 1);
 			break;
 		
-		case 3:
-			this.add_bank(pbank_wood1, 0);
+		case 2:
+			this.add_bank(pbank_desert1, 0);
 			this.add_bank(pbank_clouds1, 0);
 			this.move_bank(pbank_castle1, 0, 1);
 			break;
 			
-		case 4:
-			this.add_bank(pbank_desert1, 0);
-			this.add_bank(pbank_heli1, 1);
-			break;
-		
-		case 5:
+		case 3:
 			this.add_bank(pbank_cave1, 0);
 			this.move_bank(pbank_grass1, 0, 1);
 			this.move_bank(pbank_castle1, 1, 2);
 			break;
-			
-		case 6:
+		
+		case 4:
 			this.add_bank(pbank_egg1, 3);
+			break;
+			
+		case 5:
 			break;
 	}
 	
@@ -3843,15 +3852,7 @@ this.on_collision = on_collision_i;
 this.on_roomstart = on_roomstart_i;
 this.on_roomend = on_roomend_i;
 this.on_animationend = on_animationend_i;
-this.on_draw = function() {
-if (this.visible == 1) {
-__handle_sprite__(this);
-with(this) {
-// the player hovers 1px above the platform while its moving vertically, this stupid workaround makes it look like that's not the case
-draw_sprite(sprite_index, 0, x, y);
-}
-}
-};
+this.on_draw = on_draw_i;
 }; var o_platform = new __o_platform();
 
 function __o_platform_move_r() {
@@ -4800,12 +4801,11 @@ GGGGGGGG.....T.........T........T.\
 
 var pbank_beginner = new prefab_bank("beginner");
 pbank_beginner.length_min = 4;
-pbank_beginner.length_max = 6;
+pbank_beginner.length_max = 5;
 pbank_beginner.gap_min = 3;
 pbank_beginner.gap_max = 4;
 pbank_beginner.repeat = false;
-pbank_beginner.start = [ pr_beginner_s1, pr_beginner_s2 ];
-pbank_beginner.middle = [ pr_beginner_m1, pr_beginner_m2, pr_beginner_m3, pr_beginner_m4, pr_beginner_m6, pr_beginner_m7, pr_beginner_m8, pr_beginner_m9, pr_beginner_m10 ];
+pbank_beginner.middle = [pr_beginner_s1, pr_beginner_m1, pr_beginner_m2, pr_beginner_m3, pr_beginner_m4, pr_beginner_m6, pr_beginner_m7, pr_beginner_m8, pr_beginner_m9, pr_beginner_m10 ];
 pbank_beginner.rare = [ pr_beginner_r1 ];
 pbank_beginner.hard = [ pr_beginner_h1 ];
 

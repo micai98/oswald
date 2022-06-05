@@ -10,7 +10,18 @@ The tilde key opens settings
 ![screenshot3](https://cdn.discordapp.com/attachments/667901505420132375/978039109438279761/scr3.png)
 
 
-Current version **0.9**:
+Current version **0.9.1**:
+0.9.1:  
+  - changes to scoring system (thanks to NI240SX for the idea)
+    - player receives score based on distance travelled instead of camera speed
+  - changes to the prefab bank rotation
+    - removed the beginner bank from initial rotation and added GRASS1 and WOOD1 in its place
+	- other prefab banks unlock way faster and appear more often now
+  - adjusted some values related to collisions with moving platforms
+  - debug camera and debug teleport only work while debug mode is enabled
+  - added a new hotkey for the settings menu (9)  
+
+0.9.0:  
   - added 3 new player costumes (made by Soup)
   - reduced player's acceleration speed from 1 to 0.5
   - player can now fall up to 1 block behind the screen's left border without dying
