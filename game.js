@@ -4476,7 +4476,7 @@ var camera_speedup_stage2trigger = 1.65;
 var camera_speedup_stage2increment = 240;
 
 var game_meta_author = "micai";
-var game_meta_version = "0.9";
+var game_meta_version = "0.9.1";
 var debug = false;
 var debug_showsolids = false;
 var sound_enabled = true;
