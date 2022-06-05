@@ -1584,6 +1584,10 @@ function __col_32x() {
 __sprite_init__(this, col_32x, 32, 32, 0, 0, 'Box', 16, 0, 32, 0, 32, ['img/col_32x_0.png']);
 }; var col_32x = new __col_32x();
 
+function __s_kot_troll() { 
+__sprite_init__(this, s_kot_troll, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_troll_0.png','img/s_kot_troll_1.png','img/s_kot_troll_2.png','img/s_kot_troll_3.png']);
+}; var s_kot_troll = new __s_kot_troll();
+
 
 
 /***********************************************************************
@@ -1636,6 +1640,10 @@ __audio_init__(this, snd_thump, '', '', 'aud/thump.ogg');
 function __snd_missile() { 
 __audio_init__(this, snd_missile, '', '', 'aud/missile.ogg');
 }; var snd_missile = new __snd_missile();
+
+function __snd_bigheadhit() { 
+__audio_init__(this, snd_bigheadhit, '', '', 'aud/big_head_hit.ogg');
+}; var snd_bigheadhit = new __snd_bigheadhit();
 
 
 
@@ -4448,6 +4456,7 @@ var player_costumes = {
 	"agent": s_kot_agent,
 	"soup": s_kot_soup,
 	"burnt": s_kot_burnt,
+	"troll": s_kot_troll,
 };
 
 if(!change_costume(load_web_string("costume"))) player_character = s_kot;
@@ -4476,7 +4485,7 @@ var camera_speedup_stage2trigger = 1.65;
 var camera_speedup_stage2increment = 240;
 
 var game_meta_author = "micai";
-var game_meta_version = "0.9.1";
+var game_meta_version = "0.9.2";
 var debug = false;
 var debug_showsolids = false;
 var sound_enabled = true;
@@ -5642,6 +5651,7 @@ if(this.chc.endsWith("howdy")) change_costume("hat");
 if(this.chc.endsWith("weeder")) change_costume("soup");
 if(this.chc.endsWith("agent")) change_costume("agent");
 if(this.chc.endsWith("chinesebbq")) { keyboard_string = ""; sound_play(snd_bong); change_costume("burnt") };
+if(this.chc.endsWith("troll")) { keyboard_string = ""; sound_play(snd_bigheadhit); change_costume("troll") };
 }
 function highscore_update() { 
 save_web_integer("la", last_score);

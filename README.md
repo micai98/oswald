@@ -10,7 +10,10 @@ The tilde key opens settings
 ![screenshot3](https://cdn.discordapp.com/attachments/667901505420132375/978039109438279761/scr3.png)
 
 
-Current version **0.9.1**:
+Current version **0.9.2**:  
+0.9.2:  
+  - added a new player costume by Aethus  
+  
 0.9.1:  
   - changes to scoring system (thanks to NI240SX for the idea)
     - player receives score based on distance travelled instead of camera speed
