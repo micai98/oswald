@@ -1683,7 +1683,7 @@ function __ts_tree() {
 __background_init__(this, ts_tree, 'img/ts_tree_strip16.png')}; var ts_tree = new __ts_tree();
 
 function __ts_panel() { 
-__background_init__(this, ts_panel, 'img/ts_panel_strip16.png')}; var ts_panel = new __ts_panel();
+__background_init__(this, ts_panel, 'img/ts_segment_strip16.png')}; var ts_panel = new __ts_panel();
 
 function __ts_wood() { 
 __background_init__(this, ts_wood, 'img/ts_wood_strip16.png')}; var ts_wood = new __ts_wood();
@@ -1924,6 +1924,8 @@ this.m_foot.activate(this);
 // - FUNCTIONS - //
 this.die = function() {
 	if(!this.dead) {
+		this.vx = 0;
+		this.vy = 0;
 		spawn_corpse(x, y, player_character, sprite_dir);
 		sound_c_play(snd_dead);
 		last_score = hud_object.score;
@@ -2116,7 +2118,7 @@ if(x+sprite_index.width < room_viewport_x - player_death_margin) { this.die(); }
 };
 this.on_end_step = function() {
 with(this) {
-if(game_paused) return;
+if(game_paused || this.dead) return;
 this.mode.lateupdate(this);
 
 if(x > this.distance_travelled) { 
@@ -2290,7 +2292,7 @@ if(x+2000 > room_width) {
  //debug
 if(debug) {
 if(keyboard_check(vk_z)) {
-	x -= this.vx*4;
+	x -= this.vx*(camera_debug_speed*2);
 }
 
 if(keyboard_check(vk_x)) {
@@ -2298,7 +2300,7 @@ if(keyboard_check(vk_x)) {
 }
 
 if(keyboard_check(vk_c)) {
-	x += this.vx*2;
+	x += this.vx*camera_debug_speed;
 }
 }
 }
@@ -2354,14 +2356,10 @@ if(!game_started) {
 if(game_paused) {
 	if(keyboard_check_pressed(k_pause)) game_paused = false;
 } else {
-	/*
 	if(this.tick >= 30) {
-		if(camera_object) this.score_add = floor(camera_object.vx*10);
-		if(!player_object.dead) this.score += this.score_add;
 		this.tick = 0;
 	}
 	this.tick += 1;
-	*/
 	
 	if(!player_object.dead) {
 		//if(player_object.x > player_object.distance_travelled) this.score += floor(abs(player_object.vx*0.3));
@@ -2936,6 +2934,7 @@ if(this.tick > 1000) {
 			break;
 			
 		case 3:
+			this.add_bank(pbank_panel1, 2);
 			this.add_bank(pbank_cave1, 0);
 			this.move_bank(pbank_grass1, 0, 1);
 			this.move_bank(pbank_castle1, 1, 2);
@@ -3478,7 +3477,11 @@ this.text = "";
 }
 };
 this.on_destroy = on_destroy_i;
-this.on_step = on_step_i;
+this.on_step = function() {
+with(this) {
+if(x < room_viewport_x-64) instance_destroy()
+}
+};
 this.on_end_step = on_end_step_i;
 this.on_collision = on_collision_i;
 this.on_roomstart = on_roomstart_i;
@@ -4483,9 +4486,10 @@ var camera_speedup_speed = 0.05;
 var camera_speedup_maxspeed = 2.3;
 var camera_speedup_stage2trigger = 1.65;
 var camera_speedup_stage2increment = 240;
+var camera_debug_speed = 2;
 
 var game_meta_author = "micai";
-var game_meta_version = "0.9.2";
+var game_meta_version = "0.9.3";
 var debug = false;
 var debug_showsolids = false;
 var sound_enabled = true;
@@ -4842,7 +4846,7 @@ pbank_grass1.middle = [ pr_beginner_h1, pr_grass1_m1, pr_beginner_m5, pr_beginne
 
 // CASTLE 1
 var pr_castle1_s1 = new prefab(0, 0, "\
-............BBBBBBBBBBBBBBBBBBBBBBBB,\
+............BBBBBBBBBBBBBBBBB,\
 ..................cBBB,\
 ...................BBB,\
 ............BBBBB..BBB,\
@@ -4850,8 +4854,8 @@ var pr_castle1_s1 = new prefab(0, 0, "\
 ......BBB...BBB....BBB,\
 ......BBB...BBB..BBBBB,\
 BBB...BBB...BBB,\
-BBB...BBB...BBB.................BBB,\
-BBB...BBB...BBBBBBBBBBB...BBB...BBB,\
+BBB...BBB...BBB...........BBB,\
+BBB...BBB...BBBBBBBBBBB...BBB,\
 ");
 var pr_castle1_s2 = new prefab(0, 0, "\
 .............BBBBBBBBBBBBBBBBBBBBBB,\
@@ -5025,16 +5029,16 @@ var pr_heli1_m1 = new prefab(0, 0, "\
 .....GGG.....GGG.....GGG,\
 ");
 var pr_heli1_m2 = new prefab(0, 0, "\
-.....DDD.....DDD.....GGG..,\
-.....DDD.....sss.....GGG,\
+.....DDD.....DDD.....DDD..,\
+.....DDD.....sss.....DDD,\
 .....DDD.............sss,\
 .....sss......c,\
 ......................c,\
 ......c......sss,\
 .............DDD.....sss,\
-.....sss.....DDD.....GGG,\
-.....DDD.....DDD.....GGG,\
-.....DDD.....DDD.....GGG,\
+.....sss.....DDD.....DDD,\
+.....DDD.....DDD.....DDD,\
+.....DDD.....DDD.....DDD,\
 ");
 var pr_heli1_m3 = new prefab(0, 0, "\
 ..............CCCCCCCC.....................CCCCC,\
@@ -5068,7 +5072,7 @@ var pr_heli1_m5 = new prefab(0, 0, "\
 .....CCC..............c,\
 .....CCC......................f,\
 .....CCC.....CCC............,\
-.....CCC.....CCC.....CCC,\
+.............CCC.....CCC,\
 ......c......CCC.....CCC,\
 .............CCC.....CCC,\
 ");
@@ -5339,8 +5343,8 @@ RRR...RRR...RRR,\
 RRR...RRR...RRR.RRRRRRR,\
 ");
 var pr_cave1_s2 = new prefab(0, 0, "\
-........RRRRRRRRRRRRRRRRRR,\
-.......cRRRRRRRRRRRRRRRRRR,\
+.......RRRRRRRRRRRRRRRRRRR,\
+.......RRRRRRRRRRRRRRRRRRR,\
 .......RRRRRRRRRRRRRRRRRRR,\
 ...............RRRRRRRRRRR,\
 .................RRRRRRRRR,\
@@ -5401,7 +5405,7 @@ RRRRR...RRRRR...RRRRR,\
 var pr_cave1_m5 = new prefab(0, 0, "\
 RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
 .......RRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
-.......RR....RR...........RRRRRRRRRRR,\
+.......RR.................RRRRRRRRRRR,\
 .......RR.................RRRRR,\
 .RR...............RRRR....RRRRR,\
 .RR...............RRRR....RRRRR,\
@@ -5610,6 +5614,40 @@ pbank_wood1.gap_min = 3;
 pbank_wood1.gap_max = 4;
 pbank_wood1.repeat = false;
 pbank_wood1.middle = [pr_wood1_m1, pr_wood1_m2, pr_wood1_m3, pr_wood1_m4, pr_wood1_m5, pr_wood1_m6, pr_wood1_m7];
+
+var pr_panel1_m1 = new prefab(0, 0, "\
+.......................PPP........,\
+.......................PPP........,\
+.......................PPP........,\
+.......................PPP........,\
+................PPP.-..PPP........,\
+................PPP....PPP........,\
+........PPP.....PPP...............,\
+........PPP.....PPP.....c........-,\
+PPP.....PPP.....PPP..........-....,\
+PPP.....PPP.....PPP....PPP........,\
+");
+
+var pr_panel1_m2 = new prefab(0, 0, "\
+..............................PP,\
+..............................PP,\
+..............................PP,\
+..................PP....-.....PP,\
+..................PP..........PP,\
+..................PP............,\
+............PP....PP............,\
+PP....-.....PP....PP............,\
+PP..........PP....PP....cc....PP,\
+PP....cc....PP....PP..........PP,\
+"); 
+
+var pbank_panel1 = new prefab_bank("panel1");
+pbank_panel1.length_min = 1;
+pbank_panel1.length_max = 2;
+pbank_panel1.gap_min = 4;
+pbank_panel1.gap_max = 4;
+pbank_panel1.repeat = false;
+pbank_panel1.middle = [pr_panel1_m1, pr_panel1_m2];
 
 var prefab_bank_first = pbank_beginner;
 var prefab_testing = null;

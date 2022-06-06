@@ -10,7 +10,16 @@ The tilde key opens settings
 ![screenshot3](https://cdn.discordapp.com/attachments/667901505420132375/978039109438279761/scr3.png)
 
 
-Current version **0.9.2**:  
+Current version **0.9.3**:  
+0.9.3:
+  - fixed a bug that made it possible to gain score after player's death
+  - fixed high score display not flashing when a new high score is achieved
+  - made small changes to some prefabs
+  - modified the unused (until now) PANEL tileset
+  - added 2 prefabs with the PANEL tileset
+  - debug camera speed can now be changed (camera_debug_speed variable)
+  - fixed debug prefab markers not despawning after falling behind the left border of the screen   
+
 0.9.2:  
   - added a new player costume by Aethus  
   
