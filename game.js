@@ -1596,6 +1596,10 @@ function __s_conveyor_r() {
 __sprite_init__(this, s_conveyor_r, 16, 16, 0, 0, 'Box', 8, 0, 16, 0, 16, ['img/s_conveyor_r_0.png','img/s_conveyor_r_1.png']);
 }; var s_conveyor_r = new __s_conveyor_r();
 
+function __s_enemy_ratheli() { 
+__sprite_init__(this, s_enemy_ratheli, 32, 32, 16, 16, 'Box', 16, 9, 23, 8, 24, ['img/s_enemy_ratheli_0.png','img/s_enemy_ratheli_1.png','img/s_enemy_ratheli_2.png','img/s_enemy_ratheli_3.png','img/s_enemy_ratheli_4.png','img/s_enemy_ratheli_5.png','img/s_enemy_ratheli_6.png']);
+}; var s_enemy_ratheli = new __s_enemy_ratheli();
+
 
 
 /***********************************************************************
@@ -1956,14 +1960,14 @@ this.die = function() {
 
 this.try_stomp = function(other) {
 if(!other.dead && !this.dead) {
-	if(this.mode.stomp_lenient == this.m_foot) {
+	if(this.stomp_lenient == true) {
 		if(this.vy > 0) {
 			other.die();
 			sound_c_play(snd_stomp);
 			hud_object.score += 200;
 			if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
 			else this.vy = -(this.jumppower * this.enemy_bounce);
-		} else this.die();
+		} else { this.die() };
 	} else {
 		if(this.y+this.mode.stomp_offset < other.y) {
 			other.die();
@@ -2192,16 +2196,19 @@ this.m_heli.activate(this);
 }
 this.other = this.place_meeting(this.x, this.y, o_enemy_ratheli);
 if(this.other != null) {
-if(!this.dead) {
+if(!this.dead && !other.dead) {
 	if(this.mode == this.m_foot) {
-		if(this.vy > 0) {
+		if(this.vy > -1) {
 			other.die();
 			sound_c_play(snd_stomp);
 			hud_object.score += 200;
 			if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
 			else this.vy = -(this.jumppower * this.enemy_bounce);
-		} else this.die();
+		} else {
+			this.die();
+		}
 	} else {
+		
 		if(this.y+6 < other.y) {
 			other.die();
 			sound_c_play(snd_stomp);
@@ -3081,7 +3088,7 @@ this.on_draw = on_draw_i;
 }; var o_dev_cat_demo = new __o_dev_cat_demo();
 
 function __o_bl_woodenblock() {
-__instance_init__(this, o_bl_woodenblock, null, 0, 0, s_woodenblock, 1, 25);
+__instance_init__(this, o_bl_woodenblock, null, 0, 0, s_woodenblock, 1, 19);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3104,7 +3111,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_woodenblock = new __o_bl_woodenblock();
 
 function __o_bl_cave() {
-__instance_init__(this, o_bl_cave, null, 0, 0, s_woodenblock, 1, 26);
+__instance_init__(this, o_bl_cave, null, 0, 0, s_woodenblock, 1, 20);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3150,7 +3157,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_cave = new __o_bl_cave();
 
 function __o_trampoline() {
-__instance_init__(this, o_trampoline, null, 1, 0, s_trampoline, 1, 27);
+__instance_init__(this, o_trampoline, null, 1, 0, s_trampoline, 1, 21);
 this.on_creation = function() {
 with(this) {
 image_speed = 0;
@@ -3196,7 +3203,7 @@ draw_sprite_ext(sprite_index, image_index, x, y+this.yoffset, 1, this.dir, 0, 1)
 }; var o_trampoline = new __o_trampoline();
 
 function __o_corpse() {
-__instance_init__(this, o_corpse, null, 1, 0, s_kot_burnt, 1, 29);
+__instance_init__(this, o_corpse, null, 1, 0, s_kot_burnt, 1, 23);
 this.on_creation = function() {
 with(this) {
 
@@ -3227,7 +3234,7 @@ draw_sprite_ext(sprite_index, 0, ceil(x), ceil(y), this.sprite_dir, -1, 0, 1);
 }; var o_corpse = new __o_corpse();
 
 function __o_mobile_buttons() {
-__instance_init__(this, o_mobile_buttons, null, 1, 0, s_dev_cube, 1, 30);
+__instance_init__(this, o_mobile_buttons, null, 1, 0, s_dev_cube, 1, 24);
 this.on_creation = function() {
 with(this) {
 this.mobc_u_x = 256;
@@ -3282,7 +3289,7 @@ if(mobile_controls_enabled) {
 }; var o_mobile_buttons = new __o_mobile_buttons();
 
 function __o_sign_noheli() {
-__instance_init__(this, o_sign_noheli, null, 1, 2, s_sign_noheli, 1, 163);
+__instance_init__(this, o_sign_noheli, null, 1, 2, s_sign_noheli, 1, 157);
 this.on_creation = function() {
 with(this) {
 this.activated = false;
@@ -3313,7 +3320,7 @@ this.on_draw = on_draw_i;
 }; var o_sign_noheli = new __o_sign_noheli();
 
 function __o_veh_heli() {
-__instance_init__(this, o_veh_heli, null, 1, 0, s_heli, 1, 164);
+__instance_init__(this, o_veh_heli, null, 1, 0, s_heli, 1, 158);
 this.on_creation = function() {
 with(this) {
 y -= 4;
@@ -3351,7 +3358,7 @@ draw_sprite(sprite_index, image_index, ceil(x), ceil(y+this.yoffset));
 }; var o_veh_heli = new __o_veh_heli();
 
 function __o_enemy_ratheli() {
-__instance_init__(this, o_enemy_ratheli, null, 1, 0, s_enemy_rat, 1, 165);
+__instance_init__(this, o_enemy_ratheli, null, 1, 0, s_enemy_ratheli, 1, 159);
 this.on_creation = function() {
 with(this) {
 image_speed = 0.25;
@@ -3364,6 +3371,8 @@ ystart += character_spawn_offset_y;
 this.vx = -1;
 this.vy = 0;
 this.vy_dir = 1;
+this.vy_max = 0.75;
+this.vy_dir_max = 0.05;
 
 this.sprite_dir = -1;
 this.grounded = false;
@@ -3372,6 +3381,7 @@ this.dead_fade = 0;
 this.dead_fade_max = 60;
 
 this.die = function() {
+	this.dead = true;
 	spawn_corpse(x, y, sprite_index, sprite_dir, 0, 2);
 	spawn_corpse(x, y, s_heli, sprite_dir, 0, 2);
 	instance_destroy();
@@ -3388,8 +3398,8 @@ if(x < room_viewport_x-despawn_margin) instance_destroy()
 let svx = sign(this.vx);
 if(svx != 0) this.sprite_dir = svx;
 
-if(this.vy > 0.75) { this.vy_dir = -0.05 };
-if(this.vy < -0.75) { this.vy_dir = 0.05 };
+if(this.vy > this.vy_max) { this.vy_dir = -this.vy_dir_max };
+if(this.vy < -this.vy_max) { this.vy_dir = this.vy_dir_max };
 if(game_timer % 10 == 0) this.vy += this.vy_dir;
 
 if(place_meeting(x, y+this.vy, o_dev_solid) || y < 8 || y > room_height - 8) {
@@ -3423,8 +3433,9 @@ this.on_draw = function() {
 if (this.visible == 1) {
 __handle_sprite__(this);
 with(this) {
-draw_sprite_ext(sprite_index, 1, ceil(x), ceil(y), 1*this.sprite_dir, 1, 0, 1);
-draw_sprite_ext(s_heli, image_index, ceil(x), ceil(y+1), 1*this.sprite_dir, 1, 0, 1);
+draw_sprite_ext(sprite_index, image_index, ceil(x), ceil(y), 1*this.sprite_dir, 1, 0, 1);
+//draw_sprite_ext(sprite_index, 1, ceil(x), ceil(y), 1*this.sprite_dir, 1, 0, 1);
+//draw_sprite_ext(s_heli, image_index, ceil(x), ceil(y+1), 1*this.sprite_dir, 1, 0, 1);
 
 }
 }
@@ -3432,7 +3443,7 @@ draw_sprite_ext(s_heli, image_index, ceil(x), ceil(y+1), 1*this.sprite_dir, 1, 0
 }; var o_enemy_ratheli = new __o_enemy_ratheli();
 
 function __o_enemy_cactus() {
-__instance_init__(this, o_enemy_cactus, null, 1, 0, s_enemy_cactus, 1, 166);
+__instance_init__(this, o_enemy_cactus, null, 1, 0, s_enemy_cactus, 1, 160);
 this.on_creation = function() {
 with(this) {
 this.bound = false;
@@ -3461,7 +3472,7 @@ this.on_draw = on_draw_i;
 }; var o_enemy_cactus = new __o_enemy_cactus();
 
 function __o_bl_sand() {
-__instance_init__(this, o_bl_sand, null, 0, 0, s_woodenblock, 1, 167);
+__instance_init__(this, o_bl_sand, null, 0, 0, s_woodenblock, 1, 161);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3507,7 +3518,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_sand = new __o_bl_sand();
 
 function __o_debug_marker() {
-__instance_init__(this, o_debug_marker, null, 1, 0, s_debug_line, 1, 168);
+__instance_init__(this, o_debug_marker, null, 1, 0, s_debug_line, 1, 162);
 this.on_creation = function() {
 with(this) {
 this.text = "";
@@ -3540,7 +3551,7 @@ if(debug) {
 }; var o_debug_marker = new __o_debug_marker();
 
 function __o_bl_tree() {
-__instance_init__(this, o_bl_tree, null, 0, 0, s_woodenblock, 1, 169);
+__instance_init__(this, o_bl_tree, null, 0, 0, s_woodenblock, 1, 163);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3586,7 +3597,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_tree = new __o_bl_tree();
 
 function __o_enemy_crusher() {
-__instance_init__(this, o_enemy_crusher, null, 1, 1, s_enemy_crusher, 1, 170);
+__instance_init__(this, o_enemy_crusher, null, 1, 1, s_enemy_crusher, 1, 164);
 this.on_creation = function() {
 with(this) {
 
@@ -3659,7 +3670,7 @@ this.on_draw = on_draw_i;
 }; var o_enemy_crusher = new __o_enemy_crusher();
 
 function __o_bl_panel() {
-__instance_init__(this, o_bl_panel, null, 0, 0, s_woodenblock, 1, 171);
+__instance_init__(this, o_bl_panel, null, 0, 0, s_woodenblock, 1, 165);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3705,7 +3716,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_panel = new __o_bl_panel();
 
 function __o_bl_wood() {
-__instance_init__(this, o_bl_wood, null, 0, 0, s_woodenblock, 1, 172);
+__instance_init__(this, o_bl_wood, null, 0, 0, s_woodenblock, 1, 166);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3751,7 +3762,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_wood = new __o_bl_wood();
 
 function __o_enemy_missile() {
-__instance_init__(this, o_enemy_missile, null, 1, 0, s_enemy_missile, 1, 173);
+__instance_init__(this, o_enemy_missile, null, 1, 0, s_enemy_missile, 1, 167);
 this.on_creation = function() {
 with(this) {
 x += 8;
@@ -3807,7 +3818,7 @@ draw_sprite_ext(sprite_index, image_index, x, y, this.sprite_dir, 1, 0, 1);
 }; var o_enemy_missile = new __o_enemy_missile();
 
 function __o_bl_bigbrick() {
-__instance_init__(this, o_bl_bigbrick, null, 0, 0, s_woodenblock, 1, 174);
+__instance_init__(this, o_bl_bigbrick, null, 0, 0, s_woodenblock, 1, 168);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3853,7 +3864,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_bigbrick = new __o_bl_bigbrick();
 
 function __o_platform() {
-__instance_init__(this, o_platform, null, 1, 0, s_platform, 1, 175);
+__instance_init__(this, o_platform, null, 1, 0, s_platform, 1, 169);
 this.on_creation = function() {
 with(this) {
 // no touchy
@@ -3904,7 +3915,7 @@ this.on_draw = on_draw_i;
 }; var o_platform = new __o_platform();
 
 function __o_platform_move_r() {
-__instance_init__(this, o_platform_move_r, null, 1, 0, s_platform, 1, 176);
+__instance_init__(this, o_platform_move_r, null, 1, 0, s_platform, 1, 170);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3925,7 +3936,7 @@ this.on_draw = on_draw_i;
 }; var o_platform_move_r = new __o_platform_move_r();
 
 function __o_platform_move_d() {
-__instance_init__(this, o_platform_move_d, null, 1, 0, s_platform, 1, 179);
+__instance_init__(this, o_platform_move_d, null, 1, 0, s_platform, 1, 171);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3946,7 +3957,7 @@ this.on_draw = on_draw_i;
 }; var o_platform_move_d = new __o_platform_move_d();
 
 function __o_platform_move_l() {
-__instance_init__(this, o_platform_move_l, null, 1, 0, s_platform, 1, 181);
+__instance_init__(this, o_platform_move_l, null, 1, 0, s_platform, 1, 172);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3967,7 +3978,7 @@ this.on_draw = on_draw_i;
 }; var o_platform_move_l = new __o_platform_move_l();
 
 function __o_platform_move_u() {
-__instance_init__(this, o_platform_move_u, null, 1, 0, s_platform, 1, 182);
+__instance_init__(this, o_platform_move_u, null, 1, 0, s_platform, 1, 173);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3988,7 +3999,7 @@ this.on_draw = on_draw_i;
 }; var o_platform_move_u = new __o_platform_move_u();
 
 function __o_platform_reverse() {
-__instance_init__(this, o_platform_reverse, null, 0, 0, s_dev_fill50, 1, 187);
+__instance_init__(this, o_platform_reverse, null, 0, 0, s_dev_fill50, 1, 174);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -4001,7 +4012,7 @@ this.on_draw = on_draw_i;
 }; var o_platform_reverse = new __o_platform_reverse();
 
 function __o_platform_fall() {
-__instance_init__(this, o_platform_fall, null, 1, 0, s_platform, 1, 188);
+__instance_init__(this, o_platform_fall, null, 1, 0, s_platform, 1, 175);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -4024,7 +4035,7 @@ this.on_draw = on_draw_i;
 }; var o_platform_fall = new __o_platform_fall();
 
 function __o_bl_huge() {
-__instance_init__(this, o_bl_huge, null, 1, 0, col_32x, 1, 189);
+__instance_init__(this, o_bl_huge, null, 1, 0, col_32x, 1, 176);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -4073,7 +4084,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_huge = new __o_bl_huge();
 
 function __o_bl_woodenhuge() {
-__instance_init__(this, o_bl_woodenhuge, null, 1, 0, col_32x, 1, 190);
+__instance_init__(this, o_bl_woodenhuge, null, 1, 0, col_32x, 1, 177);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -4097,7 +4108,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_woodenhuge = new __o_bl_woodenhuge();
 
 function __o_enemy_rathuge() {
-__instance_init__(this, o_enemy_rathuge, null, 1, 2, s_enemy_rathuge, 1, 191);
+__instance_init__(this, o_enemy_rathuge, null, 1, 2, s_enemy_rathuge, 1, 178);
 this.on_creation = function() {
 with(this) {
 x += character_spawn_offset_x*2;
@@ -4208,7 +4219,7 @@ draw_sprite_ext(sprite_index, image_index, ceil(x), ceil(y), 1*this.sprite_dir, 
 }; var o_enemy_rathuge = new __o_enemy_rathuge();
 
 function __o_platform_lift() {
-__instance_init__(this, o_platform_lift, null, 1, 0, s_platform, 1, 192);
+__instance_init__(this, o_platform_lift, null, 1, 0, s_platform, 1, 179);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -4232,7 +4243,7 @@ this.on_draw = on_draw_i;
 }; var o_platform_lift = new __o_platform_lift();
 
 function __o_bl_groundalt() {
-__instance_init__(this, o_bl_groundalt, null, 1, 0, s_woodenblock, 1, 193);
+__instance_init__(this, o_bl_groundalt, null, 1, 0, s_woodenblock, 1, 180);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -4278,7 +4289,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_groundalt = new __o_bl_groundalt();
 
 function __o_bl_metal() {
-__instance_init__(this, o_bl_metal, null, 1, 0, s_woodenblock, 1, 194);
+__instance_init__(this, o_bl_metal, null, 1, 0, s_woodenblock, 1, 181);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -4324,7 +4335,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_metal = new __o_bl_metal();
 
 function __o_conveyor_l() {
-__instance_init__(this, o_conveyor_l, null, 1, 0, s_conveyor_l, 1, 195);
+__instance_init__(this, o_conveyor_l, null, 1, 0, s_conveyor_l, 1, 182);
 this.on_creation = function() {
 with(this) {
 this.bound = false;
@@ -4362,7 +4373,7 @@ draw_sprite_ext(sprite_index, image_index, x, y+16, 1, -1, 0, 1);
 }; var o_conveyor_l = new __o_conveyor_l();
 
 function __o_conveyor_r() {
-__instance_init__(this, o_conveyor_r, null, 1, 0, s_conveyor_r, 1, 196);
+__instance_init__(this, o_conveyor_r, null, 1, 0, s_conveyor_r, 1, 183);
 this.on_creation = function() {
 with(this) {
 this.bound = false;
@@ -4392,7 +4403,7 @@ this.on_draw = on_draw_i;
 }; var o_conveyor_r = new __o_conveyor_r();
 
 function __o_gamepad_test() {
-__instance_init__(this, o_gamepad_test, null, 1, 0, s_dev_unknown, 1, 239);
+__instance_init__(this, o_gamepad_test, null, 1, 0, s_dev_unknown, 1, 214);
 this.on_creation = function() {
 with(this) {
 
@@ -4420,7 +4431,7 @@ with(this) {
 }; var o_gamepad_test = new __o_gamepad_test();
 
 function __o_bl_pipe() {
-__instance_init__(this, o_bl_pipe, null, 1, 0, s_woodenblock, 1, 241);
+__instance_init__(this, o_bl_pipe, null, 1, 0, s_woodenblock, 1, 216);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -4464,6 +4475,40 @@ this.on_roomend = on_roomend_i;
 this.on_animationend = on_animationend_i;
 this.on_draw = on_draw_i;
 }; var o_bl_pipe = new __o_bl_pipe();
+
+function __o_enemy_crush_up() {
+__instance_init__(this, o_enemy_crush_up, null, 1, 0, s_enemy_crusher, 1, 238);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = on_end_step_i;
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_enemy_crush_up = new __o_enemy_crush_up();
+
+function __o_enemy_ratheli_stay() {
+__instance_init__(this, o_enemy_ratheli_stay, null, 1, 0, s_enemy_rat, 1, 239);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = function() {
+with(this) {
+let newrat = instance_create(x, y, o_enemy_ratheli);
+newrat.vx = 0;
+newrat.vy_max = 0.05;
+newrat.vy_dir = 0.01;
+instance_destroy();
+}
+};
+this.on_end_step = on_end_step_i;
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_enemy_ratheli_stay = new __o_enemy_ratheli_stay();
 
 
 
@@ -4512,12 +4557,6 @@ function __sc_prototype() {
 this.tiles = [
 ];
 this.objects = [
-[{o:o_bl_ground, x:80, y:128}],
-[{o:o_bl_ground, x:80, y:144}],
-[{o:o_bl_ground, x:64, y:144}],
-[{o:o_bl_ground, x:64, y:128}],
-[{o:o_bl_ground, x:48, y:128}],
-[{o:o_bl_ground, x:48, y:144}],
 [{o:o_kot, x:64, y:112}],
 [{o:o_hud, x:0, y:0}],
 [{o:o_bl_ground, x:384, y:80}],
@@ -4650,13 +4689,6 @@ this.objects = [
 [{o:o_bl_ground, x:752, y:48}],
 [{o:o_bl_ground, x:768, y:48}],
 [{o:o_bl_ground, x:368, y:80}],
-[{o:o_platform, x:16, y:128}],
-[{o:o_platform_move_r, x:16, y:96}],
-[{o:o_platform_move_d, x:96, y:128}],
-[{o:o_platform_move_u, x:160, y:128}],
-[{o:o_bl_woodenblock, x:0, y:96}],
-[{o:o_bl_woodenblock, x:0, y:128}],
-[{o:o_bl_woodenblock, x:0, y:144}],
 [{o:o_bl_metal, x:192, y:128}],
 [{o:o_bl_metal, x:192, y:144}],
 [{o:o_bl_metal, x:208, y:144}],
@@ -4676,21 +4708,9 @@ this.objects = [
 [{o:o_bl_metal, x:272, y:128}],
 [{o:o_bl_metal, x:272, y:144}],
 [{o:o_bl_metal, x:272, y:144}],
-[{o:o_bl_metal, x:192, y:32}],
-[{o:o_bl_metal, x:208, y:32}],
-[{o:o_bl_metal, x:208, y:32}],
-[{o:o_bl_metal, x:208, y:16}],
-[{o:o_bl_metal, x:192, y:16}],
-[{o:o_bl_metal, x:192, y:0}],
-[{o:o_bl_metal, x:208, y:0}],
-[{o:o_bl_metal, x:208, y:0}],
-[{o:o_bl_metal, x:128, y:32}],
-[{o:o_bl_metal, x:144, y:32}],
 [{o:o_bl_metal, x:320, y:144}],
 [{o:o_bl_metal, x:368, y:144}],
 [{o:o_bl_metal, x:368, y:128}],
-[{o:o_bl_metal, x:320, y:16}],
-[{o:o_bl_metal, x:320, y:32}],
 [{o:o_conveyor_l, x:352, y:128}],
 [{o:o_conveyor_l, x:336, y:128}],
 [{o:o_conveyor_l, x:320, y:128}],
@@ -4698,7 +4718,28 @@ this.objects = [
 [{o:o_conveyor_l, x:288, y:128}],
 [{o:o_conveyor_r, x:208, y:112}],
 [{o:o_conveyor_r, x:224, y:112}],
-[{o:o_conveyor_r, x:240, y:112}]];
+[{o:o_conveyor_r, x:240, y:112}],
+[{o:o_bl_groundalt, x:16, y:128}],
+[{o:o_bl_groundalt, x:0, y:128}],
+[{o:o_bl_groundalt, x:0, y:144}],
+[{o:o_bl_groundalt, x:16, y:144}],
+[{o:o_bl_groundalt, x:32, y:144}],
+[{o:o_bl_groundalt, x:32, y:128}],
+[{o:o_bl_groundalt, x:48, y:128}],
+[{o:o_bl_groundalt, x:48, y:144}],
+[{o:o_bl_groundalt, x:64, y:144}],
+[{o:o_bl_groundalt, x:64, y:128}],
+[{o:o_bl_groundalt, x:80, y:128}],
+[{o:o_bl_groundalt, x:80, y:144}],
+[{o:o_bl_groundalt, x:96, y:144}],
+[{o:o_bl_groundalt, x:96, y:128}],
+[{o:o_bl_groundalt, x:144, y:128}],
+[{o:o_bl_groundalt, x:144, y:128}],
+[{o:o_bl_groundalt, x:144, y:144}],
+[{o:o_bl_groundalt, x:160, y:144}],
+[{o:o_bl_groundalt, x:160, y:128}],
+[{o:o_bl_groundalt, x:176, y:128}],
+[{o:o_bl_groundalt, x:176, y:144}]];
 this.start = function() {
 __room_start__(this, sc_prototype, 3200, 160, 60, 255, 255, 255, null, 1, 1, 0, 320, 160, o_kot, 320, 50);
 
@@ -4837,6 +4878,7 @@ var prefab_chars = {
 	"r": o_enemy_rat,
 	"s": o_enemy_spikes,
 	"f": o_enemy_ratheli,
+	"d": o_enemy_ratheli_stay,
 	"k": o_enemy_cactus,
 	"p": o_enemy_crusher,
 	"m": o_enemy_missile,
@@ -5862,13 +5904,25 @@ DDD...DDDDD...............D.......DDD,\
 DDD...DDDDD.....DDDDDDDDDDD...W...DDD,\
 ");
 
+var pr_wood1_m8 = new prefab(0, 0, "\
+..................................,\
+..................................,\
+..................................,\
+.......TTTTT......................,\
+.........T.....d....d....d........,\
+.........T...................TTTTT,\
+.........T.....................T..,\
+....t....T.....................T..,\
+TTTTT....T.....................T..,\
+..T......T.....................T..");
+
 var pbank_wood1 = new prefab_bank("wood1");
 pbank_wood1.length_min = 4;
 pbank_wood1.length_max = 5;
 pbank_wood1.gap_min = 3;
 pbank_wood1.gap_max = 4;
 pbank_wood1.repeat = false;
-pbank_wood1.middle = [pr_wood1_m1, pr_wood1_m2, pr_wood1_m3, pr_wood1_m4, pr_wood1_m5, pr_wood1_m6, pr_wood1_m7];
+pbank_wood1.middle = [pr_wood1_m1, pr_wood1_m2, pr_wood1_m3, pr_wood1_m4, pr_wood1_m5, pr_wood1_m6, pr_wood1_m7, pr_wood1_m8];
 
 var pr_panel1_m1 = new prefab(0, 0, "\
 .......................LLL........,\
@@ -6080,6 +6134,15 @@ MMMMMMMMMMMMPMMMMMMM......................MMMM,\
 PPPPP..............P......................P..P,\
 P...P....PP........P....^.....v.....^.....P..P,\
 P...P.....P....P...P......................P..P");
+
+var pbank_factory1 = new prefab_bank("factory1");
+pbank_factory1.length_min = 4;
+pbank_factory1.length_max = 5;
+pbank_factory1.gap_min = 3;
+pbank_factory1.gap_max = 3;
+pbank_factory1.repeat = false;
+pbank_factory1.ceiling = "M";
+pbank_factory1.middle = [pr_factory1_m1, pr_factory1_m2, pr_factory1_m3, pr_factory1_m4, pr_factory1_m5, pr_factory1_m6];
 
 var prefab_bank_first = pbank_grass1;
 var prefab_testing = null;
