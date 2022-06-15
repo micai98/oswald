@@ -1711,6 +1711,9 @@ __background_init__(this, ts_groundalt, 'img/ts_ground_alt_strip16.png')}; var t
 function __ts_metal() { 
 __background_init__(this, ts_metal, 'img/ts_metal_strip16.png')}; var ts_metal = new __ts_metal();
 
+function __ts_pipe() { 
+__background_init__(this, ts_pipe, 'img/ts_pipe_strip16.png')}; var ts_pipe = new __ts_pipe();
+
 
 
 /***********************************************************************
@@ -4416,6 +4419,52 @@ with(this) {
 };
 }; var o_gamepad_test = new __o_gamepad_test();
 
+function __o_bl_pipe() {
+__instance_init__(this, o_bl_pipe, null, 1, 0, s_woodenblock, 1, 241);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = function() {
+with(this) {
+image_speed = 0;
+image_index = 0;
+
+this.hor = 0;
+this.ver = 0;
+this.bls = 16;
+
+if(y == 0) instance_create(x, y-this.bls, object_index);
+if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
+
+if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
+if(place_meeting(x-this.bls, y, object_index))
+{
+    if(this.hor == 1){this.hor = 2}
+    else{this.hor = 3}
+}
+
+if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
+if(place_meeting(x, y-this.bls, object_index))
+{
+    if(this.ver == 1){this.ver = 2}
+    else{this.ver = 3}
+}
+
+image_index = 4*this.ver + this.hor;
+tile_add(ts_pipe, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
+if(!(y + 16 >= room_height && image_index == 14)) {
+	if(image_index != 10) instance_create(x, y, o_dev_solid);
+}
+instance_destroy();
+}
+};
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_bl_pipe = new __o_bl_pipe();
+
 
 
 /***********************************************************************
@@ -4776,12 +4825,13 @@ var prefab_chars = {
 	"S": o_bl_sand,
 	"Z": o_bl_bigbrick,
 	"T": o_bl_tree,
-	"P": o_bl_panel,
+	"L": o_bl_panel,
 	"D": o_bl_wood,
 	"H": o_bl_huge,
 	"J": o_bl_woodenhuge,
 	"F": o_bl_groundalt,
 	"M": o_bl_metal,
+	"P": o_bl_pipe,
 	
 	// enemies
 	"r": o_enemy_rat,
@@ -5088,18 +5138,6 @@ BBBBBBBBBBBBBBBBBBB,\
 BBBBBBBBBBBBBBBBBBB,\
 ");
 var pr_castle1_m2 = new prefab(0, 0, "\
-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB,\
-................BB,\
-................BB,\
-................BB,\
-......................BB,\
-..........BB..........BB,\
-.....r....BB..........BB......,\
-BBBBBB....BB....BB....BB....BB,\
-BBBBBB....BB....BB....BB....BB,\
-BBBBBB....BB....BB....BB....BB,\
-");
-var pr_castle1_m3 = new prefab(0, 0, "\
 BBBBBBBBBBBBBBBBBBBBBBBBBBB,\
 ......W......W......W,\
 ......s......s......s,\
@@ -5111,7 +5149,7 @@ BBBBBBBBBBBBBBBBBBBBBBBBBBB,\
 BBBBBBBBBBBBBBBBBBBBBBBBBBB,\
 BBBBBBBBBBBBBBBBBBBBBBBBBBB,\
 ");
-var pr_castle1_m4 = new prefab(0, 0, "\
+var pr_castle1_m3 = new prefab(0, 0, "\
 BBBBBBBBBB....BBBBBBBBBBBB,\
 ............p...BBBBBBBBBB,\
 ..........................,\
@@ -5123,7 +5161,7 @@ BBBBBBBBBB....BBBBBBBBBBBB,\
 BBBBBBBBBBBBBBBBBBBB..BBBB,\
 BBBBBBBBBBBBBBBBBBBB..BBBB,\
 ");
-var pr_castle1_m5 = new prefab(0, 0, "\
+var pr_castle1_m4 = new prefab(0, 0, "\
 BBBBBBBB..BBBBBB..BBBBBBBBB,\
 ................p.....,\
 ......................,\
@@ -5135,7 +5173,7 @@ BBBBBBBB..BBBBBB..BBBBBBBBB,\
 BBBBBBBBBBBB..BBBBBBBBBBBB,\
 BBBBBBBBBBBB..BBBBBBBBBBBB,\
 ");
-var pr_castle1_m6 = new prefab(0, 0, "\
+var pr_castle1_m5 = new prefab(0, 0, "\
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB,\
 ........................BBBB....BBB,\
 ........................BBBB....BBB,\
@@ -5147,7 +5185,7 @@ BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB,\
 BBB........t...BBBBc............BBB,\
 BBB...BBBBBB...BBBBBBBBBBBBBB...BBB,\
 ");
-pr_castle1_m6.content_alt = "\
+pr_castle1_m5.content_alt = "\
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB,\
 ........................BBBB....BBB,\
 ........................BBBB....BBB,\
@@ -5159,7 +5197,7 @@ BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB,\
 BBB........t...BBBBc............BBB,\
 BBB...BBBBBB...BBBBBBBBBBBBBB...BBB,\
 ";
-var pr_castle1_m7 = new prefab(0, 0, "\
+var pr_castle1_m6 = new prefab(0, 0, "\
 BBBBB............BBBBBBBBBBBBBBBBB,\
 .......v....^............BBBB,\
 .........................BBBB,\
@@ -5171,7 +5209,7 @@ BBBBB............BBBBBBBBBBBBBBBBB,\
 BBBBB............BBBB.........BBBB,\
 BBBBB............BBBB....B....BBBB,\
 ");
-var pr_castle1_m8 = new prefab(0, 0, "\
+var pr_castle1_m7 = new prefab(0, 0, "\
 BBBBBBBBBBBBBBBBBBBBBBBBBB..BB..BBBB,\
 .................BBBBBBBBBp.BB..BB,\
 .................BBBBBBBBB..BB..BB,\
@@ -5185,7 +5223,7 @@ BBB...B...BBB....BBBB.BBBBBBBBBBBBBB,\
 ");
 
 
-var pr_castle1_h1 = new prefab(0, 0, "\
+var pr_castle1_m8 = new prefab(0, 0, "\
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB,\
 ......W......W......W..........BB....BB,\
 ......s......W......s..........BB....BB,\
@@ -5206,7 +5244,6 @@ pbank_castle1.ceiling = "B";
 pbank_castle1.repeat = false;
 pbank_castle1.start = [pr_castle1_s1, pr_castle1_s2, pr_castle1_s3];
 pbank_castle1.middle = [pr_castle1_m1, pr_castle1_m2, pr_castle1_m3, pr_castle1_m4, pr_castle1_m5, pr_castle1_m6, pr_castle1_m7, pr_castle1_m8];
-pbank_castle1.hard = [pr_castle1_h1];
 
 
 // HELI LEVEL 1
@@ -5834,29 +5871,29 @@ pbank_wood1.repeat = false;
 pbank_wood1.middle = [pr_wood1_m1, pr_wood1_m2, pr_wood1_m3, pr_wood1_m4, pr_wood1_m5, pr_wood1_m6, pr_wood1_m7];
 
 var pr_panel1_m1 = new prefab(0, 0, "\
-.......................PPP........,\
-.......................PPP........,\
-.......................PPP........,\
-.......................PPP........,\
-................PPP.-..PPP........,\
-................PPP....PPP........,\
-........PPP.....PPP...............,\
-........PPP.....PPP.....c........-,\
-PPP.....PPP.....PPP..........-....,\
-PPP.....PPP.....PPP....PPP........,\
+.......................LLL........,\
+.......................LLL........,\
+.......................LLL........,\
+.......................LLL........,\
+................LLL.-..LLL........,\
+................LLL....LLL........,\
+........LLL.....LLL...............,\
+........LLL.....LLL.....c........-,\
+LLL.....LLL.....LLL..........-....,\
+LLL.....LLL.....LLL....LLL........,\
 ");
 
 var pr_panel1_m2 = new prefab(0, 0, "\
-..............................PP,\
-..............................PP,\
-..............................PP,\
-..................PP....-.....PP,\
-..................PP..........PP,\
-..................PP............,\
-............PP....PP............,\
-PP....-.....PP....PP............,\
-PP..........PP....PP....cc....PP,\
-PP....cc....PP....PP..........PP,\
+..............................LL,\
+..............................LL,\
+..............................LL,\
+..................LL....-.....LL,\
+..................LL..........LL,\
+..................LL............,\
+............LL....LL............,\
+LL....-.....LL....LL............,\
+LL..........LL....LL....cc....LL,\
+LL....cc....LL....LL..........LL,\
 "); 
 
 var pbank_panel1 = new prefab_bank("panel1");
@@ -5959,6 +5996,90 @@ pbank_ground1.gap_min = 3;
 pbank_ground1.gap_max = 3;
 pbank_ground1.repeat = false;
 pbank_ground1.middle = [pr_ground1_m1, pr_ground1_m2, pr_ground1_m3, pr_ground1_m4, pr_ground1_m5, pr_ground1_m6];
+
+var pr_factory1_m1 = new prefab(0, 0, "\
+MMMMMMMMMMMMMMMMMMMM..........MM,\
+..............................MM,\
+..............................MM,\
+..................MM....-.....MM,\
+..................MM..........MM,\
+..................MM............,\
+............MM....MM............,\
+MM....-.....MM....MM............,\
+MM..........MM....MM....cc....MM,\
+MM....cc....MM....MM..........MM");
+
+var pr_factory1_m2 = new prefab(0, 0, "\
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM,\
+.......................MMM.........,\
+.......................MMM.........,\
+.......................MMM.........,\
+................MMM.-..MMM.........,\
+................MMM....MMM.........,\
+.......)))))....MMM................,\
+.......MMMMM....MMM.....c........-.,\
+MMM....MMMMM....MMM..........-.....,\
+MMM....MMMMM....MMM....MMM........."); 
+
+var pr_factory1_m3 = new prefab(0, 0, "\
+MMMMMMMMMMMMMMMMMMMMM,\
+P....P....P....P....P,\
+P....P....P....P....P,\
+.....P.........P.....,\
+.....P.........P.....,\
+...............P.....,\
+P....c....P.........P,\
+P.........P....c....P,\
+P....P....P.........P,\
+P....P....P....P....P");
+
+pr_factory1_m3.alt_content = "\
+MMMMMMMMMMMMMMMMMMMMM,\
+P....P....P....P....P,\
+P....P....P....P....P,\
+.....P.........P.....,\
+.....P.........P.....,\
+.....P...............,\
+P.........P....c....P,\
+P....c....P.........P,\
+P.........P....P....P,\
+P....P....P....P....P";
+
+var pr_factory1_m4 = new prefab(0, 0, "\
+MMMMMMMMMMMMMMMPMMMMMMMMMMMMMMMMM,\
+..............cP.................,\
+...............P.................,\
+.........PPPP..P.................,\
+..........Pc...P................r,\
+..........P....P.............MMMM,\
+.........PP..PPP........-....MMMM,\
+..........P..................MMMM,\
+...r......P........-.........MMMM,\
+MMMM..MMMMPMMMMM.............MMMM");
+
+var pr_factory1_m5 = new prefab(0, 0, "\
+MMMMMM..............MMMMMMMMMMMMMMMMMMMM,\
+......p.......p.....................MMMM,\
+....................................MMMM,\
+....................................MMMM,\
+..............................MM........,\
+........................MM....MM........,\
+..........p.............MM....MM........,\
+..MMMM))))))))))MMMM....MM....MM....c...,\
+MMMMMMMMMMMMMMMMMMMMMM..MM....MM.......P,\
+MMMMMMMMMMMMMMMMMMMMMM..MM....MM....P..P");
+
+var pr_factory1_m6 = new prefab(0, 0, "\
+MMMMMMMMMMMMPMMMMMMM......................MMMM,\
+............P.................................,\
+............P.................................,\
+............P..c........^.....v.....^.........,\
+............PPPP..........................PPPP,\
+...............P..........................P..P,\
+...............P..........................P..P,\
+PPPPP..............P......................P..P,\
+P...P....PP........P....^.....v.....^.....P..P,\
+P...P.....P....P...P......................P..P");
 
 var prefab_bank_first = pbank_grass1;
 var prefab_testing = null;
