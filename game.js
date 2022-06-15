@@ -1496,10 +1496,6 @@ function __s_woodenblock() {
 __sprite_init__(this, s_woodenblock, 16, 16, 0, 0, 'Box', 8, 0, 16, 0, 16, ['img/s_woodenblock_0.png']);
 }; var s_woodenblock = new __s_woodenblock();
 
-function __s_cave() { 
-__sprite_init__(this, s_cave, 16, 16, 0, 0, 'Box', 8, 0, 16, 0, 16, ['img/s_cave_0.png']);
-}; var s_cave = new __s_cave();
-
 function __s_trampoline() { 
 __sprite_init__(this, s_trampoline, 16, 16, 0, 0, 'Box', 8, 0, 16, 0, 16, ['img/s_trampoline_0.png','img/s_trampoline_1.png','img/s_trampoline_2.png','img/s_trampoline_3.png']);
 }; var s_trampoline = new __s_trampoline();
@@ -1587,6 +1583,18 @@ __sprite_init__(this, col_32x, 32, 32, 0, 0, 'Box', 16, 0, 32, 0, 32, ['img/col_
 function __s_kot_troll() { 
 __sprite_init__(this, s_kot_troll, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_troll_0.png','img/s_kot_troll_1.png','img/s_kot_troll_2.png','img/s_kot_troll_3.png']);
 }; var s_kot_troll = new __s_kot_troll();
+
+function __s_conveyor_l() { 
+__sprite_init__(this, s_conveyor_l, 16, 16, 0, 0, 'Box', 8, 0, 16, 0, 16, ['img/s_conveyor_l_0.png','img/s_conveyor_l_1.png']);
+}; var s_conveyor_l = new __s_conveyor_l();
+
+function __s_conveyor_m() { 
+__sprite_init__(this, s_conveyor_m, 16, 16, 0, 0, 'Box', 8, 0, 16, 0, 16, ['img/s_conveyor_m_0.png','img/s_conveyor_m_1.png']);
+}; var s_conveyor_m = new __s_conveyor_m();
+
+function __s_conveyor_r() { 
+__sprite_init__(this, s_conveyor_r, 16, 16, 0, 0, 'Box', 8, 0, 16, 0, 16, ['img/s_conveyor_r_0.png','img/s_conveyor_r_1.png']);
+}; var s_conveyor_r = new __s_conveyor_r();
 
 
 
@@ -1697,6 +1705,12 @@ __background_init__(this, ts_huge, 'img/s_bl_ground_giant_strip16.png')}; var ts
 function __ts_woodenhuge() { 
 __background_init__(this, ts_woodenhuge, 'img/s_bl_woodblock_giant.png')}; var ts_woodenhuge = new __ts_woodenhuge();
 
+function __ts_groundalt() { 
+__background_init__(this, ts_groundalt, 'img/ts_ground_alt_strip16.png')}; var ts_groundalt = new __ts_groundalt();
+
+function __ts_metal() { 
+__background_init__(this, ts_metal, 'img/ts_metal_strip16.png')}; var ts_metal = new __ts_metal();
+
 
 
 /***********************************************************************
@@ -1774,6 +1788,8 @@ this.vx = 0;
 this.vy = 0;
 this.vxe = 0;
 this.vye = 0;
+this.vxt = 0;
+this.vyt = 0;
 this.dirx = 0;
 this.diry = 0;
 this.dirx_last = 0;
@@ -1856,7 +1872,7 @@ function playermode(name) {
 	}
 	
 	this.jump = function(me) {
-		if(place_meeting(me.x, me.y-this.jumppower, o_dev_solid) == null && (me.grounded || (me.coyote > 0 && this.diry != -1))) {
+		if(place_meeting(me.x, me.y-this.jumppower, o_dev_solid) == null && (me.grounded || (me.coyote > 0 && me.diry != -1))) {
 			me.jumpbuffer = 0;
 			me.vy = -this.jumppower;
 			sound_c_play(snd_jump);
@@ -2008,7 +2024,7 @@ if(!this.dead) {
 	this.vye = 0;
 
 	// Horizontal movement
-	this.keyx = (input_down_int(k_right, vk_d) - input_down_int(k_left, vk_a));
+	this.keyx = ((input_down_int(k_right, vk_d) || gpadButton(15)) - (input_down_int(k_left, vk_a) || gpadButton(14)));
 	if(keyx != 0) {
 		game_started = true;
 		this.sprite_dir = this.keyx;
@@ -2101,6 +2117,15 @@ if(trmp != null) {
 	this.vy = (-this.jumppower * this.jumptrampoline)*trmp.dir;
 	this.jumpbrake_disabled = true;
 	trmp.image_speed = 0.5;
+}
+
+// Conveyor belt interaction
+if(place_meeting(x, y+2, o_conveyor_l)) {
+	if(place_meeting(x-2, y, o_dev_solid) == null) this.vxe = -2;
+}
+
+if(place_meeting(x, y+2, o_conveyor_r)) {
+	if(place_meeting(x+2, y, o_dev_solid) == null) this.vxe = 2;
 }
 
 // Dying conditions
@@ -2931,6 +2956,7 @@ if(this.tick > 1000) {
 			this.add_bank(pbank_desert1, 0);
 			this.add_bank(pbank_clouds1, 0);
 			this.move_bank(pbank_castle1, 0, 1);
+			this.add_bank(pbank_ground1, 0);
 			break;
 			
 		case 3:
@@ -3052,7 +3078,7 @@ this.on_draw = on_draw_i;
 }; var o_dev_cat_demo = new __o_dev_cat_demo();
 
 function __o_bl_woodenblock() {
-__instance_init__(this, o_bl_woodenblock, null, 0, 0, s_woodenblock, 1, 54);
+__instance_init__(this, o_bl_woodenblock, null, 0, 0, s_woodenblock, 1, 25);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3075,7 +3101,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_woodenblock = new __o_bl_woodenblock();
 
 function __o_bl_cave() {
-__instance_init__(this, o_bl_cave, null, 0, 0, s_cave, 1, 55);
+__instance_init__(this, o_bl_cave, null, 0, 0, s_woodenblock, 1, 26);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3121,7 +3147,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_cave = new __o_bl_cave();
 
 function __o_trampoline() {
-__instance_init__(this, o_trampoline, null, 1, 0, s_trampoline, 1, 56);
+__instance_init__(this, o_trampoline, null, 1, 0, s_trampoline, 1, 27);
 this.on_creation = function() {
 with(this) {
 image_speed = 0;
@@ -3167,7 +3193,7 @@ draw_sprite_ext(sprite_index, image_index, x, y+this.yoffset, 1, this.dir, 0, 1)
 }; var o_trampoline = new __o_trampoline();
 
 function __o_corpse() {
-__instance_init__(this, o_corpse, null, 1, 0, s_kot_burnt, 1, 58);
+__instance_init__(this, o_corpse, null, 1, 0, s_kot_burnt, 1, 29);
 this.on_creation = function() {
 with(this) {
 
@@ -3198,7 +3224,7 @@ draw_sprite_ext(sprite_index, 0, ceil(x), ceil(y), this.sprite_dir, -1, 0, 1);
 }; var o_corpse = new __o_corpse();
 
 function __o_mobile_buttons() {
-__instance_init__(this, o_mobile_buttons, null, 1, 0, s_dev_cube, 1, 59);
+__instance_init__(this, o_mobile_buttons, null, 1, 0, s_dev_cube, 1, 30);
 this.on_creation = function() {
 with(this) {
 this.mobc_u_x = 256;
@@ -3210,6 +3236,9 @@ this.mobc_l_y = 96;
 this.mobc_r_x = 80;
 this.mobc_r_y = 96;
 
+this.mobc_p_x = 256;
+this.mobc_p_y = 8;
+
 /*
 vkey_add(this.mobc_u_x, this.mobc_u_y, this.mobc_u_x+48, this.mobc_u_y+48, k_jump);
 vkey_add(this.mobc_l_x, this.mobc_l_y, this.mobc_l_x+48, this.mobc_l_y+48, k_left);
@@ -3220,6 +3249,8 @@ vkey_add(this.mobc_u_x, this.mobc_u_y, 48, 48, k_jump);
 
 vkey_add(this.mobc_l_x, this.mobc_l_y, 48, 48, k_left);
 vkey_add(this.mobc_r_x, this.mobc_r_y, 48, 48, k_right);
+
+vkey_add(this.mobc_p_x, this.mobc_p_y, 48, 48, k_pause);
 }
 };
 this.on_destroy = on_destroy_i;
@@ -3233,19 +3264,22 @@ this.on_draw = function() {
 if (this.visible == 1) {
 __handle_sprite__(this);
 with(this) {
-
-draw_sprite(s_mobc_l, 0, room_viewport_x+mobc_l_x, room_viewport_y+mobc_l_y);
-draw_sprite(s_mobc_r, 0,room_viewport_x+ mobc_r_x, room_viewport_y+mobc_r_y);
-draw_sprite(s_mobc_u, 0, room_viewport_x+mobc_u_x, room_viewport_y+mobc_u_y);
-
-draw_sprite_text(room_viewport_x+mouse_x-4, room_viewport_y+mouse_y-4, "+");
+if(mobile_controls_enabled) {
+	draw_set_alpha(0.25);
+	draw_sprite(s_mobc_l, 0, room_viewport_x+mobc_l_x, room_viewport_y+mobc_l_y);
+	draw_sprite(s_mobc_r, 0,room_viewport_x+ mobc_r_x, room_viewport_y+mobc_r_y);
+	draw_sprite(s_mobc_u, 0, room_viewport_x+mobc_u_x, room_viewport_y+mobc_u_y);
+	draw_sprite(s_mobc_p, 0, room_viewport_x+mobc_p_x, room_viewport_y+mobc_p_y);
+	draw_sprite_text(room_viewport_x+mouse_x-4, room_viewport_y+mouse_y-4, "+");
+	draw_set_alpha(1);
+}
 }
 }
 };
 }; var o_mobile_buttons = new __o_mobile_buttons();
 
 function __o_sign_noheli() {
-__instance_init__(this, o_sign_noheli, null, 1, 2, s_sign_noheli, 1, 192);
+__instance_init__(this, o_sign_noheli, null, 1, 2, s_sign_noheli, 1, 163);
 this.on_creation = function() {
 with(this) {
 this.activated = false;
@@ -3276,7 +3310,7 @@ this.on_draw = on_draw_i;
 }; var o_sign_noheli = new __o_sign_noheli();
 
 function __o_veh_heli() {
-__instance_init__(this, o_veh_heli, null, 1, 0, s_heli, 1, 193);
+__instance_init__(this, o_veh_heli, null, 1, 0, s_heli, 1, 164);
 this.on_creation = function() {
 with(this) {
 y -= 4;
@@ -3314,7 +3348,7 @@ draw_sprite(sprite_index, image_index, ceil(x), ceil(y+this.yoffset));
 }; var o_veh_heli = new __o_veh_heli();
 
 function __o_enemy_ratheli() {
-__instance_init__(this, o_enemy_ratheli, null, 1, 0, s_enemy_rat, 1, 194);
+__instance_init__(this, o_enemy_ratheli, null, 1, 0, s_enemy_rat, 1, 165);
 this.on_creation = function() {
 with(this) {
 image_speed = 0.25;
@@ -3395,7 +3429,7 @@ draw_sprite_ext(s_heli, image_index, ceil(x), ceil(y+1), 1*this.sprite_dir, 1, 0
 }; var o_enemy_ratheli = new __o_enemy_ratheli();
 
 function __o_enemy_cactus() {
-__instance_init__(this, o_enemy_cactus, null, 1, 0, s_enemy_cactus, 1, 195);
+__instance_init__(this, o_enemy_cactus, null, 1, 0, s_enemy_cactus, 1, 166);
 this.on_creation = function() {
 with(this) {
 this.bound = false;
@@ -3424,7 +3458,7 @@ this.on_draw = on_draw_i;
 }; var o_enemy_cactus = new __o_enemy_cactus();
 
 function __o_bl_sand() {
-__instance_init__(this, o_bl_sand, null, 0, 0, s_woodenblock, 1, 196);
+__instance_init__(this, o_bl_sand, null, 0, 0, s_woodenblock, 1, 167);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3470,7 +3504,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_sand = new __o_bl_sand();
 
 function __o_debug_marker() {
-__instance_init__(this, o_debug_marker, null, 1, 0, s_debug_line, 1, 197);
+__instance_init__(this, o_debug_marker, null, 1, 0, s_debug_line, 1, 168);
 this.on_creation = function() {
 with(this) {
 this.text = "";
@@ -3503,7 +3537,7 @@ if(debug) {
 }; var o_debug_marker = new __o_debug_marker();
 
 function __o_bl_tree() {
-__instance_init__(this, o_bl_tree, null, 0, 0, s_cave, 1, 198);
+__instance_init__(this, o_bl_tree, null, 0, 0, s_woodenblock, 1, 169);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3549,7 +3583,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_tree = new __o_bl_tree();
 
 function __o_enemy_crusher() {
-__instance_init__(this, o_enemy_crusher, null, 1, 1, s_enemy_crusher, 1, 199);
+__instance_init__(this, o_enemy_crusher, null, 1, 1, s_enemy_crusher, 1, 170);
 this.on_creation = function() {
 with(this) {
 
@@ -3622,7 +3656,7 @@ this.on_draw = on_draw_i;
 }; var o_enemy_crusher = new __o_enemy_crusher();
 
 function __o_bl_panel() {
-__instance_init__(this, o_bl_panel, null, 0, 0, s_cave, 1, 200);
+__instance_init__(this, o_bl_panel, null, 0, 0, s_woodenblock, 1, 171);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3668,7 +3702,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_panel = new __o_bl_panel();
 
 function __o_bl_wood() {
-__instance_init__(this, o_bl_wood, null, 0, 0, s_cave, 1, 201);
+__instance_init__(this, o_bl_wood, null, 0, 0, s_woodenblock, 1, 172);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3714,7 +3748,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_wood = new __o_bl_wood();
 
 function __o_enemy_missile() {
-__instance_init__(this, o_enemy_missile, null, 1, 0, s_enemy_missile, 1, 202);
+__instance_init__(this, o_enemy_missile, null, 1, 0, s_enemy_missile, 1, 173);
 this.on_creation = function() {
 with(this) {
 x += 8;
@@ -3770,7 +3804,7 @@ draw_sprite_ext(sprite_index, image_index, x, y, this.sprite_dir, 1, 0, 1);
 }; var o_enemy_missile = new __o_enemy_missile();
 
 function __o_bl_bigbrick() {
-__instance_init__(this, o_bl_bigbrick, null, 0, 0, s_cave, 1, 203);
+__instance_init__(this, o_bl_bigbrick, null, 0, 0, s_woodenblock, 1, 174);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3816,7 +3850,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_bigbrick = new __o_bl_bigbrick();
 
 function __o_platform() {
-__instance_init__(this, o_platform, null, 1, 0, s_platform, 1, 204);
+__instance_init__(this, o_platform, null, 1, 0, s_platform, 1, 175);
 this.on_creation = function() {
 with(this) {
 // no touchy
@@ -3867,7 +3901,7 @@ this.on_draw = on_draw_i;
 }; var o_platform = new __o_platform();
 
 function __o_platform_move_r() {
-__instance_init__(this, o_platform_move_r, null, 1, 0, s_platform, 1, 205);
+__instance_init__(this, o_platform_move_r, null, 1, 0, s_platform, 1, 176);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3888,7 +3922,7 @@ this.on_draw = on_draw_i;
 }; var o_platform_move_r = new __o_platform_move_r();
 
 function __o_platform_move_d() {
-__instance_init__(this, o_platform_move_d, null, 1, 0, s_platform, 1, 212);
+__instance_init__(this, o_platform_move_d, null, 1, 0, s_platform, 1, 179);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3909,7 +3943,7 @@ this.on_draw = on_draw_i;
 }; var o_platform_move_d = new __o_platform_move_d();
 
 function __o_platform_move_l() {
-__instance_init__(this, o_platform_move_l, null, 1, 0, s_platform, 1, 214);
+__instance_init__(this, o_platform_move_l, null, 1, 0, s_platform, 1, 181);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3930,7 +3964,7 @@ this.on_draw = on_draw_i;
 }; var o_platform_move_l = new __o_platform_move_l();
 
 function __o_platform_move_u() {
-__instance_init__(this, o_platform_move_u, null, 1, 0, s_platform, 1, 215);
+__instance_init__(this, o_platform_move_u, null, 1, 0, s_platform, 1, 182);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3951,7 +3985,7 @@ this.on_draw = on_draw_i;
 }; var o_platform_move_u = new __o_platform_move_u();
 
 function __o_platform_reverse() {
-__instance_init__(this, o_platform_reverse, null, 0, 0, s_dev_fill50, 1, 220);
+__instance_init__(this, o_platform_reverse, null, 0, 0, s_dev_fill50, 1, 187);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3964,7 +3998,7 @@ this.on_draw = on_draw_i;
 }; var o_platform_reverse = new __o_platform_reverse();
 
 function __o_platform_fall() {
-__instance_init__(this, o_platform_fall, null, 1, 0, s_platform, 1, 221);
+__instance_init__(this, o_platform_fall, null, 1, 0, s_platform, 1, 188);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3987,7 +4021,7 @@ this.on_draw = on_draw_i;
 }; var o_platform_fall = new __o_platform_fall();
 
 function __o_bl_huge() {
-__instance_init__(this, o_bl_huge, null, 1, 0, col_32x, 1, 222);
+__instance_init__(this, o_bl_huge, null, 1, 0, col_32x, 1, 189);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -4036,7 +4070,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_huge = new __o_bl_huge();
 
 function __o_bl_woodenhuge() {
-__instance_init__(this, o_bl_woodenhuge, null, 1, 0, col_32x, 1, 223);
+__instance_init__(this, o_bl_woodenhuge, null, 1, 0, col_32x, 1, 190);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -4060,7 +4094,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_woodenhuge = new __o_bl_woodenhuge();
 
 function __o_enemy_rathuge() {
-__instance_init__(this, o_enemy_rathuge, null, 1, 2, s_enemy_rathuge, 1, 224);
+__instance_init__(this, o_enemy_rathuge, null, 1, 2, s_enemy_rathuge, 1, 191);
 this.on_creation = function() {
 with(this) {
 x += character_spawn_offset_x*2;
@@ -4103,7 +4137,7 @@ with(this) {
 if(game_paused) return;
 if(x > room_viewport_x+room_viewport_width) return;
 if( y + 16 > room_height ) instance_destroy();
-if(x < room_viewport_x-64) instance_destroy()
+if(x < room_viewport_x-64) instance_destroy();
 
 if(place_meeting(x-this.vx, y, o_dev_solid) != null || place_meeting(x+this.vx, y, o_dev_solid) != null) { this.vx = -this.vx; this.sprite_dir = -this.sprite_dir}
 this.vy += this.gravity;
@@ -4171,7 +4205,7 @@ draw_sprite_ext(sprite_index, image_index, ceil(x), ceil(y), 1*this.sprite_dir, 
 }; var o_enemy_rathuge = new __o_enemy_rathuge();
 
 function __o_platform_lift() {
-__instance_init__(this, o_platform_lift, null, 1, 0, s_platform, 1, 225);
+__instance_init__(this, o_platform_lift, null, 1, 0, s_platform, 1, 192);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -4193,6 +4227,194 @@ this.on_roomend = on_roomend_i;
 this.on_animationend = on_animationend_i;
 this.on_draw = on_draw_i;
 }; var o_platform_lift = new __o_platform_lift();
+
+function __o_bl_groundalt() {
+__instance_init__(this, o_bl_groundalt, null, 1, 0, s_woodenblock, 1, 193);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = function() {
+with(this) {
+image_speed = 0;
+image_index = 0;
+
+this.hor = 0;
+this.ver = 0;
+this.bls = 16;
+
+if(y == 0) instance_create(x, y-this.bls, object_index);
+if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
+
+if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
+if(place_meeting(x-this.bls, y, object_index))
+{
+    if(this.hor == 1){this.hor = 2}
+    else{this.hor = 3}
+}
+
+if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
+if(place_meeting(x, y-this.bls, object_index))
+{
+    if(this.ver == 1){this.ver = 2}
+    else{this.ver = 3}
+}
+
+image_index = 4*this.ver + this.hor;
+tile_add(ts_groundalt, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
+if(!(y + 16 >= room_height && image_index == 14)) {
+	if(image_index != 10) instance_create(x, y, o_dev_solid);
+}
+instance_destroy();
+}
+};
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_bl_groundalt = new __o_bl_groundalt();
+
+function __o_bl_metal() {
+__instance_init__(this, o_bl_metal, null, 1, 0, s_woodenblock, 1, 194);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = function() {
+with(this) {
+image_speed = 0;
+image_index = 0;
+
+this.hor = 0;
+this.ver = 0;
+this.bls = 16;
+
+if(y == 0) instance_create(x, y-this.bls, object_index);
+if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
+
+if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
+if(place_meeting(x-this.bls, y, object_index))
+{
+    if(this.hor == 1){this.hor = 2}
+    else{this.hor = 3}
+}
+
+if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
+if(place_meeting(x, y-this.bls, object_index))
+{
+    if(this.ver == 1){this.ver = 2}
+    else{this.ver = 3}
+}
+
+image_index = 4*this.ver + this.hor;
+tile_add(ts_metal, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
+if(!(y + 16 >= room_height && image_index == 14)) {
+	if(image_index != 10) instance_create(x, y, o_dev_solid);
+}
+instance_destroy();
+}
+};
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_bl_metal = new __o_bl_metal();
+
+function __o_conveyor_l() {
+__instance_init__(this, o_conveyor_l, null, 1, 0, s_conveyor_l, 1, 195);
+this.on_creation = function() {
+with(this) {
+this.bound = false;
+image_speed = 0.1;
+instance_create(x, y, o_dev_solid);
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = function() {
+with(this) {
+if(x < room_viewport_x-64) instance_destroy();
+if(!this.bound) {
+	if(place_meeting(x-16, y, o_conveyor_l) != null) {
+		if(place_meeting(x+16, y, o_conveyor_l) != null) {
+			sprite_index = s_conveyor_m;
+		} else sprite_index = s_conveyor_r;
+	} else sprite_index = s_conveyor_l;
+	this.bound = true;
+}
+}
+};
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = function() {
+if (this.visible == 1) {
+__handle_sprite__(this);
+with(this) {
+draw_sprite_ext(sprite_index, image_index, x, y+16, 1, -1, 0, 1);
+}
+}
+};
+}; var o_conveyor_l = new __o_conveyor_l();
+
+function __o_conveyor_r() {
+__instance_init__(this, o_conveyor_r, null, 1, 0, s_conveyor_r, 1, 196);
+this.on_creation = function() {
+with(this) {
+this.bound = false;
+image_speed = 0.1;
+instance_create(x, y, o_dev_solid);
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = function() {
+with(this) {
+if(x < room_viewport_x-64) instance_destroy();
+if(this.bound) return;
+if(place_meeting(x-16, y, o_conveyor_r)) {
+	if(place_meeting(x+16, y, o_conveyor_r)) {
+		sprite_index = s_conveyor_m;
+	} else sprite_index = s_conveyor_r;
+} else sprite_index = s_conveyor_l;
+this.bound = true;
+}
+};
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_conveyor_r = new __o_conveyor_r();
+
+function __o_gamepad_test() {
+__instance_init__(this, o_gamepad_test, null, 1, 0, s_dev_unknown, 1, 239);
+this.on_creation = function() {
+with(this) {
+
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = function() {
+with(this) {
+
+}
+};
+this.on_end_step = on_end_step_i;
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = function() {
+if (this.visible == 1) {
+__handle_sprite__(this);
+with(this) {
+
+}
+}
+};
+}; var o_gamepad_test = new __o_gamepad_test();
 
 
 
@@ -4225,7 +4447,8 @@ this.objects = [
 [{o:o_kot, x:80, y:96}],
 [{o:o_camera, x:124, y:0}],
 [{o:o_hud, x:0, y:16}],
-[{o:o_world_generator, x:0, y:0}]];
+[{o:o_world_generator, x:0, y:0}],
+[{o:o_gamepad_test, x:0, y:32}]];
 this.start = function() {
 __room_start__(this, sc_game, 500000, 160, 60, 255, 255, 255, null, 1, 1, 0, 320, 160, o_camera, 320, 160);
 
@@ -4240,41 +4463,12 @@ function __sc_prototype() {
 this.tiles = [
 ];
 this.objects = [
-[{o:o_bl_ground, x:192, y:128}],
-[{o:o_bl_ground, x:192, y:128}],
-[{o:o_bl_ground, x:192, y:144}],
-[{o:o_bl_ground, x:208, y:144}],
-[{o:o_bl_ground, x:208, y:128}],
-[{o:o_bl_ground, x:224, y:128}],
-[{o:o_bl_ground, x:224, y:144}],
-[{o:o_bl_ground, x:240, y:144}],
-[{o:o_bl_ground, x:240, y:128}],
 [{o:o_bl_ground, x:80, y:128}],
 [{o:o_bl_ground, x:80, y:144}],
 [{o:o_bl_ground, x:64, y:144}],
 [{o:o_bl_ground, x:64, y:128}],
 [{o:o_bl_ground, x:48, y:128}],
 [{o:o_bl_ground, x:48, y:144}],
-[{o:o_bl_ground, x:336, y:96}],
-[{o:o_bl_ground, x:304, y:96}],
-[{o:o_bl_ground, x:320, y:96}],
-[{o:o_bl_ground, x:336, y:96}],
-[{o:o_bl_ground, x:336, y:112}],
-[{o:o_bl_ground, x:304, y:112}],
-[{o:o_bl_ground, x:320, y:112}],
-[{o:o_bl_ground, x:304, y:128}],
-[{o:o_bl_ground, x:320, y:128}],
-[{o:o_bl_ground, x:336, y:128}],
-[{o:o_bl_ground, x:336, y:144}],
-[{o:o_bl_ground, x:320, y:144}],
-[{o:o_bl_ground, x:304, y:144}],
-[{o:o_bl_ground, x:304, y:0}],
-[{o:o_bl_ground, x:304, y:16}],
-[{o:o_bl_ground, x:304, y:16}],
-[{o:o_bl_ground, x:320, y:16}],
-[{o:o_bl_ground, x:320, y:0}],
-[{o:o_bl_ground, x:336, y:16}],
-[{o:o_bl_ground, x:336, y:0}],
 [{o:o_kot, x:64, y:112}],
 [{o:o_hud, x:0, y:0}],
 [{o:o_bl_ground, x:384, y:80}],
@@ -4408,18 +4602,60 @@ this.objects = [
 [{o:o_bl_ground, x:768, y:48}],
 [{o:o_bl_ground, x:368, y:80}],
 [{o:o_platform, x:16, y:128}],
-[{o:o_platform, x:192, y:64}],
-[{o:o_platform, x:224, y:64}],
-[{o:o_platform, x:192, y:32}],
-[{o:o_platform, x:224, y:32}],
 [{o:o_platform_move_r, x:16, y:96}],
 [{o:o_platform_move_d, x:96, y:128}],
 [{o:o_platform_move_u, x:160, y:128}],
 [{o:o_bl_woodenblock, x:0, y:96}],
 [{o:o_bl_woodenblock, x:0, y:128}],
-[{o:o_bl_woodenblock, x:0, y:144}]];
+[{o:o_bl_woodenblock, x:0, y:144}],
+[{o:o_bl_metal, x:192, y:128}],
+[{o:o_bl_metal, x:192, y:144}],
+[{o:o_bl_metal, x:208, y:144}],
+[{o:o_bl_metal, x:192, y:128}],
+[{o:o_bl_metal, x:208, y:128}],
+[{o:o_bl_metal, x:224, y:128}],
+[{o:o_bl_metal, x:224, y:144}],
+[{o:o_bl_metal, x:208, y:144}],
+[{o:o_bl_metal, x:192, y:144}],
+[{o:o_bl_metal, x:240, y:128}],
+[{o:o_bl_metal, x:240, y:144}],
+[{o:o_bl_metal, x:256, y:144}],
+[{o:o_bl_metal, x:256, y:128}],
+[{o:o_bl_metal, x:256, y:112}],
+[{o:o_bl_metal, x:256, y:112}],
+[{o:o_bl_metal, x:272, y:112}],
+[{o:o_bl_metal, x:272, y:128}],
+[{o:o_bl_metal, x:272, y:144}],
+[{o:o_bl_metal, x:272, y:144}],
+[{o:o_bl_metal, x:192, y:32}],
+[{o:o_bl_metal, x:208, y:32}],
+[{o:o_bl_metal, x:208, y:32}],
+[{o:o_bl_metal, x:208, y:16}],
+[{o:o_bl_metal, x:192, y:16}],
+[{o:o_bl_metal, x:192, y:0}],
+[{o:o_bl_metal, x:208, y:0}],
+[{o:o_bl_metal, x:208, y:0}],
+[{o:o_bl_metal, x:128, y:32}],
+[{o:o_bl_metal, x:144, y:32}],
+[{o:o_bl_metal, x:320, y:144}],
+[{o:o_bl_metal, x:368, y:144}],
+[{o:o_bl_metal, x:368, y:128}],
+[{o:o_bl_metal, x:320, y:16}],
+[{o:o_bl_metal, x:320, y:32}],
+[{o:o_conveyor_l, x:352, y:128}],
+[{o:o_conveyor_l, x:336, y:128}],
+[{o:o_conveyor_l, x:320, y:128}],
+[{o:o_conveyor_l, x:304, y:128}],
+[{o:o_conveyor_l, x:288, y:128}],
+[{o:o_conveyor_r, x:208, y:112}],
+[{o:o_conveyor_r, x:224, y:112}],
+[{o:o_conveyor_r, x:240, y:112}]];
 this.start = function() {
 __room_start__(this, sc_prototype, 3200, 160, 60, 255, 255, 255, null, 1, 1, 0, 320, 160, o_kot, 320, 50);
+
+if(typeof dispconfLoad !== "undefined") {
+	dispconfLoad();
+}
 };
 }
 var sc_prototype = new __sc_prototype();
@@ -4468,6 +4704,15 @@ var character_spawn_offset_x = 4;
 var character_spawn_offset_y = 2;
 var mobile_controls_enabled = false;
 
+
+var gpad_active = 0;
+function gpadButton(num=-1) {
+	if (num == -1) return false;
+	if (!navigator.getGamepads()[0]) return false;
+	return navigator.getGamepads()[0].buttons[num].pressed
+}
+
+
 var k_jump = vk_space;
 var k_up = vk_up;
 var k_left = vk_left;
@@ -4489,7 +4734,7 @@ var camera_speedup_stage2increment = 240;
 var camera_debug_speed = 2;
 
 var game_meta_author = "micai";
-var game_meta_version = "0.9.3";
+var game_meta_version = "0.10-wip";
 var debug = false;
 var debug_showsolids = false;
 var sound_enabled = true;
@@ -4501,6 +4746,15 @@ tu_preloader_barstroke = "rgb(0, 0, 0)";
 tu_preloader_barfill = "rgb(0, 0, 0)";
 
 tu_canvas_css = "background: rgb(255, 255, 255); border: 0;";
+
+
+// FUNNY OVERRIDES OF ENGINE'S FUNCTIONS
+function __mousemovelistener__(_e) {
+	let _r = tu_canvas.getBoundingClientRect();
+	mouse_x = ((_e.clientX - _r.left)/(_r.right - _r.left)) * tu_canvas.width;
+	mouse_y = ((_e.clientY - _r.top)/(_r.bottom - _r.top)) * tu_canvas.height;
+	if (mouse_down) __touchsim__(mouse_x, mouse_y);
+};
 
 /***********************************************************************
  * CUSTOM GLOBAL FUNCTIONS
@@ -4526,6 +4780,8 @@ var prefab_chars = {
 	"D": o_bl_wood,
 	"H": o_bl_huge,
 	"J": o_bl_woodenhuge,
+	"F": o_bl_groundalt,
+	"M": o_bl_metal,
 	
 	// enemies
 	"r": o_enemy_rat,
@@ -4552,13 +4808,20 @@ var prefab_chars = {
 	"=": o_platform,
 	"-": o_platform_fall,
 	"+": o_platform_lift,
-	"|": o_platform_reverse
+	"|": o_platform_reverse,
+	
+	// conveyor belts
+	"(": o_conveyor_l,
+	")": o_conveyor_r
 	
 };
 
 function prefab_deploy(px, py, prefab, gap = 0, gapcei = "") { 
 	//console.time("prefab deploy time");
 	var content = prefab.content;
+	if(prefab.content_alt != null) {
+		if(Math.random() > 0.5) content = prefab.content_alt;
+	}
 	var len = content.length;
 	var cx = 0;
 	var cy = 0;
@@ -4622,6 +4885,7 @@ function prefab(bank, tags, content) {
 	this.bank = bank;
 	this.tags = tags;
 	this.content = content;
+	this.content_alt = null;
 }
 
 // Prefabs
@@ -4645,56 +4909,8 @@ var pr_spawnpoint_short = new prefab(0, 0, "\
 
 
 
-// BEGINNER PREFABS
-var pr_beginner_s1 = new prefab(0, 0, "\
-,\
-,\
-,\
-,\
-,\
-,\
-.........r,\
-.....GGGGG,\
-GGGGGGGGGG,\
-GGGGGGGGGG,\
-");
-var pr_beginner_s2 = new prefab(0, 0, "\
-,\
-,\
-,\
-,\
-,\
-........r,\
-.......WW,\
-......WWW,\
-GGGGGGGGG......WW,\
-GGGGGGGGG......WW,\
-");
-var pr_beginner_m1 = new prefab(0, 0, "\
-,\
-,\
-,\
-,\
-.....c,\
-,\
-,\
-........GGG,\
-GGG.....GGG,\
-GGG.....GGG,\
-");
-var pr_beginner_m2 = new prefab(0, 0, "\
-,\
-,\
-,\
-,\
-,\
-............r,\
-........TTTTT,\
-TTT.......T,\
-.T........T,\
-.T........T,\
-");
-var pr_beginner_m3 = new prefab(0, 0, "\
+// GRASS 1
+var pr_grass1_m1 = new prefab(0, 0, "\
 ,,,,\
 ................r,\
 ..........sGGGGGG,\
@@ -4703,7 +4919,7 @@ sGGGGGG...GGGGGGG,\
 GGGGGGG...GGGGGGG,\
 GGGGGGG...GGGGGGG,\
 ");
-var pr_beginner_m4 = new prefab(0, 0, "\
+var pr_grass1_m2 = new prefab(0, 0, "\
 ............DDDDDDDDDD,\
 ..................cDDD,\
 ...................DDD,\
@@ -4715,7 +4931,20 @@ DDD...DDD...DDD,\
 DDD...DDD...DDD...........DDD,\
 DDD...DDD...DDDDDDDDDDD...DDD,\
 ");
-var pr_beginner_m5 = new prefab(0, 0, "\
+pr_grass1_m2.content_alt = "\
+.DDDDDDDDDD,\
+.DDDc,\
+.DDD,\
+.DDD..DDDDD,\
+.DDD...cDDD,\
+.DDD....DDD,\
+.DDDDD..DDD,\
+........DDD,\
+........DDD,\
+DDDDDDD.DDD,\
+";
+
+var pr_grass1_m3 = new prefab(0, 0, "\
 ,\
 ..........c.....c,\
 ,\
@@ -4727,7 +4956,7 @@ var pr_beginner_m5 = new prefab(0, 0, "\
 .........t.......GGG,\
 GGGGGGGGGGG......GGG..\
 ");
-var pr_beginner_m6 = new prefab(0, 0, "\
+var pr_grass1_m4 = new prefab(0, 0, "\
 ................GGG,\
 ................GGG,\
 ,\
@@ -4739,19 +4968,7 @@ var pr_beginner_m6 = new prefab(0, 0, "\
 GGG...GGGGGGG...GGG,\
 GGG...GGGGGGG...GGG,\
 ");
-var pr_beginner_m7 = new prefab(0, 0, "\
-.......DDDDDDDDDD,\
-.......DDDc,\
-.......DDD,\
-.......DDD..DDDDD,\
-.......DDD...cDDD,\
-.......DDD....DDD...DDD,\
-.......DDDDD..DDD...DDD,\
-..............DDD...DDD,\
-..............DDD...DDD,\
-DDD...DDDDDDDDDDD...DDD,\
-");
-var pr_beginner_m8 = new prefab(0, 0, "\
+var pr_grass1_m5 = new prefab(0, 0, "\
 ,\
 ,\
 ,\
@@ -4763,7 +4980,7 @@ var pr_beginner_m8 = new prefab(0, 0, "\
 GGGGGGGGG,\
 GGGGGGGGG,\
 ");
-var pr_beginner_m9 = new prefab(0, 0, "\
+var pr_grass1_m6 = new prefab(0, 0, "\
 ,\
 ,\
 ,\
@@ -4775,7 +4992,19 @@ var pr_beginner_m9 = new prefab(0, 0, "\
 GGGGG...W...W...GGGGG,\
 GGGGG...W...W...GGGGG,\
 ");
-var pr_beginner_m10 = new prefab(0, 0, "\
+pr_grass1_m6.content_alt = "\
+,\
+,\
+,\
+,\
+..........c,\
+,\
+........W...W,\
+GGGGG...W...W...GGGGG,\
+GGGGG...W...W...GGGGG,\
+GGGGG...W...W...GGGGG,\
+";
+var pr_grass1_m7 = new prefab(0, 0, "\
 ,\
 ,\
 ,\
@@ -4784,10 +5013,10 @@ var pr_beginner_m10 = new prefab(0, 0, "\
 ................W,\
 ............W...W........r,\
 ........W...W...W...GGGGGG,\
-GGGGG...W...W...W...GGGGGG,\
+........W...W...W...GGGGGG,\
 GGGGG...W...W...W...GGGGGG,\
 ");
-var pr_beginner_h1 = new prefab(0, 0, "\
+var pr_grass1_m8 = new prefab(0, 0, "\
 ,\
 ,\
 ,\
@@ -4799,41 +5028,6 @@ var pr_beginner_h1 = new prefab(0, 0, "\
 GGGGG....t......t.,\
 GGGGG....W......W.,\
 ");
-var pr_beginner_r1 = new prefab(0, 0, "\
-..........................c,\
-,\
-.............................TTTTTTT,\
-...............r................T,\
-...........TTTTT................T,\
-.............T..................T,\
-.............T..........r.t.....T,\
-.......t.....T......TTTTTTT.....T,\
-GGGGGGGG.....T.........T........T,\
-GGGGGGGG.....T.........T........T.\
-");
-
-var pbank_beginner = new prefab_bank("beginner");
-pbank_beginner.length_min = 4;
-pbank_beginner.length_max = 5;
-pbank_beginner.gap_min = 3;
-pbank_beginner.gap_max = 4;
-pbank_beginner.repeat = false;
-pbank_beginner.middle = [pr_beginner_s1, pr_beginner_m1, pr_beginner_m2, pr_beginner_m3, pr_beginner_m4, pr_beginner_m6, pr_beginner_m7, pr_beginner_m8, pr_beginner_m9, pr_beginner_m10 ];
-pbank_beginner.rare = [ pr_beginner_r1 ];
-pbank_beginner.hard = [ pr_beginner_h1 ];
-
-var pr_grass1_m1 = new prefab(0, 0, "\
-.DDDDDDDDDD,\
-.DDDc,\
-.DDD,\
-.DDD..DDDDD,\
-.DDD...cDDD,\
-.DDD....DDD,\
-.DDDDD..DDD,\
-........DDD,\
-........DDD,\
-DDDDDDD.DDD,\
-");
 
 var pbank_grass1 = new prefab_bank("grass1");
 pbank_grass1.length_min = 2;
@@ -4841,7 +5035,7 @@ pbank_grass1.length_max = 3;
 pbank_grass1.gap_min = 3;
 pbank_grass1.gap_max = 4;
 pbank_grass1.repeat = false;
-pbank_grass1.middle = [ pr_beginner_h1, pr_grass1_m1, pr_beginner_m5, pr_beginner_m6, pr_beginner_m8, pr_beginner_m9, pr_beginner_m10 ];
+pbank_grass1.middle = [ pr_grass1_m1, pr_grass1_m2, pr_grass1_m3, pr_grass1_m4, pr_grass1_m5, pr_grass1_m6, pr_grass1_m7, pr_grass1_m8 ];
 
 
 // CASTLE 1
@@ -4953,6 +5147,18 @@ BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB,\
 BBB........t...BBBBc............BBB,\
 BBB...BBBBBB...BBBBBBBBBBBBBB...BBB,\
 ");
+pr_castle1_m6.content_alt = "\
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB,\
+........................BBBB....BBB,\
+........................BBBB....BBB,\
+........................BBBB,\
+...............BBBB.....BBBB,\
+...............BBBB.....BBBB,\
+...............BBBBss.csBBBB,\
+...............BBBBBB..BBBBB,\
+BBB........t...BBBBc............BBB,\
+BBB...BBBBBB...BBBBBBBBBBBBBB...BBB,\
+";
 var pr_castle1_m7 = new prefab(0, 0, "\
 BBBBB............BBBBBBBBBBBBBBBBB,\
 .......v....^............BBBB,\
@@ -5438,6 +5644,18 @@ RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
 RRRRR....R....R....R....R....RR,\
 RRRRR....R....R....R....R....RR,\
 ");
+pr_cave1_m7.content_alt = "\
+RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
+RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
+...................c.........RR,\
+.............................RR,\
+..............c....R,\
+...................R....c,\
+.........c....R....R,\
+..............R....R....R,\
+.........R....R....R....R....RR,\
+RRRRR....R....R....R....R....RR,\
+";
 
 var pbank_cave1 = new prefab_bank("cave1");
 pbank_cave1.length_min = 3;
@@ -5649,7 +5867,100 @@ pbank_panel1.gap_max = 4;
 pbank_panel1.repeat = false;
 pbank_panel1.middle = [pr_panel1_m1, pr_panel1_m2];
 
-var prefab_bank_first = pbank_beginner;
+
+var pr_ground1_m1 = new prefab(0, 0, "\
+..............,\
+..............,\
+......FF......,\
+.......F......,\
+......cF......,\
+......FF.....c,\
+.......F......,\
+.......F.....F,\
+F.F.FFFF.....F,\
+FFFFFFFF.....F");
+
+var pr_ground1_m2 = new prefab(0, 0, "\
+.........FF,\
+.........FF,\
+.........FF,\
+....FF...FF,\
+....FF.c.FF,\
+....FF.....,\
+....FF.....,\
+....FF.....,\
+..t.FF...FF,\
+FFF.FF...FF");
+
+var pr_ground1_m3 = new prefab(0, 0, "\
+........,\
+........,\
+........,\
+........,\
+......sF,\
+......FF,\
+..r...FF,\
+FFF...FF,\
+FFF...FF,\
+FFF...FF");
+
+var pr_ground1_m4 = new prefab(0, 0, "\
+...............FF,\
+...............FF,\
+...............FF,\
+...............FF,\
+..........-....FF,\
+...............FF,\
+.....-...........,\
+.................,\
+-.........cc.....,\
+...............FF");
+
+var pr_ground1_m5 = new prefab(0, 0, "\
+.....,\
+.....,\
+.....,\
+.....,\
+.....,\
+.....,\
+c...F,\
+....F,\
+F...F,\
+F...F");
+
+var pr_ground1_m6 = new prefab(0, 0, "\
+......FF...........,\
+......FF...........,\
+..................r,\
+......cc.......FFFF,\
+......FF.......FFFF,\
+...............FFFF,\
+...............FFFF,\
+..r............FFFF,\
+FFF...FF...t...FFFF,\
+FFF...FF...W...FFFF");
+
+pr_ground1_m6.alt_content = "\
+......FF...................,\
+......FF...................,\
+...........................,\
+......cc.......FF...-....-.,\
+......FF.......FF..........,\
+...............FF..........,\
+..r............FF..........,\
+FFF............FF........cc,\
+FFF...FF...t...FF..........,\
+FFF...FF...W...FF..........";
+
+var pbank_ground1 = new prefab_bank("ground1");
+pbank_ground1.length_min = 4;
+pbank_ground1.length_max = 5;
+pbank_ground1.gap_min = 3;
+pbank_ground1.gap_max = 3;
+pbank_ground1.repeat = false;
+pbank_ground1.middle = [pr_ground1_m1, pr_ground1_m2, pr_ground1_m3, pr_ground1_m4, pr_ground1_m5, pr_ground1_m6];
+
+var prefab_bank_first = pbank_grass1;
 var prefab_testing = null;
 var prefab_bank_testing = null;
 //var prefab_list = [pr_simple1, pr_simple2, pr_simple3, pr_simple4, pr_simple5, pr_simple6, pr_simple7, pr_simple8, pr_castle1, pr_castle2, pr_castle3, pr_castle4, pr_castle4, pr_castle5, pr_cave2, pr_cave1, pr_cave3, pr_clouds1, pr_clouds2];
@@ -5661,6 +5972,8 @@ GGGGG.G.GG,\
 ");
 
 // - - - - - - - - -
+const urlparams = new URLSearchParams(window.location.search);
+if(urlparams.get("prefabtest") != null) prefab_testing = new prefab(0, 0, urlparams.get("prefabtest"));
 function draw_sprite_text(x,y,text) { 
 for (i = 0; i < text.length+1; i += 1) {
 	if(text.charCodeAt(i)-32 > 0) draw_sprite(s_font, text.charCodeAt(i)-32, x+i*8, y);
