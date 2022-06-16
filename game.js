@@ -2973,6 +2973,7 @@ if(this.tick > 1000) {
 		case 3:
 			this.add_bank(pbank_panel1, 2);
 			this.add_bank(pbank_cave1, 0);
+			this.add_bank(pbank_factory1, 0);
 			this.move_bank(pbank_grass1, 0, 1);
 			this.move_bank(pbank_castle1, 1, 2);
 			break;
@@ -3633,7 +3634,7 @@ if(this.mode == -1) {
 if(this.mode == 0) {
 	this.vy = this.crushspeed;
 	this.tick = 0;
-	if(place_meeting(x, y+this.vy, o_dev_solid)) {
+	if(place_meeting(x, y+this.vy, o_dev_solid) || place_meeting(x, y+this.vy, o_platform_reverse)) {
 		this.mode = 1;
 		if(x < room_viewport_x+room_viewport_width) sound_c_play(snd_thump);
 	}
@@ -3877,6 +3878,7 @@ this.vx = 0;
 this.vy = 0;
 this.static = true;
 this.wrap = true;
+this.bounce = true;
 this.fall = false;
 this.fallspeed = 2;
 }
@@ -3887,8 +3889,14 @@ with(this) {
 if(x+sprite_index.width+64 < room_viewport_x) instance_destroy();
 
 if(!game_paused && !static) {
-	if(place_meeting(x+this.vx, y, o_dev_solid) || place_meeting(x+this.vx, y, o_platform_reverse)) this.vx = -this.vx;
-	if(place_meeting(x, y+this.vy, o_dev_solid) || place_meeting(x+this.vx, y, o_platform_reverse)) this.vy = -this.vy;
+	if(place_meeting(x+this.vx, y, o_dev_solid) || place_meeting(x+this.vx, y, o_platform_reverse)) {
+		if(this.bounce == true) this.vx = -this.vx;
+		else this.vx = 0;
+	}
+	if(place_meeting(x, y+this.vy, o_dev_solid) || place_meeting(x+this.vx, y, o_platform_reverse)) {
+		if(this.bounce == true) this.vy = -this.vy;
+		else this.vy = 0;
+	};
 
 	x += this.vx;
 	y += this.vy;
@@ -4026,6 +4034,7 @@ platform.vx = 0;
 platform.static = false;
 platform.fall = true;
 platform.wrap = false;
+platform.bounce = false;
 instance_destroy();
 }
 };
@@ -4233,6 +4242,7 @@ platform.vx = 0;
 platform.static = false;
 platform.fall = true;
 platform.wrap = false;
+platform.bounce = false;
 platform.fallspeed = -2;
 instance_destroy();
 }
