@@ -1820,7 +1820,6 @@ this.gravity = 0.5;
 this.jumppower = 8;
 this.accel = 0.5;
 this.jumpbrake = 0.6;
-this.jumptrampoline = 1.6;
 this.vx_max = 3;
 this.vy_max = 3;
 this.enemy_bounce = 0.75;
@@ -2121,7 +2120,7 @@ let trmp = place_meeting(x, y+2, o_trampoline);
 if(trmp == null) trmp = place_meeting(x, y-2, o_trampoline); 
 if(trmp != null) {
 	sound_c_play(snd_trampoline);
-	this.vy = (-this.jumppower * this.jumptrampoline)*trmp.dir;
+	this.vy = (-this.jumppower * trmp.jumpmult)*trmp.dir;
 	this.jumpbrake_disabled = true;
 	trmp.image_speed = 0.5;
 }
@@ -2765,7 +2764,9 @@ if(prefab_testing == null) {
 	prefab_deploy(0, 0, pr_spawnpoint, 3);
 } else {
 	prefab_deploy(0, 0, pr_spawnpoint_short, 4);
+	if(prefab_testing_heli == true) prefab_deploy(prefab_len_total, 0, pr_heli1_s1, 4);
 	prefab_deploy(prefab_len_total, 0, prefab_testing, 4);
+	if(prefab_testing_heli == true) prefab_deploy(prefab_len_total, 0, pr_heli1_e1, 4);
 }
 
 this.start = null;
@@ -3163,6 +3164,7 @@ with(this) {
 image_speed = 0;
 this.dir = 0;
 this.yoffset = 0;
+this.jumpmult = 1.6;
 instance_create(x, y, o_dev_solid);
 }
 };
@@ -4490,7 +4492,7 @@ this.on_draw = on_draw_i;
 }; var o_enemy_crush_up = new __o_enemy_crush_up();
 
 function __o_enemy_ratheli_stay() {
-__instance_init__(this, o_enemy_ratheli_stay, null, 1, 0, s_enemy_rat, 1, 239);
+__instance_init__(this, o_enemy_ratheli_stay, null, 1, 0, s_enemy_ratheli, 1, 239);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = function() {
@@ -5726,9 +5728,9 @@ RRRRR....R....R....R....R....RR,\
 pr_cave1_m7.content_alt = "\
 RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
 RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
-...................c.........RR,\
 .............................RR,\
-..............c....R,\
+...................c.........RR,\
+..............c.....,\
 ...................R....c,\
 .........c....R....R,\
 ..............R....R....R,\
@@ -6147,6 +6149,7 @@ pbank_factory1.middle = [pr_factory1_m1, pr_factory1_m2, pr_factory1_m3, pr_fact
 var prefab_bank_first = pbank_grass1;
 var prefab_testing = null;
 var prefab_bank_testing = null;
+var prefab_testing_heli = false;
 //var prefab_list = [pr_simple1, pr_simple2, pr_simple3, pr_simple4, pr_simple5, pr_simple6, pr_simple7, pr_simple8, pr_castle1, pr_castle2, pr_castle3, pr_castle4, pr_castle4, pr_castle5, pr_cave2, pr_cave1, pr_cave3, pr_clouds1, pr_clouds2];
 
 var test_prefab = new prefab(0, 0, "\
@@ -6158,6 +6161,7 @@ GGGGG.G.GG,\
 // - - - - - - - - -
 const urlparams = new URLSearchParams(window.location.search);
 if(urlparams.get("prefabtest") != null) prefab_testing = new prefab(0, 0, urlparams.get("prefabtest"));
+if(urlparams.get("helitest") != null) prefab_testing_heli = true;
 function draw_sprite_text(x,y,text) { 
 for (i = 0; i < text.length+1; i += 1) {
 	if(text.charCodeAt(i)-32 > 0) draw_sprite(s_font, text.charCodeAt(i)-32, x+i*8, y);
