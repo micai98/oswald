@@ -1600,6 +1600,10 @@ function __s_enemy_ratheli() {
 __sprite_init__(this, s_enemy_ratheli, 32, 32, 16, 16, 'Box', 16, 9, 23, 8, 24, ['img/s_enemy_ratheli_0.png','img/s_enemy_ratheli_1.png','img/s_enemy_ratheli_2.png','img/s_enemy_ratheli_3.png','img/s_enemy_ratheli_4.png','img/s_enemy_ratheli_5.png','img/s_enemy_ratheli_6.png']);
 }; var s_enemy_ratheli = new __s_enemy_ratheli();
 
+function __s_water() { 
+__sprite_init__(this, s_water, 16, 16, 0, 0, 'Box', 8, 0, 16, 0, 16, ['img/s_water_0.png','img/s_water_1.png','img/s_water_2.png','img/s_water_3.png','img/s_water_4.png','img/s_water_5.png','img/s_water_6.png','img/s_water_7.png']);
+}; var s_water = new __s_water();
+
 
 
 /***********************************************************************
@@ -1888,6 +1892,13 @@ function playermode(name) {
 
 // Foot mode (default)
 this.m_foot = new playermode("foot"); // no custom settings, will use default ones
+
+// Swim mode
+this.m_swim = new playermode("swim"); // no custom settings, will use default ones
+this.m_swim.gravity = 0.2;
+this.m_swim.friction = 0.9;
+this.m_swim.jumppower = 4;
+
 
 // Heli mode
 this.m_heli = new playermode("heli");
@@ -4522,6 +4533,23 @@ this.on_animationend = on_animationend_i;
 this.on_draw = on_draw_i;
 }; var o_enemy_ratheli_stay = new __o_enemy_ratheli_stay();
 
+function __o_water() {
+__instance_init__(this, o_water, null, 1, 0, s_water, 1, 240);
+this.on_creation = function() {
+with(this) {
+image_speed  = 0.1;
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = on_end_step_i;
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_water = new __o_water();
+
 
 
 /***********************************************************************
@@ -4751,7 +4779,9 @@ this.objects = [
 [{o:o_bl_groundalt, x:160, y:144}],
 [{o:o_bl_groundalt, x:160, y:128}],
 [{o:o_bl_groundalt, x:176, y:128}],
-[{o:o_bl_groundalt, x:176, y:144}]];
+[{o:o_bl_groundalt, x:176, y:144}],
+[{o:o_water, x:112, y:128}],
+[{o:o_water, x:128, y:128}]];
 this.start = function() {
 __room_start__(this, sc_prototype, 3200, 160, 60, 255, 255, 255, null, 1, 1, 0, 320, 160, o_kot, 320, 50);
 
@@ -4899,6 +4929,7 @@ var prefab_chars = {
 	// bonus
 	"c": o_coin,
 	"t": o_trampoline,
+	"w": o_water,
 	
 	// vehicles
 	"h": o_veh_heli,
