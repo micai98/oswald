@@ -2364,7 +2364,7 @@ this.other = this.place_meeting(this.x, this.y, o_watercurrent);
 if(this.other != null) {
 this.vye = other.vforce;
 this.vxe = other.hforce;
-this.nogravity = true;
+if(other.vforce < 0) this.nogravity = true;
 }
 this.other = this.place_meeting(this.x, this.y, o_enemy_fishjump);
 if(this.other != null) {
