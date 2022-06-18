@@ -1604,6 +1604,18 @@ function __s_water() {
 __sprite_init__(this, s_water, 16, 16, 0, 0, 'Box', 8, 0, 16, 0, 16, ['img/s_water_0.png','img/s_water_1.png','img/s_water_2.png','img/s_water_3.png','img/s_water_4.png','img/s_water_5.png','img/s_water_6.png','img/s_water_7.png']);
 }; var s_water = new __s_water();
 
+function __s_enemy_fish() { 
+__sprite_init__(this, s_enemy_fish, 18, 16, 9, 8, 'Box', 9, 2, 16, 4, 13, ['img/s_enemy_fish_0.png','img/s_enemy_fish_1.png']);
+}; var s_enemy_fish = new __s_enemy_fish();
+
+function __s_bubble() { 
+__sprite_init__(this, s_bubble, 4, 4, 2, 2, 'Box', 2, 0, 4, 0, 4, ['img/s_bubble_0.png']);
+}; var s_bubble = new __s_bubble();
+
+function __s_enemy_fish2() { 
+__sprite_init__(this, s_enemy_fish2, 18, 16, 9, 8, 'Box', 9, 0, 18, 3, 14, ['img/s_enemy_fish2_0.png','img/s_enemy_fish2_1.png']);
+}; var s_enemy_fish2 = new __s_enemy_fish2();
+
 
 
 /***********************************************************************
@@ -1722,6 +1734,9 @@ __background_init__(this, ts_metal, 'img/ts_metal_strip16.png')}; var ts_metal =
 function __ts_pipe() { 
 __background_init__(this, ts_pipe, 'img/ts_pipe_strip16.png')}; var ts_pipe = new __ts_pipe();
 
+function __ts_bridge() { 
+__background_init__(this, ts_bridge, 'img/ts_bridge_strip16.png')}; var ts_bridge = new __ts_bridge();
+
 
 
 /***********************************************************************
@@ -1793,7 +1808,7 @@ y += character_spawn_offset_y;
 ystart += character_spawn_offset_y;
 
 // Variables
-this.distance_travelled = 0;
+this.distance_travelled = xstart;
 
 this.vx = 0;
 this.vy = 0;
@@ -1815,7 +1830,8 @@ this.xsafe = x;
 this.ysafe = y;
 this.grounded = false;
 this.dead = false;
-
+this.modetick = 0;
+this.nogravity = false;
 
 // Properties
 this.friction = 0.8;
@@ -1878,6 +1894,7 @@ function playermode(name) {
 		me.decoration_frame = 0;
 		me.stomp_lenient = this.stomp_lenient;
 		me.stomp_offset = this.stomp_offset;
+		me.modetick = 0;
 		this.begin(me);
 	}
 	
@@ -1894,11 +1911,33 @@ function playermode(name) {
 this.m_foot = new playermode("foot"); // no custom settings, will use default ones
 
 // Swim mode
-this.m_swim = new playermode("swim"); // no custom settings, will use default ones
-this.m_swim.gravity = 0.2;
-this.m_swim.friction = 0.9;
+this.m_swim = new playermode("swim");
+this.m_swim.gravity = 0.15;
+this.m_swim.friction = 0.925;
 this.m_swim.jumppower = 4;
+this.m_swim.accel = 0.25;
+this.m_swim.vy_max = 2;
 
+this.m_swim.begin = function(me) {
+	
+}
+
+this.m_swim.update = function(me) {
+	if(me.modetick > 40) {
+		me.modetick = 0;
+		instance_create(me.x+(5*me.sprite_dir), me.y-2, o_deco_bubble);
+	}
+	if(me.keyx != 0) image_speed = 0.1;
+}
+
+this.m_swim.jump = function(me) {
+	if(place_meeting(me.x, me.y-this.jumppower, o_dev_solid) == null) {
+		me.jumpbuffer = 0;
+		me.vy = -this.jumppower;
+		sound_c_play(snd_float);
+		instance_create(me.x+(5*me.sprite_dir), me.y-2, o_deco_bubble);
+	}
+}
 
 // Heli mode
 this.m_heli = new playermode("heli");
@@ -1998,15 +2037,10 @@ if(game_paused) {
 	return;
 }
 
-// Get direction from speed
-this.dirx = Math.sign(vx);
-this.diry = Math.sign(vy);
-if(this.dirx != 0) this.dirx_last = this.dirx;
-if(this.diry != 0) this.diry_last = this.diry;
-
 // - Controls and movement -
 if(!this.dead) {
 	this.mode.update(this);
+	this.modetick += 1;
 	// Jumping
 	if(input_pressed(k_up, k_jump, vk_w)) {
 		game_started = true;
@@ -2024,7 +2058,7 @@ if(!this.dead) {
 	
 	// Falling
 	if(!this.grounded) {
-		this.vy += this.gravity;
+		if(!this.nogravity) this.vy += this.gravity;
 		if(this.coyote > 0) this.coyote -= 1;
 	} else {
 		this.coyote = this.coyote_max;
@@ -2035,10 +2069,11 @@ if(!this.dead) {
 	if(this.vx < -this.vx_max) this.vx = -this.vx_max;
 	x += this.vx;
 	y += this.vy;
-	x += this.vxe;
-	y += this.vye;
+	if(place_meeting(x+this.vxe, y, o_dev_solid) == null) x += this.vxe;
+	if(place_meeting(x, y+this.vye, o_dev_solid) == null) y += this.vye;
 	this.vxe = 0;
 	this.vye = 0;
+	this.nogravity = false;
 
 	// Horizontal movement
 	this.keyx = ((input_down_int(k_right, vk_d) || gpadButton(15)) - (input_down_int(k_left, vk_a) || gpadButton(14)));
@@ -2061,9 +2096,17 @@ let stompable = place_meeting(x, y+vy, o_enemy_rat);
 if(stompable == null) stompable = place_meeting(x, y+vy, o_enemy_ratheli);
 if(stompable == null) stompable = place_meeting(x, y+vy, o_enemy_missile);
 if(stompable == null) stompable = place_meeting(x, y+vy, o_enemy_rathuge);
+if(stompable == null) stompable = place_meeting(x, y+vy, o_enemy_fish);
+if(stompable == null) stompable = place_meeting(x, y+vy, o_enemy_fishjump);
 if(stompable != null && this.vy > 0) {
 	this.try_stomp(other);
 }
+
+// Get direction from speed
+this.dirx = Math.sign(vx);
+this.diry = Math.sign(vy);
+if(this.dirx != 0) this.dirx_last = this.dirx;
+if(this.diry != 0) this.diry_last = this.diry;
 
 // - Collision detection -
 // Vertical
@@ -2164,8 +2207,8 @@ if(game_paused || this.dead) return;
 this.mode.lateupdate(this);
 
 if(x > this.distance_travelled) { 
-	this.distance_travelled = x;
-	hud_object.score += floor(abs(player_object.vx*0.3));
+	hud_object.score += floor(x-this.distance_travelled);
+	this.distance_travelled = floor(x);
 }
 
 // Dont let him go out of bounds
@@ -2175,6 +2218,15 @@ if(y < -10) y = -10;
 /* debug shit delete later */
 //if(y+11 > room_height) { y = room_height-11; this.grounded = true }
 if(keyboard_check(vk_ctrl) && debug) { x = camera_object.x; y = camera_object.y+43; vx = 0; vy = 0; }
+
+if(keyboard_check_pressed(vk_v)) {
+	instance_create(32, 32, o_bl_bigbrick);
+	x = 20;
+	y = 16;
+	this.vx = 3;
+	this.vy = 3;
+	
+}
 }
 };
 this.on_collision = function() {
@@ -2263,6 +2315,81 @@ if(!other.dead && !this.dead) {
 	}
 }
 }
+this.other = this.place_meeting(this.x, this.y, o_water);
+if(this.other != null) {
+if(this.mode == this.m_foot) {
+	if(this.vy > 0.5) {
+		this.m_swim.activate(this);
+		this.vy += 1;
+		for(let i=0; i<=20; i += 2) {
+			setTimeout(function(me) {
+				instance_create(me.x+random_int(-8, 8), me.y+16+random_int(-3, 3), o_deco_bubble);
+			}, i*10, this);
+		}
+	}
+}
+}
+this.other = this.place_meeting(this.x, this.y, o_water_disable);
+if(this.other != null) {
+if(this.mode == this.m_swim && this.vy < 1) {
+	this.m_foot.activate(this);
+	this.vy = -jumppower;
+}
+}
+this.other = this.place_meeting(this.x, this.y, o_enemy_fish);
+if(this.other != null) {
+if(!this.dead && !other.dead) {
+	if(this.mode == this.m_foot) {
+		if(this.vy > -1) {
+			other.die();
+			sound_c_play(snd_stomp);
+			hud_object.score += 200;
+			if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
+			else this.vy = -(this.jumppower * this.enemy_bounce);
+		} else {
+			this.die();
+		}
+	} else {
+		
+		if(this.y+6 < other.y) {
+			other.die();
+			sound_c_play(snd_stomp);
+			hud_object.score += 200;
+			this.vy = -this.jumppower;
+		} else this.die();
+	}
+}
+}
+this.other = this.place_meeting(this.x, this.y, o_watercurrent);
+if(this.other != null) {
+this.vye = other.vforce;
+this.vxe = other.hforce;
+this.nogravity = true;
+}
+this.other = this.place_meeting(this.x, this.y, o_enemy_fishjump);
+if(this.other != null) {
+if(!this.dead && !other.dead) {
+	if(this.mode == this.m_foot) {
+		if(this.vy > -1 && this.y+8< other.y) {
+			other.die();
+			sound_c_play(snd_stomp);
+			hud_object.score += 300;
+			if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
+			else this.vy = -(this.jumppower * this.enemy_bounce);
+		} else {
+			this.die();
+		}
+	} else {
+		
+		if(this.y+6 < other.y) {
+			other.die();
+			sound_c_play(snd_stomp);
+			hud_object.score += 300;
+			this.vy = -this.jumppower;
+		} else this.die();
+	}
+}
+}
 }
 };
 this.on_roomstart = on_roomstart_i;
@@ -2295,6 +2422,7 @@ with(this) {
 camera_object = this;
 
 this.vx = camera_speed_start;
+if(prefab_testing_speed != 0) this.vx = prefab_testing_speed;
 this.tick = 0;
 this.interval = camera_speedup_interval;
 this.increment = camera_speedup_increment;
@@ -3645,7 +3773,7 @@ if(this.mode == -1) {
 if(this.mode == 0) {
 	this.vy = this.crushspeed;
 	this.tick = 0;
-	if(place_meeting(x, y+this.vy, o_dev_solid) || place_meeting(x, y+this.vy, o_platform_reverse)) {
+	if(place_meeting(x, y+this.vy, o_dev_solid) || place_meeting(x, y+this.vy, o_platform_reverse) || y+this.vy >= room_height-16) {
 		this.mode = 1;
 		if(x < room_viewport_x+room_viewport_width) sound_c_play(snd_thump);
 	}
@@ -4538,6 +4666,168 @@ __instance_init__(this, o_water, null, 1, 0, s_water, 1, 240);
 this.on_creation = function() {
 with(this) {
 image_speed  = 0.1;
+instance_create(x, y-16, o_water_disable);
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = function() {
+with(this) {
+if(x < room_viewport_x-48) instance_destroy();
+}
+};
+this.on_end_step = on_end_step_i;
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_water = new __o_water();
+
+function __o_water_disable() {
+__instance_init__(this, o_water_disable, null, 0, 0, col_16x, 1, 243);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = function() {
+with(this) {
+if(x < room_viewport_x-48) instance_destroy();
+}
+};
+this.on_end_step = on_end_step_i;
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_water_disable = new __o_water_disable();
+
+function __o_enemy_fish() {
+__instance_init__(this, o_enemy_fish, null, 1, 0, s_enemy_fish, 1, 244);
+this.on_creation = function() {
+with(this) {
+image_speed = 0.1;
+
+x += character_spawn_offset_x;
+xstart += character_spawn_offset_x;
+y += character_spawn_offset_y;
+ystart += character_spawn_offset_y;
+
+this.vx = -0.75;
+this.vy = 0;
+this.vy_dir = 0.35;
+this.vy_max = 0.35;
+this.vy_dir_max = 0.05;
+
+this.sprite_dir = -1;
+this.grounded = false;
+this.dead = false;
+this.dead_fade = 0;
+this.dead_fade_max = 60;
+
+this.die = function() {
+	this.dead = true;
+	spawn_corpse(x, y, sprite_index, sprite_dir, 0, 2);
+	instance_destroy();
+}
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = function() {
+with(this) {
+if(game_paused) return;
+if(x-8 > room_viewport_x+room_viewport_width) return;
+if(x < room_viewport_x-despawn_margin) instance_destroy()
+
+let svx = sign(this.vx);
+if(svx != 0) this.sprite_dir = svx;
+
+if(this.vy > this.vy_max) { this.vy_dir = -this.vy_dir_max };
+if(this.vy < -this.vy_max) { this.vy_dir = this.vy_dir_max };
+if(game_timer % 10 == 0) this.vy += this.vy_dir;
+
+if(place_meeting(x, y+this.vy, o_dev_solid) || y < 8 || y > room_height - 8) {
+	this.vy_dir = -this.vy_dir;
+	this.vy = -this.vy;
+}
+
+if(place_meeting(x+this.vx, y, o_dev_solid)) {
+	this.vx = -this.vx;
+}
+
+x += this.vx;
+y += this.vy;
+}
+};
+this.on_end_step = on_end_step_i;
+this.on_collision = function() {
+with(this) {
+this.other = this.place_meeting(this.x, this.y, o_dev_solid);
+if(this.other != null) {
+if(place_meeting(x+vx, y-vy, o_dev_solid)) {
+	this.vx = -this.vx;
+}
+}
+}
+};
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = function() {
+if (this.visible == 1) {
+__handle_sprite__(this);
+with(this) {
+draw_sprite_ext(sprite_index, image_index, ceil(x), ceil(y), 1*this.sprite_dir, 1, 0, 1);
+//draw_sprite_ext(sprite_index, 1, ceil(x), ceil(y), 1*this.sprite_dir, 1, 0, 1);
+//draw_sprite_ext(s_heli, image_index, ceil(x), ceil(y+1), 1*this.sprite_dir, 1, 0, 1);
+
+}
+}
+};
+}; var o_enemy_fish = new __o_enemy_fish();
+
+function __o_deco_bubble() {
+__instance_init__(this, o_deco_bubble, null, 1, 0, s_bubble, 1, 245);
+this.on_creation = function() {
+with(this) {
+this.tick = 0;
+this.tick_limit = random_int(30, 60);
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = function() {
+with(this) {
+y -= 1.5;
+this.tick += 1;
+if(this.tick >= this.tick_limit) instance_destroy();
+if(place_meeting(x,y,o_dev_solid)) instance_destroy();
+//if(place_meeting(x,y,o_water)) instance_destroy();
+if(place_meeting(x,y,o_water_disable)) instance_destroy();
+}
+};
+this.on_end_step = on_end_step_i;
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = function() {
+if (this.visible == 1) {
+__handle_sprite__(this);
+with(this) {
+draw_sprite(sprite_index, 0, ceil(x), ceil(y));
+}
+}
+};
+}; var o_deco_bubble = new __o_deco_bubble();
+
+function __o_watercurrent() {
+__instance_init__(this, o_watercurrent, null, 1, 0, col_16x, 1, 246);
+this.on_creation = function() {
+with(this) {
+this.hforce = 0;
+this.vforce = 0;
+
+this.bub1y = random_int(0,4); this.bub1x = random_int(0,14);
+this.bub2y = random_int(0,4); this.bub2x = random_int(0,14);
+this.bub3y = random_int(0,4); this.bub3x = random_int(0,14);
 }
 };
 this.on_destroy = on_destroy_i;
@@ -4547,8 +4837,258 @@ this.on_collision = on_collision_i;
 this.on_roomstart = on_roomstart_i;
 this.on_roomend = on_roomend_i;
 this.on_animationend = on_animationend_i;
+this.on_draw = function() {
+if (this.visible == 1) {
+__handle_sprite__(this);
+with(this) {
+if(game_paused) return;
+if(x-8 > room_viewport_x+room_viewport_width) return;
+if(x < room_viewport_x-despawn_margin) instance_destroy()
+
+if(this.bub1x > 14) { this.bub1x = random_int(0,4); this.bub1y = random_int(0,14); }
+if(this.bub1x < 0) { this.bub1x = random_int(0,14); this.bub1y = random_int(0,14); }
+if(this.bub2x > 14) { this.bub2x = random_int(0,4); this.bub2y = random_int(0,14); }
+if(this.bub2x < 0) { this.bub2x = random_int(0,14); this.bub2y = random_int(0,14); }
+
+if(this.bub1y > 14) { this.bub1y = random_int(0,4); this.bub1x = random_int(0,14); }
+if(this.bub1y < 0) { this.bub1y = random_int(0,14); this.bub1x = random_int(0,14); }
+if(this.bub2y > 14) { this.bub2y = random_int(0,4); this.bub2x = random_int(0,14); }
+if(this.bub2y < 0) { this.bub2y = random_int(0,14); this.bub2x = random_int(0,14); }
+
+//if(this.bub3y > 14) { this.bub3y = random_int(0,4); this.bub3x = random_int(0,14); }
+
+this.bub1x += this.hforce * 0.25;
+this.bub2x += this.hforce * 0.25;
+
+this.bub1y += this.vforce * 0.25;
+this.bub2y += this.vforce * 0.25;
+//this.bub3y += 0.25;
+
+draw_sprite(s_bubble, 0, ceil(x+this.bub1x), ceil(y+this.bub1y));
+draw_sprite(s_bubble, 0, ceil(x+this.bub2x), ceil(y+this.bub2y));
+//draw_sprite(s_bubble, 0, x+this.bub3x, y+this.bub3y);
+}
+}
+};
+}; var o_watercurrent = new __o_watercurrent();
+
+function __o_watercurrent_l() {
+__instance_init__(this, o_watercurrent_l, null, 1, 0, s_bubble, 1, 247);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = function() {
+with(this) {
+let nwc = instance_create(x, y, o_watercurrent);
+nwc.hforce = -2;
+nwc.vforce = 0;
+instance_destroy();
+}
+};
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
 this.on_draw = on_draw_i;
-}; var o_water = new __o_water();
+}; var o_watercurrent_l = new __o_watercurrent_l();
+
+function __o_watercurrent_r() {
+__instance_init__(this, o_watercurrent_r, null, 1, 0, s_bubble, 1, 248);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = function() {
+with(this) {
+let nwc = instance_create(x, y, o_watercurrent);
+nwc.hforce = 2;
+nwc.vforce = 0;
+instance_destroy();
+}
+};
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_watercurrent_r = new __o_watercurrent_r();
+
+function __o_watercurrent_u() {
+__instance_init__(this, o_watercurrent_u, null, 1, 0, s_bubble, 1, 249);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = function() {
+with(this) {
+let nwc = instance_create(x, y, o_watercurrent);
+nwc.hforce = 0;
+nwc.vforce = -2.5;
+instance_destroy();
+}
+};
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_watercurrent_u = new __o_watercurrent_u();
+
+function __o_watercurrent_d() {
+__instance_init__(this, o_watercurrent_d, null, 1, 0, s_bubble, 1, 250);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = function() {
+with(this) {
+let nwc = instance_create(x, y, o_watercurrent);
+nwc.hforce = 0;
+nwc.vforce = 2;
+instance_destroy();
+}
+};
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_watercurrent_d = new __o_watercurrent_d();
+
+function __o_bl_bridge() {
+__instance_init__(this, o_bl_bridge, null, 1, 0, s_woodenblock, 1, 251);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = function() {
+with(this) {
+image_speed = 0;
+image_index = 0;
+
+this.hor = 0;
+this.ver = 0;
+this.bls = 16;
+
+if(y == 0) instance_create(x, y-this.bls, object_index);
+if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
+
+if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
+if(place_meeting(x-this.bls, y, object_index))
+{
+    if(this.hor == 1){this.hor = 2}
+    else{this.hor = 3}
+}
+
+if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
+if(place_meeting(x, y-this.bls, object_index))
+{
+    if(this.ver == 1){this.ver = 2}
+    else{this.ver = 3}
+}
+
+image_index = 4*this.ver + this.hor;
+tile_add(ts_bridge, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
+if(!(y + 16 >= room_height && image_index == 14)) {
+	if(image_index != 10) instance_create(x, y, o_dev_solid);
+}
+instance_destroy();
+}
+};
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_bl_bridge = new __o_bl_bridge();
+
+function __o_enemy_fishjump() {
+__instance_init__(this, o_enemy_fishjump, null, 1, 0, s_enemy_fish2, 1, 252);
+this.on_creation = function() {
+with(this) {
+image_speed = 0.1;
+
+x += character_spawn_offset_x;
+xstart += character_spawn_offset_x;
+y += character_spawn_offset_y;
+ystart += character_spawn_offset_y;
+
+y = room_height;
+
+this.vx = 0;
+this.vy = 0;
+this.vx_accel = -0.25;
+this.vx_max = 2.5;
+
+this.gravity = 0.3;
+
+this.fired = false;
+this.sprite_dir = -1;
+this.falling = false;
+this.dead = false;
+
+this.die = function() {
+	this.dead = true;
+	spawn_corpse(x, y, sprite_index, sprite_dir, 0, 2);
+	instance_destroy();
+}
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = function() {
+with(this) {
+if(game_paused) return;
+if(x-8 > room_viewport_x+room_viewport_width) return;
+if(x < room_viewport_x-despawn_margin) instance_destroy()
+
+let svx = sign(this.vx);
+if(svx != 0) this.sprite_dir = svx;
+
+this.vx += this.vx_accel;
+if(this.vx > this.vx_max) this.vx = this.vx_max;
+if(this.vx < -this.vx_max) this.vx = -this.vx_max;
+
+if(!this.fired) {
+	this.fired = true;
+	this.vy = -6;
+}
+
+if(!this.falling && y <= ystart) {
+	this.vy *= 0.5;
+	this.falling = true;
+}
+
+if(this.falling) this.vy += this.gravity;
+else this.vy + this.gravity*0.5;
+
+x += this.vx;
+y += this.vy;
+}
+};
+this.on_end_step = on_end_step_i;
+this.on_collision = function() {
+with(this) {
+this.other = this.place_meeting(this.x, this.y, o_dev_solid);
+if(this.other != null) {
+/*
+if(place_meeting(x+vx, y-vy, o_dev_solid)) {
+	this.vx = -this.vx;
+}
+*/
+}
+}
+};
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = function() {
+if (this.visible == 1) {
+__handle_sprite__(this);
+with(this) {
+draw_sprite_ext(sprite_index, image_index, ceil(x), ceil(y), 1*this.sprite_dir, 1, 0, 1);
+//draw_sprite_ext(sprite_index, 1, ceil(x), ceil(y), 1*this.sprite_dir, 1, 0, 1);
+//draw_sprite_ext(s_heli, image_index, ceil(x), ceil(y+1), 1*this.sprite_dir, 1, 0, 1);
+
+}
+}
+};
+}; var o_enemy_fishjump = new __o_enemy_fishjump();
 
 
 
@@ -4915,6 +5455,7 @@ var prefab_chars = {
 	"F": o_bl_groundalt,
 	"M": o_bl_metal,
 	"P": o_bl_pipe,
+	"K": o_bl_bridge,
 	
 	// enemies
 	"r": o_enemy_rat,
@@ -4925,11 +5466,20 @@ var prefab_chars = {
 	"p": o_enemy_crusher,
 	"m": o_enemy_missile,
 	"g": o_enemy_rathuge,
+	"i": o_enemy_fish,
+	"j": o_enemy_fishjump,
 	
 	// bonus
 	"c": o_coin,
 	"t": o_trampoline,
+	
+	// water
 	"w": o_water,
+	"[": o_watercurrent_l,
+	"]": o_watercurrent_r,
+	"{": o_watercurrent_u,
+	"}": o_watercurrent_d,
+	
 	
 	// vehicles
 	"h": o_veh_heli,
@@ -5778,6 +6328,17 @@ RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
 .........R....R....R....R....RR,\
 RRRRR....R....R....R....R....RR,\
 ";
+var pr_cave1_m8 = new prefab(0, 0, "\
+RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
+........R....R....R....R....R....R....R..,\
+........R....s....R....R....R....R....s..,\
+........s.........R....s....R....s.......,\
+.............c....s.........s.........c..,\
+........c..............c.........c.......,\
+.....r.......s....c.........c.........s..,\
+RRRRRR..s....R.........s.........s....R..,\
+RRRRRR..R....R....s....R....s....R.RR.R..,\
+RRRRRR..R.RR.R.RR.R.RR.R.RR.R.RR.R.RR.R..");
 
 var pbank_cave1 = new prefab_bank("cave1");
 pbank_cave1.length_min = 3;
@@ -5787,7 +6348,7 @@ pbank_cave1.gap_max = 4;
 pbank_cave1.ceiling = "R";
 pbank_cave1.repeat = false;
 pbank_cave1.start = [pr_cave1_s1, pr_cave1_s2];
-pbank_cave1.middle = [pr_cave1_m1, pr_cave1_m2, pr_cave1_m3, pr_cave1_m4, pr_cave1_m5, pr_cave1_m6, pr_cave1_m7];
+pbank_cave1.middle = [pr_cave1_m1, pr_cave1_m2, pr_cave1_m3, pr_cave1_m4, pr_cave1_m5, pr_cave1_m6, pr_cave1_m7, pr_cave1_m8];
 
 var pr_clouds1_m1 = new prefab(0, 0, "\
 ,\
@@ -6178,6 +6739,30 @@ PPPPP..............P......................P..P,\
 P...P....PP........P....^.....v.....^.....P..P,\
 P...P.....P....P...P......................P..P");
 
+var pr_factory1_m7 = new prefab(0, 0, "\
+MMMMMMMMMMMMMMMMMMMMMMMMMMM,\
+...........................,\
+...........................,\
+...........................,\
+..............s............,\
+............PPP.........s..,\
+.......s.....P.....s....PPP,\
+......PPP....P...PPPP....P.,\
+.......P.....P...P..P....P.,\
+PPP....P.....P...P..P....P.");
+
+var pr_factory1_m8 = new prefab(0, 0, "\
+MMMMMMMMMMMMMMMMMPMMMMMMP..PMMMMM,\
+.................P......Pp.P.....,\
+.................P......P..P.....,\
+..........PPPPP-.PPPPPPPP..Pc....,\
+..........P..P.............PP....,\
+..........P..P...................,\
+..........P..P...................,\
+(((((.....P..P.........r.........,\
+MMMMM..t..P..PP..PPPPPPPP|.PPPPPP,\
+MMMMM..M..P..P....P....P....P..P.");
+
 var pbank_factory1 = new prefab_bank("factory1");
 pbank_factory1.length_min = 4;
 pbank_factory1.length_max = 5;
@@ -6185,12 +6770,13 @@ pbank_factory1.gap_min = 3;
 pbank_factory1.gap_max = 3;
 pbank_factory1.repeat = false;
 pbank_factory1.ceiling = "M";
-pbank_factory1.middle = [pr_factory1_m1, pr_factory1_m2, pr_factory1_m3, pr_factory1_m4, pr_factory1_m5, pr_factory1_m6];
+pbank_factory1.middle = [pr_factory1_m1, pr_factory1_m2, pr_factory1_m3, pr_factory1_m4, pr_factory1_m5, pr_factory1_m6, pr_factory1_m7, pr_factory1_m8];
 
 var prefab_bank_first = pbank_grass1;
 var prefab_testing = null;
 var prefab_bank_testing = null;
 var prefab_testing_heli = false;
+var prefab_testing_speed = 0;
 //var prefab_list = [pr_simple1, pr_simple2, pr_simple3, pr_simple4, pr_simple5, pr_simple6, pr_simple7, pr_simple8, pr_castle1, pr_castle2, pr_castle3, pr_castle4, pr_castle4, pr_castle5, pr_cave2, pr_cave1, pr_cave3, pr_clouds1, pr_clouds2];
 
 var test_prefab = new prefab(0, 0, "\
@@ -6203,6 +6789,7 @@ GGGGG.G.GG,\
 const urlparams = new URLSearchParams(window.location.search);
 if(urlparams.get("prefabtest") != null) prefab_testing = new prefab(0, 0, urlparams.get("prefabtest"));
 if(urlparams.get("helitest") != null) prefab_testing_heli = true;
+if(urlparams.get("speedtest") != null) prefab_testing_speed = parseFloat(urlparams.get("speedtest"));
 function draw_sprite_text(x,y,text) { 
 for (i = 0; i < text.length+1; i += 1) {
 	if(text.charCodeAt(i)-32 > 0) draw_sprite(s_font, text.charCodeAt(i)-32, x+i*8, y);
