@@ -84,7 +84,7 @@
 				Soup, NI240SX, Aethus, osdever, Mizu, MrDawn, Amanojakuchou, MrAdam
 			</p>
 			<div class="row">
-				<p>version 0.9.3</p>
+				<p>version <span id="b_versiontext"></span></p>
 				<button onclick="wChangelog.style.display = 'block'">View changelog</button>
 			</div>
 		</article>
@@ -406,5 +406,8 @@
 	</script>
 	<!-- THE GAME -->
 	<script type="text/javascript" src="game.js"></script>	
+	<script>
+		document.getElementById("b_versiontext").innerHTML = game_meta_version;
+	</script>
 </body>
 </html>
