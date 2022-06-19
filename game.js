@@ -2013,7 +2013,7 @@ if(!other.dead && !this.dead) {
 		if(this.vy > 0) {
 			other.die();
 			sound_c_play(snd_stomp);
-			hud_object.score += 200;
+			hud_object.score += other.reward;
 			if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
 			else this.vy = -(this.jumppower * this.enemy_bounce);
 		} else { this.die() };
@@ -2021,7 +2021,7 @@ if(!other.dead && !this.dead) {
 		if(this.y+this.mode.stomp_offset < other.y) {
 			other.die();
 			sound_c_play(snd_stomp);
-			hud_object.score += 200;
+			hud_object.score += other.reward;
 			this.vy = -this.jumppower;
 		} else this.die();
 	}
@@ -2207,7 +2207,7 @@ if(game_paused || this.dead) return;
 this.mode.lateupdate(this);
 
 if(x > this.distance_travelled) { 
-	hud_object.score += floor(x-this.distance_travelled);
+	hud_object.score += floor((x-this.distance_travelled) / 2);
 	this.distance_travelled = floor(x);
 }
 
@@ -2243,7 +2243,7 @@ if(!other.dead && !this.dead) {
 	if(this.vy > 0) {
 		other.die();
 		sound_c_play(snd_stomp);
-		hud_object.score += 100;
+		hud_object.score += other.reward;
 		if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
 		else this.vy = -(this.jumppower * this.enemy_bounce);
 	} else {
@@ -2263,7 +2263,7 @@ if(!this.dead && !other.dead) {
 		if(this.vy > -1) {
 			other.die();
 			sound_c_play(snd_stomp);
-			hud_object.score += 200;
+			hud_object.score += other.reward;
 			if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
 			else this.vy = -(this.jumppower * this.enemy_bounce);
 		} else {
@@ -2274,7 +2274,7 @@ if(!this.dead && !other.dead) {
 		if(this.y+6 < other.y) {
 			other.die();
 			sound_c_play(snd_stomp);
-			hud_object.score += 200;
+			hud_object.score += other.reward;
 			this.vy = -this.jumppower;
 		} else this.die();
 	}
@@ -2287,7 +2287,7 @@ if(!this.dead) {
 		if(this.vy > 0) {
 			other.die();
 			sound_c_play(snd_stomp);
-			hud_object.score += 300;
+			hud_object.score += other.reward;
 			if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
 			else this.vy = -(this.jumppower * this.enemy_bounce);
 		} else this.die();
@@ -2295,7 +2295,7 @@ if(!this.dead) {
 		if(this.y+6 < other.y) {
 			other.die();
 			sound_c_play(snd_stomp);
-			hud_object.score += 300;
+			hud_object.score += other.reward;
 			this.vy = -this.jumppower;
 		} else this.die();
 	}
@@ -2307,7 +2307,7 @@ if(!other.dead && !this.dead) {
 	if(this.vy > 0 && this.y > other.y+8) {
 		other.die();
 		sound_c_play(snd_stomp);
-		hud_object.score += 200;
+		hud_object.score += other.reward;
 		if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
 		else this.vy = -(this.jumppower * this.enemy_bounce);
 	} else {
@@ -2343,7 +2343,7 @@ if(!this.dead && !other.dead) {
 		if(this.vy > -1) {
 			other.die();
 			sound_c_play(snd_stomp);
-			hud_object.score += 200;
+			hud_object.score += other.reward;
 			if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
 			else this.vy = -(this.jumppower * this.enemy_bounce);
 		} else {
@@ -2354,7 +2354,7 @@ if(!this.dead && !other.dead) {
 		if(this.y+6 < other.y) {
 			other.die();
 			sound_c_play(snd_stomp);
-			hud_object.score += 200;
+			hud_object.score += other.reward;
 			this.vy = -this.jumppower;
 		} else this.die();
 	}
@@ -2373,7 +2373,7 @@ if(!this.dead && !other.dead) {
 		if(this.vy > -1 && this.y+8< other.y) {
 			other.die();
 			sound_c_play(snd_stomp);
-			hud_object.score += 300;
+			hud_object.score += other.reward;
 			if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
 			else this.vy = -(this.jumppower * this.enemy_bounce);
 		} else {
@@ -2384,7 +2384,7 @@ if(!this.dead && !other.dead) {
 		if(this.y+6 < other.y) {
 			other.die();
 			sound_c_play(snd_stomp);
-			hud_object.score += 300;
+			hud_object.score += other.reward;
 			this.vy = -this.jumppower;
 		} else this.die();
 	}
@@ -2781,6 +2781,8 @@ xstart += character_spawn_offset_x;
 y += character_spawn_offset_y;
 ystart += character_spawn_offset_y;
 
+this.reward = 100;
+
 this.vx = -0.5;
 this.vy = 0;
 this.sprite_dir = -1;
@@ -3054,6 +3056,8 @@ if(camera_object.x + 160 > prefab_len_total*16) {
 	// ending the current set and loading a new bank
 	if(this.current >= this.limit || this.limit == 0) {
 		if(this.end != null) { 
+			console.log("deploying end prefab");
+			console.log(prefab_ceiling);
 			marker(prefab_len_total*16, 0, "end");
 			prefab_deploy(prefab_len_total, 0, this.end, random_int(2, 3));
 			this.end = null;
@@ -3068,7 +3072,7 @@ if(camera_object.x + 160 > prefab_len_total*16) {
 		this.next_prefab = this.rotation[this.next_prefab_index];
 	} while(this.rotation.length > 1 && this.next_prefab == previous_prefab);
 	
-	if(this.current == this.limit-1) prefab_ceiling = "";
+	if(this.current == this.limit-1 && this.end == null) prefab_ceiling = "";
 	marker(prefab_len_total*16, 0, "mid" + this.current.toString());
 	prefab_deploy(prefab_len_total, 0, this.next_prefab, random_int(this.min_gap, this.max_gap), prefab_ceiling);
 	if(!this.repeat) this.rotation.splice(this.next_prefab_index, 1);
@@ -3105,8 +3109,9 @@ if(this.tick > 1000) {
 		case 2:
 			this.add_bank(pbank_desert1, 0);
 			this.add_bank(pbank_clouds1, 0);
-			this.move_bank(pbank_castle1, 0, 1);
 			this.add_bank(pbank_ground1, 0);
+			this.add_bank(pbank_bridge1, 0);
+			this.move_bank(pbank_castle1, 0, 1);
 			break;
 			
 		case 3:
@@ -3510,6 +3515,8 @@ xstart += character_spawn_offset_x;
 y += character_spawn_offset_y;
 ystart += character_spawn_offset_y;
 
+this.reward = 200;
+
 this.vx = -1;
 this.vy = 0;
 this.vy_dir = 1;
@@ -3912,6 +3919,8 @@ xstart += 8;
 y += 8;
 ystart += 8;
 
+this.reward = 300;
+
 this.fired = false;
 this.dead = false;
 this.vx = -3;
@@ -4265,6 +4274,8 @@ x += character_spawn_offset_x*2;
 xstart += character_spawn_offset_x*2;
 y += character_spawn_offset_y*2;
 ystart += character_spawn_offset_y*2;
+
+this.reward = 200;
 
 this.vx = -0.5;
 this.vy = 0;
@@ -4711,6 +4722,7 @@ xstart += character_spawn_offset_x;
 y += character_spawn_offset_y;
 ystart += character_spawn_offset_y;
 
+this.reward = 100;
 this.vx = -0.75;
 this.vy = 0;
 this.vy_dir = 0.35;
@@ -5011,9 +5023,11 @@ ystart += character_spawn_offset_y;
 
 y = room_height;
 
+this.reward = 300;
+
 this.vx = 0;
 this.vy = 0;
-this.vx_accel = -0.25;
+this.vx_accel = -0.3;
 this.vx_max = 2.5;
 
 this.gravity = 0.3;
@@ -5046,7 +5060,7 @@ if(this.vx < -this.vx_max) this.vx = -this.vx_max;
 
 if(!this.fired) {
 	this.fired = true;
-	this.vy = -6;
+	this.vy = -5;
 }
 
 if(!this.falling && y <= ystart) {
@@ -5540,7 +5554,8 @@ function prefab_deploy_empty(px, len, cei="") {
 	var cy = 0;
 	var ce = 0;
 	for(i=0; i<cei.length; i++) {
-		if(!cei[i] in prefab_chars) continue;
+		if(cei[i] == ".") { cy += 1; continue; }
+		if(cei[i] in prefab_chars == false) continue;
 		var cur = prefab_chars[cei[i]];
 		cx = 0;
 		for(j=0; j<len; j++) {
@@ -6329,16 +6344,16 @@ RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
 RRRRR....R....R....R....R....RR,\
 ";
 var pr_cave1_m8 = new prefab(0, 0, "\
-RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
+RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
 ........R....R....R....R....R....R....R..,\
 ........R....s....R....R....R....R....s..,\
 ........s.........R....s....R....s.......,\
 .............c....s.........s.........c..,\
 ........c..............c.........c.......,\
 .....r.......s....c.........c.........s..,\
-RRRRRR..s....R.........s.........s....R..,\
-RRRRRR..R....R....s....R....s....R.RR.R..,\
-RRRRRR..R.RR.R.RR.R.RR.R.RR.R.RR.R.RR.R..");
+RRRRRR..s....R.........s.........s....R..RRR,\
+RRRRRR..R....R....s....R....s....R.RR.R..RRR,\
+RRRRRR..R.RR.R.RR.R.RR.R.RR.R.RR.R.RR.R..RRR");
 
 var pbank_cave1 = new prefab_bank("cave1");
 pbank_cave1.length_min = 3;
@@ -6723,9 +6738,9 @@ MMMMMM..............MMMMMMMMMMMMMMMMMMMM,\
 ..............................MM........,\
 ........................MM....MM........,\
 ..........p.............MM....MM........,\
-..MMMM))))))))))MMMM....MM....MM....c...,\
-MMMMMMMMMMMMMMMMMMMMMM..MM....MM.......P,\
-MMMMMMMMMMMMMMMMMMMMMM..MM....MM....P..P");
+..MMMMMM..MM..MMMMMM....MM....MM....c...,\
+MMMMMMMM..MM..MMMMMMMM..MM....MM.......P,\
+MMMMMMMM..MM..MMMMMMMM..MM....MM....P..P");
 
 var pr_factory1_m6 = new prefab(0, 0, "\
 MMMMMMMMMMMMPMMMMMMM......................MMMM,\
@@ -6771,6 +6786,77 @@ pbank_factory1.gap_max = 3;
 pbank_factory1.repeat = false;
 pbank_factory1.ceiling = "M";
 pbank_factory1.middle = [pr_factory1_m1, pr_factory1_m2, pr_factory1_m3, pr_factory1_m4, pr_factory1_m5, pr_factory1_m6, pr_factory1_m7, pr_factory1_m8];
+
+var pr_bridge1_m1 = new prefab(0, 0, "\
+,\
+,\
+.............KKKKK.....,\
+.............K...K.....,\
+.............K...K....K,\
+.............K...K....K,\
+.....r...t...K...K....K,\
+KKKKKK...K...K...K....K,\
+K....K...K...K...K....K,\
+KwwwwKwwwKwwwKwwwKwwwwK");
+
+var pr_bridge1_m2 = new prefab(0, 0, "\
+,\
+....................j.......,\
+.......j....................,\
+...............c..c.....j...,\
+..c..c.....j................,\
+............................,\
+............KKKK..KKKK......,\
+KKKKKKKK....K..K..K..K....-.,\
+K......K....K..K..K..K......,\
+KwwwwwwKwwwwKwwKwwKwwKwwwwww");
+
+var pr_bridge1_m3 = new prefab(0, 0, "\
+,\
+,\
+........................j.,\
+.................KKKKKK...,\
+.................K....K...,\
+..........j......K....K...,\
+.................K....K...,\
+.................K....K..K,\
+KKK......KKKK.+..K....K..K,\
+KwKwwwwwwKwwKwwwwKwwwwKwwK");
+
+var pr_bridge1_m4 = new prefab(0, 0, "\
+,\
+.....................j........,\
+........j.....................,\
+........c..c.............j....,\
+............j.................,\
+............KKKKK..KKKKK......,\
+KKKKKKKK....K...K..K...K....-.,\
+K......K....K...K..K...K......,\
+K......K....K...K..K...K......,\
+KwwwwwwKwwwwKwwwKwwKwwwKwwwwww");
+
+var pr_bridge1_e1 = new prefab(0, 0, "\
+,\
+,\
+,\
+,\
+,\
+,\
+,\
+KKKK,\
+K..K,\
+KwwK");
+
+var pbank_bridge1 = new prefab_bank("bridge1");
+pbank_bridge1.length_min = 3;
+pbank_bridge1.length_max = 4;
+pbank_bridge1.gap_min = 4;
+pbank_bridge1.gap_max = 4;
+pbank_bridge1.repeat = false;
+pbank_bridge1.ceiling = ".........w";
+pbank_bridge1.middle = [pr_bridge1_m1, pr_bridge1_m2, pr_bridge1_m3, pr_bridge1_m4];
+pbank_bridge1.end = [pr_bridge1_e1];
+
 
 var prefab_bank_first = pbank_grass1;
 var prefab_testing = null;
