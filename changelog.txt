@@ -1,3 +1,47 @@
+0.10:
+  - made a proper level editor for the game (it's separate from the game itself)
+  - the game can read level data from URL query strings (it's used by the level editor to play exported levels)
+
+  - made changes to player character's code
+    - fixed a coyote timer bug that made it possible to do multiple jumps in a row
+    - collision detection improvements 
+
+  - made changes to the scoring system (again)
+    - player's walking speed is no longer taken into consideration while applying score reward for distance travelled
+	- fixed inconsistent score rewards for killed enemies
+
+  - deleted some unused graphics and unused lines of code
+  - each trampoline can now have its own unique jump strength
+  - crushers now collide with the "platform reverser" object and the bottom of the screen
+  
+  - added new enemies:
+    - static heli rat
+	- fish
+	- jumping fish
+	- robo-oswald (big thanks to Amanojakuchou for the sprite and idea)
+	
+  - added conveyor belts
+  - added water
+    - player enters swim mode upon touching the water's surface and exits it upon jumping out of it
+	- added water currents that move the player around underwater in one of four directions
+	
+  - added new terrain types
+    - metal
+	- pipe
+	- ground alt
+	- bridge
+	- slime (spawns invisible trampolines for bounciness)
+	
+  - added new prefab banks using newly added terrain types (factory, ground, bridge) [thanks to MrAdam for level ideas]
+  - updated existing prefab banks
+  - added alternative prefab content: one prefab can now have 2 different variations, each has 50% chance of spawning
+  - updated prefab bank "ceilings": they're way more flexible now and can be used to make floors in gaps between prefabs
+  - fixed prefab bank ceilings not appearing on the last middle prefab of the bank
+  
+  - added "heli test mode" for testing heli prefabs (can be enabled with query string parameters)
+  - added "prefab testing speed" for testing prefabs at different speeds (can be enabled with query string parameters)
+	
+
 0.9.3:
   - fixed a bug that made it possible to gain score after player's death
   - fixed high score display not flashing when a new high score is achieved
@@ -12,7 +56,7 @@
 
 0.9.1:
   - changes to scoring system (thanks to NI240SX for the idea)
-    - player receives score based on distance travelled instead of camera speed
+    - player receives score based on distance travelled and walking speed instead of camera speed
   - changes to the prefab bank rotation
     - removed the beginner bank from initial rotation and added GRASS1 and WOOD1 in its place
 	- other prefab banks unlock way faster and appear more often now

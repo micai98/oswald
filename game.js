@@ -1616,6 +1616,34 @@ function __s_enemy_fish2() {
 __sprite_init__(this, s_enemy_fish2, 18, 16, 9, 8, 'Box', 9, 0, 18, 3, 14, ['img/s_enemy_fish2_0.png','img/s_enemy_fish2_1.png']);
 }; var s_enemy_fish2 = new __s_enemy_fish2();
 
+function __s_kot_kenshin() { 
+__sprite_init__(this, s_kot_kenshin, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_kenshin_0.png','img/s_kot_kenshin_1.png','img/s_kot_kenshin_2.png','img/s_kot_kenshin_3.png']);
+}; var s_kot_kenshin = new __s_kot_kenshin();
+
+function __s_kot_dealer() { 
+__sprite_init__(this, s_kot_dealer, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_dealer_0.png','img/s_kot_dealer_1.png','img/s_kot_dealer_2.png','img/s_kot_dealer_3.png']);
+}; var s_kot_dealer = new __s_kot_dealer();
+
+function __s_enemy_floatingspike() { 
+__sprite_init__(this, s_enemy_floatingspike, 16, 16, 0, 0, 'Box', 8, 2, 14, 2, 14, ['img/s_enemy_floatingspike_0.png']);
+}; var s_enemy_floatingspike = new __s_enemy_floatingspike();
+
+function __s_enemy_shark() { 
+__sprite_init__(this, s_enemy_shark, 22, 14, 11, 7, 'Box', 11, 1, 21, 3, 13, ['img/s_enemy_shark_0.png']);
+}; var s_enemy_shark = new __s_enemy_shark();
+
+function __s_kot_claymore() { 
+__sprite_init__(this, s_kot_claymore, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_claymore_0.png','img/s_kot_claymore_1.png','img/s_kot_claymore_2.png','img/s_kot_claymore_3.png']);
+}; var s_kot_claymore = new __s_kot_claymore();
+
+function __s_enemy_robot() { 
+__sprite_init__(this, s_enemy_robot, 16, 22, 8, 11, 'Box', 8, 3, 13, 5, 22, ['img/s_enemy_robot_0.png','img/s_enemy_robot_1.png','img/s_enemy_robot_2.png','img/s_enemy_robot_3.png']);
+}; var s_enemy_robot = new __s_enemy_robot();
+
+function __s_enemy_bigbot() { 
+__sprite_init__(this, s_enemy_bigbot, 16, 22, 8, 11, 'Box', 8, 3, 14, 5, 22, ['img/s_enemy_bigbot_0.png','img/s_enemy_bigbot_1.png','img/s_enemy_bigbot_2.png','img/s_enemy_bigbot_3.png']);
+}; var s_enemy_bigbot = new __s_enemy_bigbot();
+
 
 
 /***********************************************************************
@@ -1859,7 +1887,7 @@ function playermode(name) {
 	// Properties
 	this.gravity = 0.5;
 	this.friction = 0.8;
-	this.airfriction = 0.8;
+	this.airfriction = 0.95;
 	this.jumppower = 8;
 	this.jumpbrake = 0.6;
 	this.accel = 0.5;
@@ -1885,6 +1913,7 @@ function playermode(name) {
 		me.mode = this;
 		me.gravity = this.gravity;
 		me.friction = this.friction;
+		me.airfriction = this.airfriction;
 		me.jumppower = this.jumppower;
 		me.jumpbrake = this.jumpbrake;
 		me.accel = this.accel;
@@ -1913,7 +1942,8 @@ this.m_foot = new playermode("foot"); // no custom settings, will use default on
 // Swim mode
 this.m_swim = new playermode("swim");
 this.m_swim.gravity = 0.15;
-this.m_swim.friction = 0.925;
+this.m_swim.friction = 0.94;
+this.m_swim.airfriction = 0.98;
 this.m_swim.jumppower = 4;
 this.m_swim.accel = 0.25;
 this.m_swim.vy_max = 2;
@@ -1943,8 +1973,8 @@ this.m_swim.jump = function(me) {
 this.m_heli = new playermode("heli");
 this.m_heli.decoration = s_heli;
 this.m_heli.gravity = 0.2;
-this.m_heli.friction = 0.95;
-this.m_heli.airfriction = 0.95;
+this.m_heli.friction = 0.97;
+this.m_heli.airfriction = 0.97;
 this.m_heli.jumppower = 4;
 this.m_heli.jumpbrake = 1;
 this.m_heli.accel = 0.25;
@@ -2193,6 +2223,7 @@ if(place_meeting(x, y, o_dev_hazard) != null) { this.die(); }
 if(place_meeting(x, y, o_enemy_cactus) != null) { this.die(); }
 if(place_meeting(x, y, o_enemy_spikes) != null) { this.die(); }
 if(place_meeting(x, y, o_enemy_crusher) != null) { this.die(); }
+if(place_meeting(x, y, o_enemy_floatingspike) != null) { this.die(); }
 if(y-sprite_index.height > room_height) { this.die(); }
 if(x+sprite_index.width < room_viewport_x - player_death_margin) { this.die(); }
 
@@ -2282,7 +2313,7 @@ if(!this.dead && !other.dead) {
 }
 this.other = this.place_meeting(this.x, this.y, o_enemy_missile);
 if(this.other != null) {
-if(!this.dead) {
+if(!this.dead && !other.dead) {
 	if(this.mode == this.m_foot) {
 		if(this.vy > 0) {
 			other.die();
@@ -2906,8 +2937,10 @@ if(prefab_testing == null) {
 } else {
 	prefab_deploy(0, 0, pr_spawnpoint_short, 4);
 	if(prefab_testing_heli == true) prefab_deploy(prefab_len_total, 0, pr_heli1_s1, 4);
+	else if(prefab_testing_water == true) prefab_deploy(prefab_len_total, 0, pr_water1_s0, 0);
 	prefab_deploy(prefab_len_total, 0, prefab_testing, 4);
 	if(prefab_testing_heli == true) prefab_deploy(prefab_len_total, 0, pr_heli1_e1, 4);
+	else if(prefab_testing_water == true) prefab_deploy(prefab_len_total, 0, pr_water1_e1, 3);
 }
 
 this.start = null;
@@ -3111,13 +3144,14 @@ if(this.tick > 1000) {
 			this.add_bank(pbank_clouds1, 0);
 			this.add_bank(pbank_ground1, 0);
 			this.add_bank(pbank_bridge1, 0);
+			this.add_bank(pbank_factory1, 0);
+			this.add_bank(pbank_water1, 1);
 			this.move_bank(pbank_castle1, 0, 1);
 			break;
 			
 		case 3:
 			this.add_bank(pbank_panel1, 2);
 			this.add_bank(pbank_cave1, 0);
-			this.add_bank(pbank_factory1, 0);
 			this.move_bank(pbank_grass1, 0, 1);
 			this.move_bank(pbank_castle1, 1, 2);
 			break;
@@ -5104,6 +5138,149 @@ draw_sprite_ext(sprite_index, image_index, ceil(x), ceil(y), 1*this.sprite_dir, 
 };
 }; var o_enemy_fishjump = new __o_enemy_fishjump();
 
+function __o_enemy_shark() {
+__instance_init__(this, o_enemy_shark, null, 1, 0, s_enemy_shark, 1, 253);
+this.on_creation = function() {
+with(this) {
+x += 8;
+xstart += 8;
+y += 8;
+ystart += 8;
+
+this.reward = 300;
+
+this.dead = false;
+this.fired = false;
+this.dead = false;
+this.vx = -3;
+this.sprite_dir = -1;
+
+this.die = function() {
+	spawn_corpse(x, y, sprite_index, sprite_dir);
+	instance_destroy();
+}
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = function() {
+with(this) {
+if(game_paused) return;
+if(x > room_viewport_x+room_viewport_width) return;
+if( y + 16 > room_height ) instance_destroy();
+if(x < room_viewport_x-despawn_margin) instance_destroy()
+if(!fired) {
+	fired = true;
+}
+x += this.vx;
+}
+};
+this.on_end_step = on_end_step_i;
+this.on_collision = function() {
+with(this) {
+this.other = this.place_meeting(this.x, this.y, o_dev_solid);
+if(this.other != null) {
+this.die();
+}
+}
+};
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = function() {
+if (this.visible == 1) {
+__handle_sprite__(this);
+with(this) {
+draw_sprite_ext(sprite_index, image_index, x, y, this.sprite_dir, 1, 0, 1);
+}
+}
+};
+}; var o_enemy_shark = new __o_enemy_shark();
+
+function __o_enemy_floatingspike() {
+__instance_init__(this, o_enemy_floatingspike, null, 1, 0, s_enemy_floatingspike, 1, 254);
+this.on_creation = function() {
+with(this) {
+this.vx = 0;
+this.vy = 0;
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = function() {
+with(this) {
+if(game_paused) return;
+//if(x-8 > room_viewport_x+room_viewport_width) return;
+if(x < room_viewport_x-despawn_margin) instance_destroy()
+
+x += this.vx;
+y += this.vy;
+}
+};
+this.on_end_step = on_end_step_i;
+this.on_collision = function() {
+with(this) {
+this.other = this.place_meeting(this.x, this.y, o_platform_reverse);
+if(this.other != null) {
+this.vx = -this.vx;
+this.vy = -this.vy;
+}
+this.other = this.place_meeting(this.x, this.y, o_dev_solid);
+if(this.other != null) {
+this.vx = -this.vx;
+this.vy = -this.vy;
+}
+}
+};
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = function() {
+if (this.visible == 1) {
+__handle_sprite__(this);
+with(this) {
+draw_sprite(sprite_index, image_index, ceil(x), ceil(y));
+}
+}
+};
+}; var o_enemy_floatingspike = new __o_enemy_floatingspike();
+
+function __o_enemy_fspike_l() {
+__instance_init__(this, o_enemy_fspike_l, null, 1, 0, s_enemy_floatingspike, 1, 255);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = function() {
+with(this) {
+let nsp = instance_create(x, y, o_enemy_floatingspike);
+nsp.vx -= 1.5;
+instance_destroy();
+}
+};
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_enemy_fspike_l = new __o_enemy_fspike_l();
+
+function __o_enemy_fspike_u() {
+__instance_init__(this, o_enemy_fspike_u, null, 1, 0, s_enemy_floatingspike, 1, 256);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = function() {
+with(this) {
+let nsp = instance_create(x, y, o_enemy_floatingspike);
+nsp.vy -= 1.5;
+instance_destroy();
+}
+};
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_enemy_fspike_u = new __o_enemy_fspike_u();
+
 
 
 /***********************************************************************
@@ -5382,6 +5559,9 @@ var player_costumes = {
 	"soup": s_kot_soup,
 	"burnt": s_kot_burnt,
 	"troll": s_kot_troll,
+	"kenshin": s_kot_kenshin,
+	"dealer": s_kot_dealer,
+	"claymore": s_kot_claymore,
 };
 
 if(!change_costume(load_web_string("costume"))) player_character = s_kot;
@@ -5482,6 +5662,8 @@ var prefab_chars = {
 	"g": o_enemy_rathuge,
 	"i": o_enemy_fish,
 	"j": o_enemy_fishjump,
+	"z": o_enemy_fspike_l,
+	"x": o_enemy_fspike_u,
 	
 	// bonus
 	"c": o_coin,
@@ -6857,6 +7039,101 @@ pbank_bridge1.ceiling = ".........w";
 pbank_bridge1.middle = [pr_bridge1_m1, pr_bridge1_m2, pr_bridge1_m3, pr_bridge1_m4];
 pbank_bridge1.end = [pr_bridge1_e1];
 
+var pr_water1_s0 = new prefab(0, 0, "\
+......SSSSSS,\
+......SS,\
+......SS,\
+......SS,\
+......SS,\
+SSwwwwSS,\
+SS......,\
+SS......,\
+SS......,\
+SSSSSSSSSSSS");
+
+var pr_water1_s1 = new prefab(0, 0, "\
+..............SS,\
+..............SS,\
+........SS....SS,\
+........SS....SS,\
+........SSwwwwSS,\
+........SS......,\
+........SS......,\
+........SS....}},\
+....t...SS....}},\
+W..GG...SSSSSS}}");
+
+var pr_water1_m1 = new prefab(0, 0, "\
+SSSSSSSSSSSSSSS,\
+SS.............,\
+SS......i....i.,\
+...............,\
+......SSSSSSSS.,\
+......SSSSSSSS.,\
+...............,\
+SS......i....i.,\
+SS.............,\
+SSSSSSSSSSSSSSS");
+
+var pr_water1_m2 = new prefab(0, 0, "\
+SSSSSSSSSSSSSSSSSSSSSSSSSSSS,\
+SS........................SS,\
+SS........................SS,\
+SS........................SS,\
+SS.............r..........SS,\
+SSwwwwSSwwwwSSSSwwwwSSwwwwSS,\
+......SS}}}}SSSS}}}}SS......,\
+......SS}}}}SSSS}}}}SS......,\
+......SS}}}}SSSS}}}}SS......,\
+SSSSSSSS}}}}SSSS}}}}SSSSSSSS");
+
+var pr_water1_m3 = new prefab(0, 0, "\
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS,\
+SS.......c..c.......SS{{{{SSSS,\
+SS..................SS{{{{SSSS,\
+SS......}}}}}}......SS{{{{SSSS,\
+SS....SS}}}}}}SS....SS{{{{SSSS,\
+SS...zSS}}}}}}SSz...SS{{{{SSSS,\
+......SS}}}}}}SS......{{{{....,\
+......SS}}}}}}SS..............,\
+......SS}}}}}}SS..............,\
+SSSSSSSS}}}}}}SSSSSS..c..c....");
+
+var pr_water1_m4 = new prefab(0, 0, "\
+SSSSSSSSSSSSSSS,\
+..S....S....S..,\
+..S.........S..,\
+..x.........S..,\
+............x..,\
+.......x.......,\
+.......S.......,\
+..S....S.......,\
+..S....S....S..,\
+SSSSSSSSSSSSSSS");
+
+var pr_water1_e1 = new prefab(0, 0, "\
+SS......,\
+SS......,\
+SS......,\
+SS......,\
+SSwwwwSS,\
+......SS,\
+......SS,\
+......SS,\
+......SS,\
+SSSSSSSS");
+
+var pbank_water1 = new prefab_bank("water1");
+pbank_water1.length_min = 3;
+pbank_water1.length_max = 4;
+pbank_water1.gap_min = 5;
+pbank_water1.gap_max = 6;
+pbank_water1.repeat = false;
+pbank_water1.ceiling = "S........S";
+pbank_water1.start = [pr_water1_s1];
+pbank_water1.middle = [pr_water1_m1, pr_water1_m2, pr_water1_m3, pr_water1_m4];
+pbank_water1.end = [pr_water1_e1];
+
 
 var prefab_bank_first = pbank_grass1;
 var prefab_testing = null;
@@ -6875,6 +7152,7 @@ GGGGG.G.GG,\
 const urlparams = new URLSearchParams(window.location.search);
 if(urlparams.get("prefabtest") != null) prefab_testing = new prefab(0, 0, urlparams.get("prefabtest"));
 if(urlparams.get("helitest") != null) prefab_testing_heli = true;
+if(urlparams.get("watertest") != null) prefab_testing_water = true;
 if(urlparams.get("speedtest") != null) prefab_testing_speed = parseFloat(urlparams.get("speedtest"));
 function draw_sprite_text(x,y,text) { 
 for (i = 0; i < text.length+1; i += 1) {
@@ -6905,6 +7183,9 @@ if(this.chc.endsWith("weeder")) change_costume("soup");
 if(this.chc.endsWith("agent")) change_costume("agent");
 if(this.chc.endsWith("chinesebbq")) { keyboard_string = ""; sound_play(snd_bong); change_costume("burnt") };
 if(this.chc.endsWith("troll")) { keyboard_string = ""; sound_play(snd_bigheadhit); change_costume("troll") };
+if(this.chc.endsWith("milkcheesesymphony")) change_costume("kenshin");
+if(this.chc.endsWith("brokebadly")) change_costume("dealer");
+if(this.chc.endsWith("ghettobot")) change_costume("claymore");
 }
 function highscore_update() { 
 save_web_integer("la", last_score);
