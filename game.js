@@ -1629,7 +1629,7 @@ __sprite_init__(this, s_enemy_floatingspike, 16, 16, 0, 0, 'Box', 8, 2, 14, 2, 1
 }; var s_enemy_floatingspike = new __s_enemy_floatingspike();
 
 function __s_enemy_shark() { 
-__sprite_init__(this, s_enemy_shark, 22, 14, 11, 7, 'Box', 11, 1, 21, 3, 13, ['img/s_enemy_shark_0.png']);
+__sprite_init__(this, s_enemy_shark, 22, 14, 11, 7, 'Box', 11, 1, 21, 3, 13, ['img/s_enemy_shark_0.png','img/s_enemy_shark_1.png','img/s_enemy_shark_2.png','img/s_enemy_shark_3.png']);
 }; var s_enemy_shark = new __s_enemy_shark();
 
 function __s_kot_claymore() { 
@@ -1637,12 +1637,24 @@ __sprite_init__(this, s_kot_claymore, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['i
 }; var s_kot_claymore = new __s_kot_claymore();
 
 function __s_enemy_robot() { 
-__sprite_init__(this, s_enemy_robot, 16, 22, 8, 11, 'Box', 8, 3, 13, 5, 22, ['img/s_enemy_robot_0.png','img/s_enemy_robot_1.png','img/s_enemy_robot_2.png','img/s_enemy_robot_3.png']);
+__sprite_init__(this, s_enemy_robot, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_enemy_robot_0.png','img/s_enemy_robot_1.png','img/s_enemy_robot_2.png','img/s_enemy_robot_3.png']);
 }; var s_enemy_robot = new __s_enemy_robot();
 
 function __s_enemy_bigbot() { 
-__sprite_init__(this, s_enemy_bigbot, 16, 22, 8, 11, 'Box', 8, 3, 14, 5, 22, ['img/s_enemy_bigbot_0.png','img/s_enemy_bigbot_1.png','img/s_enemy_bigbot_2.png','img/s_enemy_bigbot_3.png']);
+__sprite_init__(this, s_enemy_bigbot, 16, 22, 8, 11, 'Box', 8, 3, 14, 8, 22, ['img/s_enemy_bigbot_0.png','img/s_enemy_bigbot_1.png','img/s_enemy_bigbot_2.png','img/s_enemy_bigbot_3.png']);
 }; var s_enemy_bigbot = new __s_enemy_bigbot();
+
+function __s_enemy_bigbot_shoot() { 
+__sprite_init__(this, s_enemy_bigbot_shoot, 16, 22, 8, 11, 'Box', 8, 3, 14, 8, 22, ['img/s_enemy_bigbot_shoot_0.png','img/s_enemy_bigbot_shoot_1.png','img/s_enemy_bigbot_shoot_2.png','img/s_enemy_bigbot_shoot_3.png']);
+}; var s_enemy_bigbot_shoot = new __s_enemy_bigbot_shoot();
+
+function __s_enemy_bullet() { 
+__sprite_init__(this, s_enemy_bullet, 8, 8, 4, 4, 'Box', 4, 0, 8, 1, 7, ['img/s_enemy_bullet_0.png']);
+}; var s_enemy_bullet = new __s_enemy_bullet();
+
+function __s_kot_bear() { 
+__sprite_init__(this, s_kot_bear, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_bear_0.png','img/s_kot_bear_1.png','img/s_kot_bear_2.png','img/s_kot_bear_3.png']);
+}; var s_kot_bear = new __s_kot_bear();
 
 
 
@@ -1775,9 +1787,14 @@ __background_init__(this, ts_bridge, 'img/ts_bridge_strip16.png')}; var ts_bridg
 /***********************************************************************
  * OBJECTS
  ***********************************************************************/
-function __o_bl_ground() {
-__instance_init__(this, o_bl_ground, null, 0, 1, s_ground, 1, 0);
-this.on_creation = on_creation_i;
+function __o_autotile() {
+__instance_init__(this, o_autotile, null, 0, 0, s_ground, 1, 0);
+this.on_creation = function() {
+with(this) {
+this.tileset = ts_panel;
+this.bls = 16;
+}
+};
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
@@ -1787,7 +1804,6 @@ image_index = 0;
 
 this.hor = 0;
 this.ver = 0;
-this.bls = 16;
 
 if(y == 0) instance_create(x, y-this.bls, object_index);
 if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
@@ -1806,10 +1822,15 @@ if(place_meeting(x, y-this.bls, object_index))
     else{this.ver = 3}
 }
 
+//if(prefab_autotile_connect) this.hor = 2;
+
 image_index = 4*this.ver + this.hor;
-tile_add(ts_ground, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
+tile_add(this.tileset, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
 if(!(y + 16 >= room_height && image_index == 14)) {
-	if(image_index != 10) instance_create(x, y, o_dev_solid);
+	if(image_index != 10) {
+		let s = instance_create(x, y, o_dev_solid);
+		if(this.bls == 32) s.sprite_index = col_32x;
+	}
 }
 instance_destroy();
 }
@@ -1819,7 +1840,7 @@ this.on_roomstart = on_roomstart_i;
 this.on_roomend = on_roomend_i;
 this.on_animationend = on_animationend_i;
 this.on_draw = on_draw_i;
-}; var o_bl_ground = new __o_bl_ground();
+}; var o_autotile = new __o_autotile();
 
 function __o_kot() {
 __instance_init__(this, o_kot, null, 1, 0, s_kot, 1, 1);
@@ -1848,6 +1869,10 @@ this.dirx = 0;
 this.diry = 0;
 this.dirx_last = 0;
 this.diry_last = 0;
+this.keyx = 0;
+this.keyy = false;
+this.keyy_p = false;
+this.keyy_r = false;
 this.coyote = 0;
 this.coyote_max = 5;
 this.jumpbuffer = 0;
@@ -2044,7 +2069,7 @@ if(!other.dead && !this.dead) {
 			other.die();
 			sound_c_play(snd_stomp);
 			hud_object.score += other.reward;
-			if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
+			if(this.keyy == true) this.vy = -(this.jumppower * this.enemy_bounce_high);
 			else this.vy = -(this.jumppower * this.enemy_bounce);
 		} else { this.die() };
 	} else {
@@ -2071,13 +2096,22 @@ if(game_paused) {
 if(!this.dead) {
 	this.mode.update(this);
 	this.modetick += 1;
+	
+	// Inputs
+	if(game_inmenu == false) {
+		this.keyy = input_down(k_up, k_jump, vk_w);
+		this.keyy_p = input_pressed(k_up, k_jump, vk_w);
+		this.keyy_r = input_released(k_up, k_jump, vk_w);
+		this.keyx = ((input_down_int(k_right, vk_d) || gpadButton(15)) - (input_down_int(k_left, vk_a) || gpadButton(14)));
+	}
+	
 	// Jumping
-	if(input_pressed(k_up, k_jump, vk_w)) {
+	if(this.keyy_p == true) {
 		game_started = true;
 		this.jumpbuffer = this.jumpbuffer_max;
 	}
 	
-	if(input_released(k_up, k_jump, vk_w) && this.diry == -1 && !this.jumpbrake_disabled ) {
+	if(this.keyy_r == true && this.diry == -1 && !this.jumpbrake_disabled ) {
 		this.vy *= this.jumpbrake;
 	}
 	
@@ -2106,7 +2140,6 @@ if(!this.dead) {
 	this.nogravity = false;
 
 	// Horizontal movement
-	this.keyx = ((input_down_int(k_right, vk_d) || gpadButton(15)) - (input_down_int(k_left, vk_a) || gpadButton(14)));
 	if(keyx != 0) {
 		game_started = true;
 		this.sprite_dir = this.keyx;
@@ -2128,6 +2161,8 @@ if(stompable == null) stompable = place_meeting(x, y+vy, o_enemy_missile);
 if(stompable == null) stompable = place_meeting(x, y+vy, o_enemy_rathuge);
 if(stompable == null) stompable = place_meeting(x, y+vy, o_enemy_fish);
 if(stompable == null) stompable = place_meeting(x, y+vy, o_enemy_fishjump);
+if(stompable == null) stompable = place_meeting(x, y+vy, o_enemy_robot);
+if(stompable == null) stompable = place_meeting(x, y+vy, o_enemy_bigbot);
 if(stompable != null && this.vy > 0) {
 	this.try_stomp(other);
 }
@@ -2224,6 +2259,8 @@ if(place_meeting(x, y, o_enemy_cactus) != null) { this.die(); }
 if(place_meeting(x, y, o_enemy_spikes) != null) { this.die(); }
 if(place_meeting(x, y, o_enemy_crusher) != null) { this.die(); }
 if(place_meeting(x, y, o_enemy_floatingspike) != null) { this.die(); }
+if(place_meeting(x, y, o_enemy_shark) != null) { this.die(); }
+if(place_meeting(x, y, o_enemy_bullet) != null) { this.die(); other.delete = true; }
 if(y-sprite_index.height > room_height) { this.die(); }
 if(x+sprite_index.width < room_viewport_x - player_death_margin) { this.die(); }
 
@@ -2275,7 +2312,7 @@ if(!other.dead && !this.dead) {
 		other.die();
 		sound_c_play(snd_stomp);
 		hud_object.score += other.reward;
-		if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
+		if(this.keyy == true) this.vy = -(this.jumppower * this.enemy_bounce_high);
 		else this.vy = -(this.jumppower * this.enemy_bounce);
 	} else {
 		this.die();
@@ -2295,7 +2332,7 @@ if(!this.dead && !other.dead) {
 			other.die();
 			sound_c_play(snd_stomp);
 			hud_object.score += other.reward;
-			if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
+			if(this.keyy == true) this.vy = -(this.jumppower * this.enemy_bounce_high);
 			else this.vy = -(this.jumppower * this.enemy_bounce);
 		} else {
 			this.die();
@@ -2319,7 +2356,7 @@ if(!this.dead && !other.dead) {
 			other.die();
 			sound_c_play(snd_stomp);
 			hud_object.score += other.reward;
-			if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
+			if(this.keyy == true) this.vy = -(this.jumppower * this.enemy_bounce_high);
 			else this.vy = -(this.jumppower * this.enemy_bounce);
 		} else this.die();
 	} else {
@@ -2339,7 +2376,7 @@ if(!other.dead && !this.dead) {
 		other.die();
 		sound_c_play(snd_stomp);
 		hud_object.score += other.reward;
-		if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
+		if(this.keyy == true) this.vy = -(this.jumppower * this.enemy_bounce_high);
 		else this.vy = -(this.jumppower * this.enemy_bounce);
 	} else {
 		this.die();
@@ -2364,7 +2401,8 @@ this.other = this.place_meeting(this.x, this.y, o_water_disable);
 if(this.other != null) {
 if(this.mode == this.m_swim && this.vy < 1) {
 	this.m_foot.activate(this);
-	this.vy = -jumppower;
+	if(this.keyy == true) this.vy = -this.jumppower;
+	else this.vy = -this.jumppower * this.enemy_bounce;
 }
 }
 this.other = this.place_meeting(this.x, this.y, o_enemy_fish);
@@ -2375,7 +2413,7 @@ if(!this.dead && !other.dead) {
 			other.die();
 			sound_c_play(snd_stomp);
 			hud_object.score += other.reward;
-			if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
+			if(this.keyy == true) this.vy = -(this.jumppower * this.enemy_bounce_high);
 			else this.vy = -(this.jumppower * this.enemy_bounce);
 		} else {
 			this.die();
@@ -2405,7 +2443,7 @@ if(!this.dead && !other.dead) {
 			other.die();
 			sound_c_play(snd_stomp);
 			hud_object.score += other.reward;
-			if(keyboard_check(k_up)) this.vy = -(this.jumppower * this.enemy_bounce_high);
+			if(this.keyy == true) this.vy = -(this.jumppower * this.enemy_bounce_high);
 			else this.vy = -(this.jumppower * this.enemy_bounce);
 		} else {
 			this.die();
@@ -2418,6 +2456,34 @@ if(!this.dead && !other.dead) {
 			hud_object.score += other.reward;
 			this.vy = -this.jumppower;
 		} else this.die();
+	}
+}
+}
+this.other = this.place_meeting(this.x, this.y, o_enemy_robot);
+if(this.other != null) {
+if(!other.dead && !this.dead) {
+	if(this.vy > 0 && this.y > other.y+4) {
+		other.die();
+		sound_c_play(snd_stomp);
+		hud_object.score += other.reward;
+		if(this.keyy == true) this.vy = -(this.jumppower * this.enemy_bounce_high);
+		else this.vy = -(this.jumppower * this.enemy_bounce);
+	} else {
+		this.die();
+	}
+}
+}
+this.other = this.place_meeting(this.x, this.y, o_enemy_bigbot);
+if(this.other != null) {
+if(!other.dead && !this.dead) {
+	if(this.vy > 0 && this.y > other.y+4) {
+		other.die();
+		sound_c_play(snd_stomp);
+		hud_object.score += other.reward;
+		if(this.keyy == true) this.vy = -(this.jumppower * this.enemy_bounce_high);
+		else this.vy = -(this.jumppower * this.enemy_bounce);
+	} else {
+		this.die();
 	}
 }
 }
@@ -2650,6 +2716,7 @@ function __o_enemy_spikes() {
 __instance_init__(this, o_enemy_spikes, null, 1, 0, s_spikes, 1, 5);
 this.on_creation = function() {
 with(this) {
+this.tick = 0;
 this.bound = false;
 image_speed = 0;
 }
@@ -2658,7 +2725,8 @@ this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
-if(!this.bound) {
+if(this.bound == false) this.tick += 1;
+if(this.tick == 1) {
 if(place_meeting(x, y+16, o_dev_solid)) image_index = 0;
 else if(place_meeting(x, y-16, o_dev_solid)) image_index = 1;
 //else if(place_meeting(x+16, y, o_dev_solid)) image_index = 2;
@@ -2717,41 +2785,14 @@ this.on_draw = on_draw_i;
 }; var o_dev_hazard = new __o_dev_hazard();
 
 function __o_bl_brick() {
-__instance_init__(this, o_bl_brick, null, 0, 0, s_brick, 1, 8);
+__instance_init__(this, o_bl_brick, null, 0, 0, s_brick, 0, 8);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
-image_speed = 0;
-image_index = 0;
-
-this.hor = 0;
-this.ver = 0;
-this.bls = 16;
-
-if(y == 0) instance_create(x, y-this.bls, object_index);
-if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
-
-if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
-if(place_meeting(x-this.bls, y, object_index))
-{
-    if(this.hor == 1){this.hor = 2}
-    else{this.hor = 3}
-}
-
-if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
-if(place_meeting(x, y-this.bls, object_index))
-{
-    if(this.ver == 1){this.ver = 2}
-    else{this.ver = 3}
-}
-
-image_index = 4*this.ver + this.hor;
-tile_add(ts_brick, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
-if(!(y + 16 >= room_height && image_index == 14)) {
-	if(image_index != 10) instance_create(x, y, o_dev_solid);
-}
+let g = instance_create(x, y, o_autotile);
+g.tileset = ts_brick;
 instance_destroy();
 }
 };
@@ -2763,13 +2804,14 @@ this.on_draw = on_draw_i;
 }; var o_bl_brick = new __o_bl_brick();
 
 function __o_bl_cloud() {
-__instance_init__(this, o_bl_cloud, null, 0, 0, s_cloud, 1, 9);
+__instance_init__(this, o_bl_cloud, null, 0, 0, s_cloud, 0, 9);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
-autotile(this, 16, ts_cloud, o_dev_solid);
+let g = instance_create(x, y, o_autotile);
+g.tileset = ts_cloud;
 instance_destroy();
 }
 };
@@ -2900,6 +2942,11 @@ this.die(1);
 this.other = this.place_meeting(this.x, this.y, o_enemy_crusher);
 if(this.other != null) {
 this.die();
+}
+this.other = this.place_meeting(this.x, this.y, o_enemy_bullet);
+if(this.other != null) {
+this.die(1);
+other.delete = true;
 }
 }
 };
@@ -3268,7 +3315,7 @@ this.on_draw = on_draw_i;
 }; var o_dev_cat_demo = new __o_dev_cat_demo();
 
 function __o_bl_woodenblock() {
-__instance_init__(this, o_bl_woodenblock, null, 0, 0, s_woodenblock, 1, 19);
+__instance_init__(this, o_bl_woodenblock, null, 0, 0, s_woodenblock, 0, 19);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -3291,41 +3338,14 @@ this.on_draw = on_draw_i;
 }; var o_bl_woodenblock = new __o_bl_woodenblock();
 
 function __o_bl_cave() {
-__instance_init__(this, o_bl_cave, null, 0, 0, s_woodenblock, 1, 20);
+__instance_init__(this, o_bl_cave, null, 0, 0, s_woodenblock, 0, 20);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
-image_speed = 0;
-image_index = 0;
-
-this.hor = 0;
-this.ver = 0;
-this.bls = 16;
-
-if(y == 0) instance_create(x, y-this.bls, object_index);
-if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
-
-if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
-if(place_meeting(x-this.bls, y, object_index))
-{
-    if(this.hor == 1){this.hor = 2}
-    else{this.hor = 3}
-}
-
-if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
-if(place_meeting(x, y-this.bls, object_index))
-{
-    if(this.ver == 1){this.ver = 2}
-    else{this.ver = 3}
-}
-
-image_index = 4*this.ver + this.hor;
-tile_add(ts_cave, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
-if(!(y + 16 >= room_height && image_index == 14)) {
-	if(image_index != 10) instance_create(x, y, o_dev_solid);
-}
+let g = instance_create(x, y, o_autotile);
+g.tileset = ts_cave;
 instance_destroy();
 }
 };
@@ -3655,41 +3675,14 @@ this.on_draw = on_draw_i;
 }; var o_enemy_cactus = new __o_enemy_cactus();
 
 function __o_bl_sand() {
-__instance_init__(this, o_bl_sand, null, 0, 0, s_woodenblock, 1, 161);
+__instance_init__(this, o_bl_sand, null, 0, 0, s_woodenblock, 0, 161);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
-image_speed = 0;
-image_index = 0;
-
-this.hor = 0;
-this.ver = 0;
-this.bls = 16;
-
-if(y == 0) instance_create(x, y-this.bls, object_index);
-if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
-
-if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
-if(place_meeting(x-this.bls, y, object_index))
-{
-    if(this.hor == 1){this.hor = 2}
-    else{this.hor = 3}
-}
-
-if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
-if(place_meeting(x, y-this.bls, object_index))
-{
-    if(this.ver == 1){this.ver = 2}
-    else{this.ver = 3}
-}
-
-image_index = 4*this.ver + this.hor;
-tile_add(ts_sand, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
-if(!(y + 16 >= room_height && image_index == 14)) {
-	if(image_index != 10) instance_create(x, y, o_dev_solid);
-}
+let g = instance_create(x, y, o_autotile);
+g.tileset = ts_sand;
 instance_destroy();
 }
 };
@@ -3734,41 +3727,14 @@ if(debug) {
 }; var o_debug_marker = new __o_debug_marker();
 
 function __o_bl_tree() {
-__instance_init__(this, o_bl_tree, null, 0, 0, s_woodenblock, 1, 163);
+__instance_init__(this, o_bl_tree, null, 0, 0, s_woodenblock, 0, 163);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
-image_speed = 0;
-image_index = 0;
-
-this.hor = 0;
-this.ver = 0;
-this.bls = 16;
-
-if(y == 0) instance_create(x, y-this.bls, object_index);
-if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
-
-if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
-if(place_meeting(x-this.bls, y, object_index))
-{
-    if(this.hor == 1){this.hor = 2}
-    else{this.hor = 3}
-}
-
-if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
-if(place_meeting(x, y-this.bls, object_index))
-{
-    if(this.ver == 1){this.ver = 2}
-    else{this.ver = 3}
-}
-
-image_index = 4*this.ver + this.hor;
-tile_add(ts_tree, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
-if(!(y + 16 >= room_height && image_index == 14)) {
-	if(image_index != 10) instance_create(x, y, o_dev_solid);
-}
+let g = instance_create(x, y, o_autotile);
+g.tileset = ts_tree;
 instance_destroy();
 }
 };
@@ -3853,41 +3819,14 @@ this.on_draw = on_draw_i;
 }; var o_enemy_crusher = new __o_enemy_crusher();
 
 function __o_bl_panel() {
-__instance_init__(this, o_bl_panel, null, 0, 0, s_woodenblock, 1, 165);
+__instance_init__(this, o_bl_panel, null, 0, 0, s_woodenblock, 0, 165);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
-image_speed = 0;
-image_index = 0;
-
-this.hor = 0;
-this.ver = 0;
-this.bls = 16;
-
-if(y == 0) instance_create(x, y-this.bls, object_index);
-if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
-
-if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
-if(place_meeting(x-this.bls, y, object_index))
-{
-    if(this.hor == 1){this.hor = 2}
-    else{this.hor = 3}
-}
-
-if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
-if(place_meeting(x, y-this.bls, object_index))
-{
-    if(this.ver == 1){this.ver = 2}
-    else{this.ver = 3}
-}
-
-image_index = 4*this.ver + this.hor;
-tile_add(ts_panel, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
-if(!(y + 16 >= room_height && image_index == 14)) {
-	if(image_index != 10) instance_create(x, y, o_dev_solid);
-}
+let g = instance_create(x, y, o_autotile);
+g.tileset = ts_panel;
 instance_destroy();
 }
 };
@@ -3899,41 +3838,14 @@ this.on_draw = on_draw_i;
 }; var o_bl_panel = new __o_bl_panel();
 
 function __o_bl_wood() {
-__instance_init__(this, o_bl_wood, null, 0, 0, s_woodenblock, 1, 166);
+__instance_init__(this, o_bl_wood, null, 0, 0, s_woodenblock, 0, 166);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
-image_speed = 0;
-image_index = 0;
-
-this.hor = 0;
-this.ver = 0;
-this.bls = 16;
-
-if(y == 0) instance_create(x, y-this.bls, object_index);
-if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
-
-if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
-if(place_meeting(x-this.bls, y, object_index))
-{
-    if(this.hor == 1){this.hor = 2}
-    else{this.hor = 3}
-}
-
-if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
-if(place_meeting(x, y-this.bls, object_index))
-{
-    if(this.ver == 1){this.ver = 2}
-    else{this.ver = 3}
-}
-
-image_index = 4*this.ver + this.hor;
-tile_add(ts_wood, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
-if(!(y + 16 >= room_height && image_index == 14)) {
-	if(image_index != 10) instance_create(x, y, o_dev_solid);
-}
+let g = instance_create(x, y, o_autotile);
+g.tileset = ts_wood;
 instance_destroy();
 }
 };
@@ -4003,41 +3915,14 @@ draw_sprite_ext(sprite_index, image_index, x, y, this.sprite_dir, 1, 0, 1);
 }; var o_enemy_missile = new __o_enemy_missile();
 
 function __o_bl_bigbrick() {
-__instance_init__(this, o_bl_bigbrick, null, 0, 0, s_woodenblock, 1, 168);
+__instance_init__(this, o_bl_bigbrick, null, 0, 0, s_woodenblock, 0, 168);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
-image_speed = 0;
-image_index = 0;
-
-this.hor = 0;
-this.ver = 0;
-this.bls = 16;
-
-if(y == 0) instance_create(x, y-this.bls, object_index);
-if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
-
-if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
-if(place_meeting(x-this.bls, y, object_index))
-{
-    if(this.hor == 1){this.hor = 2}
-    else{this.hor = 3}
-}
-
-if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
-if(place_meeting(x, y-this.bls, object_index))
-{
-    if(this.ver == 1){this.ver = 2}
-    else{this.ver = 3}
-}
-
-image_index = 4*this.ver + this.hor;
-tile_add(ts_bigbrick, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
-if(!(y + 16 >= room_height && image_index == 14)) {
-	if(image_index != 10) instance_create(x, y, o_dev_solid);
-}
+let g = instance_create(x, y, o_autotile);
+g.tileset = ts_bigbrick;
 instance_destroy();
 }
 };
@@ -4234,38 +4119,9 @@ this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
-image_speed = 0;
-image_index = 0;
-
-this.hor = 0;
-this.ver = 0;
-this.bls = 32;
-
-if(y == 0) instance_create(x, y-this.bls, object_index);
-if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
-
-if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
-if(place_meeting(x-this.bls, y, object_index))
-{
-    if(this.hor == 1){this.hor = 2}
-    else{this.hor = 3}
-}
-
-if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
-if(place_meeting(x, y-this.bls, object_index))
-{
-    if(this.ver == 1){this.ver = 2}
-    else{this.ver = 3}
-}
-
-image_index = 4*this.ver + this.hor;
-tile_add(ts_huge, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
-if(!(y + 16 >= room_height && image_index == 14)) {
-	if(image_index != 10) {
-		let sol = instance_create(x, y, o_dev_solid);
-		sol.sprite_index = col_32x;
-	}	
-}
+let g = instance_create(x, y, o_autotile);
+g.tileset = ts_huge;
+g.bls = 32;
 instance_destroy();
 }
 };
@@ -4439,41 +4295,14 @@ this.on_draw = on_draw_i;
 }; var o_platform_lift = new __o_platform_lift();
 
 function __o_bl_groundalt() {
-__instance_init__(this, o_bl_groundalt, null, 1, 0, s_woodenblock, 1, 180);
+__instance_init__(this, o_bl_groundalt, null, 0, 0, s_woodenblock, 0, 180);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
-image_speed = 0;
-image_index = 0;
-
-this.hor = 0;
-this.ver = 0;
-this.bls = 16;
-
-if(y == 0) instance_create(x, y-this.bls, object_index);
-if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
-
-if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
-if(place_meeting(x-this.bls, y, object_index))
-{
-    if(this.hor == 1){this.hor = 2}
-    else{this.hor = 3}
-}
-
-if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
-if(place_meeting(x, y-this.bls, object_index))
-{
-    if(this.ver == 1){this.ver = 2}
-    else{this.ver = 3}
-}
-
-image_index = 4*this.ver + this.hor;
-tile_add(ts_groundalt, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
-if(!(y + 16 >= room_height && image_index == 14)) {
-	if(image_index != 10) instance_create(x, y, o_dev_solid);
-}
+let g = instance_create(x, y, o_autotile);
+g.tileset = ts_groundalt;
 instance_destroy();
 }
 };
@@ -4485,41 +4314,14 @@ this.on_draw = on_draw_i;
 }; var o_bl_groundalt = new __o_bl_groundalt();
 
 function __o_bl_metal() {
-__instance_init__(this, o_bl_metal, null, 1, 0, s_woodenblock, 1, 181);
+__instance_init__(this, o_bl_metal, null, 0, 0, s_woodenblock, 0, 181);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
-image_speed = 0;
-image_index = 0;
-
-this.hor = 0;
-this.ver = 0;
-this.bls = 16;
-
-if(y == 0) instance_create(x, y-this.bls, object_index);
-if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
-
-if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
-if(place_meeting(x-this.bls, y, object_index))
-{
-    if(this.hor == 1){this.hor = 2}
-    else{this.hor = 3}
-}
-
-if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
-if(place_meeting(x, y-this.bls, object_index))
-{
-    if(this.ver == 1){this.ver = 2}
-    else{this.ver = 3}
-}
-
-image_index = 4*this.ver + this.hor;
-tile_add(ts_metal, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
-if(!(y + 16 >= room_height && image_index == 14)) {
-	if(image_index != 10) instance_create(x, y, o_dev_solid);
-}
+let g = instance_create(x, y, o_autotile);
+g.tileset = ts_metal;
 instance_destroy();
 }
 };
@@ -4599,7 +4401,7 @@ this.on_draw = on_draw_i;
 }; var o_conveyor_r = new __o_conveyor_r();
 
 function __o_gamepad_test() {
-__instance_init__(this, o_gamepad_test, null, 1, 0, s_dev_unknown, 1, 214);
+__instance_init__(this, o_gamepad_test, null, 1, 0, s_dev_unknown, 1, 207);
 this.on_creation = function() {
 with(this) {
 
@@ -4627,41 +4429,14 @@ with(this) {
 }; var o_gamepad_test = new __o_gamepad_test();
 
 function __o_bl_pipe() {
-__instance_init__(this, o_bl_pipe, null, 1, 0, s_woodenblock, 1, 216);
+__instance_init__(this, o_bl_pipe, null, 0, 0, s_woodenblock, 0, 209);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
-image_speed = 0;
-image_index = 0;
-
-this.hor = 0;
-this.ver = 0;
-this.bls = 16;
-
-if(y == 0) instance_create(x, y-this.bls, object_index);
-if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
-
-if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
-if(place_meeting(x-this.bls, y, object_index))
-{
-    if(this.hor == 1){this.hor = 2}
-    else{this.hor = 3}
-}
-
-if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
-if(place_meeting(x, y-this.bls, object_index))
-{
-    if(this.ver == 1){this.ver = 2}
-    else{this.ver = 3}
-}
-
-image_index = 4*this.ver + this.hor;
-tile_add(ts_pipe, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
-if(!(y + 16 >= room_height && image_index == 14)) {
-	if(image_index != 10) instance_create(x, y, o_dev_solid);
-}
+let g = instance_create(x, y, o_autotile);
+g.tileset = ts_pipe;
 instance_destroy();
 }
 };
@@ -4673,7 +4448,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_pipe = new __o_bl_pipe();
 
 function __o_enemy_crush_up() {
-__instance_init__(this, o_enemy_crush_up, null, 1, 0, s_enemy_crusher, 1, 238);
+__instance_init__(this, o_enemy_crush_up, null, 1, 0, s_enemy_crusher, 1, 224);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -4686,7 +4461,7 @@ this.on_draw = on_draw_i;
 }; var o_enemy_crush_up = new __o_enemy_crush_up();
 
 function __o_enemy_ratheli_stay() {
-__instance_init__(this, o_enemy_ratheli_stay, null, 1, 0, s_enemy_ratheli, 1, 239);
+__instance_init__(this, o_enemy_ratheli_stay, null, 1, 0, s_enemy_ratheli, 1, 225);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = function() {
@@ -4707,7 +4482,7 @@ this.on_draw = on_draw_i;
 }; var o_enemy_ratheli_stay = new __o_enemy_ratheli_stay();
 
 function __o_water() {
-__instance_init__(this, o_water, null, 1, 0, s_water, 1, 240);
+__instance_init__(this, o_water, null, 1, 1, s_water, 1, 226);
 this.on_creation = function() {
 with(this) {
 image_speed  = 0.1;
@@ -4729,7 +4504,7 @@ this.on_draw = on_draw_i;
 }; var o_water = new __o_water();
 
 function __o_water_disable() {
-__instance_init__(this, o_water_disable, null, 0, 0, col_16x, 1, 243);
+__instance_init__(this, o_water_disable, null, 0, 0, col_16x, 1, 229);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = function() {
@@ -4746,15 +4521,15 @@ this.on_draw = on_draw_i;
 }; var o_water_disable = new __o_water_disable();
 
 function __o_enemy_fish() {
-__instance_init__(this, o_enemy_fish, null, 1, 0, s_enemy_fish, 1, 244);
+__instance_init__(this, o_enemy_fish, null, 1, 0, s_enemy_fish, 1, 230);
 this.on_creation = function() {
 with(this) {
 image_speed = 0.1;
 
-x += character_spawn_offset_x;
-xstart += character_spawn_offset_x;
-y += character_spawn_offset_y;
-ystart += character_spawn_offset_y;
+x += 4;
+xstart += 4;
+y += 4;
+ystart += 4;
 
 this.reward = 100;
 this.vx = -0.75;
@@ -4831,7 +4606,7 @@ draw_sprite_ext(sprite_index, image_index, ceil(x), ceil(y), 1*this.sprite_dir, 
 }; var o_enemy_fish = new __o_enemy_fish();
 
 function __o_deco_bubble() {
-__instance_init__(this, o_deco_bubble, null, 1, 0, s_bubble, 1, 245);
+__instance_init__(this, o_deco_bubble, null, 1, 0, s_bubble, 1, 231);
 this.on_creation = function() {
 with(this) {
 this.tick = 0;
@@ -4865,7 +4640,7 @@ draw_sprite(sprite_index, 0, ceil(x), ceil(y));
 }; var o_deco_bubble = new __o_deco_bubble();
 
 function __o_watercurrent() {
-__instance_init__(this, o_watercurrent, null, 1, 0, col_16x, 1, 246);
+__instance_init__(this, o_watercurrent, null, 1, 0, col_16x, 1, 232);
 this.on_creation = function() {
 with(this) {
 this.hforce = 0;
@@ -4919,7 +4694,7 @@ draw_sprite(s_bubble, 0, ceil(x+this.bub2x), ceil(y+this.bub2y));
 }; var o_watercurrent = new __o_watercurrent();
 
 function __o_watercurrent_l() {
-__instance_init__(this, o_watercurrent_l, null, 1, 0, s_bubble, 1, 247);
+__instance_init__(this, o_watercurrent_l, null, 1, 0, s_bubble, 1, 233);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -4939,7 +4714,7 @@ this.on_draw = on_draw_i;
 }; var o_watercurrent_l = new __o_watercurrent_l();
 
 function __o_watercurrent_r() {
-__instance_init__(this, o_watercurrent_r, null, 1, 0, s_bubble, 1, 248);
+__instance_init__(this, o_watercurrent_r, null, 1, 0, s_bubble, 1, 234);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -4959,7 +4734,7 @@ this.on_draw = on_draw_i;
 }; var o_watercurrent_r = new __o_watercurrent_r();
 
 function __o_watercurrent_u() {
-__instance_init__(this, o_watercurrent_u, null, 1, 0, s_bubble, 1, 249);
+__instance_init__(this, o_watercurrent_u, null, 1, 0, s_bubble, 1, 235);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -4979,7 +4754,7 @@ this.on_draw = on_draw_i;
 }; var o_watercurrent_u = new __o_watercurrent_u();
 
 function __o_watercurrent_d() {
-__instance_init__(this, o_watercurrent_d, null, 1, 0, s_bubble, 1, 250);
+__instance_init__(this, o_watercurrent_d, null, 1, 0, s_bubble, 1, 236);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -4999,41 +4774,14 @@ this.on_draw = on_draw_i;
 }; var o_watercurrent_d = new __o_watercurrent_d();
 
 function __o_bl_bridge() {
-__instance_init__(this, o_bl_bridge, null, 1, 0, s_woodenblock, 1, 251);
+__instance_init__(this, o_bl_bridge, null, 0, 0, s_woodenblock, 0, 237);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
-image_speed = 0;
-image_index = 0;
-
-this.hor = 0;
-this.ver = 0;
-this.bls = 16;
-
-if(y == 0) instance_create(x, y-this.bls, object_index);
-if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
-
-if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
-if(place_meeting(x-this.bls, y, object_index))
-{
-    if(this.hor == 1){this.hor = 2}
-    else{this.hor = 3}
-}
-
-if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
-if(place_meeting(x, y-this.bls, object_index))
-{
-    if(this.ver == 1){this.ver = 2}
-    else{this.ver = 3}
-}
-
-image_index = 4*this.ver + this.hor;
-tile_add(ts_bridge, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
-if(!(y + 16 >= room_height && image_index == 14)) {
-	if(image_index != 10) instance_create(x, y, o_dev_solid);
-}
+let g = instance_create(x, y, o_autotile);
+g.tileset = ts_bridge;
 instance_destroy();
 }
 };
@@ -5045,7 +4793,7 @@ this.on_draw = on_draw_i;
 }; var o_bl_bridge = new __o_bl_bridge();
 
 function __o_enemy_fishjump() {
-__instance_init__(this, o_enemy_fishjump, null, 1, 0, s_enemy_fish2, 1, 252);
+__instance_init__(this, o_enemy_fishjump, null, 1, 0, s_enemy_fish2, 1, 238);
 this.on_creation = function() {
 with(this) {
 image_speed = 0.1;
@@ -5139,13 +4887,13 @@ draw_sprite_ext(sprite_index, image_index, ceil(x), ceil(y), 1*this.sprite_dir, 
 }; var o_enemy_fishjump = new __o_enemy_fishjump();
 
 function __o_enemy_shark() {
-__instance_init__(this, o_enemy_shark, null, 1, 0, s_enemy_shark, 1, 253);
+__instance_init__(this, o_enemy_shark, null, 1, 0, s_enemy_shark, 1, 239);
 this.on_creation = function() {
 with(this) {
-x += 8;
-xstart += 8;
-y += 8;
-ystart += 8;
+x += 4;
+xstart += 4;
+y += 4;
+ystart += 4;
 
 this.reward = 300;
 
@@ -5153,7 +4901,14 @@ this.dead = false;
 this.fired = false;
 this.dead = false;
 this.vx = -3;
+this.vy = 0;
+this.vx_max = 2;
+this.vy_max = 1.5;
+this.vx_accel = 0.25;
+this.vy_accel = 0.25;
 this.sprite_dir = -1;
+
+image_speed = 0.1;
 
 this.die = function() {
 	spawn_corpse(x, y, sprite_index, sprite_dir);
@@ -5167,11 +4922,29 @@ with(this) {
 if(game_paused) return;
 if(x > room_viewport_x+room_viewport_width) return;
 if( y + 16 > room_height ) instance_destroy();
-if(x < room_viewport_x-despawn_margin) instance_destroy()
-if(!fired) {
-	fired = true;
+if(x < room_viewport_x-despawn_margin) instance_destroy();
+
+if(abs(player_object.x - x) > 8) {
+	if(player_object.x < x) { this.vx -= this.vx_accel; this.sprite_dir = -1}
+	if(player_object.x > x) { this.vx += this.vx_accel; this.sprite_dir = 1 }
+} else {
+	this.vx *= 0.8;
 }
-x += this.vx;
+
+if(abs(player_object.y - y) > 8) {
+	if(player_object.y < y) this.vy -= this.vy_accel;
+	if(player_object.y > y) this.vy += this.vy_accel;
+} else {
+	this.vy *= 0.8;
+}
+
+if(this.vx > this.vx_max) this.vx = this.vx_max;
+if(this.vx < -this.vx_max) this.vx = -this.vx_max;
+if(this.vy > this.vy_max) this.vy = this.vy_max;
+if(this.vy < -this.vy_max) this.vy = -this.vy_max;
+
+if(place_meeting(x+this.vx, y, o_dev_solid) == null && place_meeting(x+this.vx, y, o_water) == null) x += this.vx;
+if(place_meeting(x, y+this.vy, o_dev_solid) == null && place_meeting(x, y+this.vy, o_water) == null) y += this.vy;
 }
 };
 this.on_end_step = on_end_step_i;
@@ -5179,7 +4952,7 @@ this.on_collision = function() {
 with(this) {
 this.other = this.place_meeting(this.x, this.y, o_dev_solid);
 if(this.other != null) {
-this.die();
+//this.die();
 }
 }
 };
@@ -5190,14 +4963,14 @@ this.on_draw = function() {
 if (this.visible == 1) {
 __handle_sprite__(this);
 with(this) {
-draw_sprite_ext(sprite_index, image_index, x, y, this.sprite_dir, 1, 0, 1);
+draw_sprite_ext(sprite_index, image_index, ceil(x), ceil(y), this.sprite_dir, 1, 0, 1);
 }
 }
 };
 }; var o_enemy_shark = new __o_enemy_shark();
 
 function __o_enemy_floatingspike() {
-__instance_init__(this, o_enemy_floatingspike, null, 1, 0, s_enemy_floatingspike, 1, 254);
+__instance_init__(this, o_enemy_floatingspike, null, 1, 0, s_enemy_floatingspike, 1, 240);
 this.on_creation = function() {
 with(this) {
 this.vx = 0;
@@ -5244,7 +5017,7 @@ draw_sprite(sprite_index, image_index, ceil(x), ceil(y));
 }; var o_enemy_floatingspike = new __o_enemy_floatingspike();
 
 function __o_enemy_fspike_l() {
-__instance_init__(this, o_enemy_fspike_l, null, 1, 0, s_enemy_floatingspike, 1, 255);
+__instance_init__(this, o_enemy_fspike_l, null, 1, 0, s_enemy_floatingspike, 1, 241);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -5263,7 +5036,7 @@ this.on_draw = on_draw_i;
 }; var o_enemy_fspike_l = new __o_enemy_fspike_l();
 
 function __o_enemy_fspike_u() {
-__instance_init__(this, o_enemy_fspike_u, null, 1, 0, s_enemy_floatingspike, 1, 256);
+__instance_init__(this, o_enemy_fspike_u, null, 1, 0, s_enemy_floatingspike, 1, 242);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -5280,6 +5053,452 @@ this.on_roomend = on_roomend_i;
 this.on_animationend = on_animationend_i;
 this.on_draw = on_draw_i;
 }; var o_enemy_fspike_u = new __o_enemy_fspike_u();
+
+function __o_enemy_robot() {
+__instance_init__(this, o_enemy_robot, null, 1, 2, s_enemy_robot, 1, 243);
+this.on_creation = function() {
+with(this) {
+x += character_spawn_offset_x;
+xstart += character_spawn_offset_x;
+y += character_spawn_offset_y;
+ystart += character_spawn_offset_y;
+
+this.reward = 300;
+
+this.vx = -0.5;
+this.vy = 0;
+this.sprite_dir = -1;
+this.grounded = false;
+this.dead = false;
+this.dead_fade = 0;
+this.dead_fade_max = 60;
+this.jumppower = 7;
+
+this.vx_max = 1.5;
+this.vy_max = 4;
+this.gravity = 0.5;
+
+this.image_speed_max = image_speed = 0.2;
+
+this.die = function(how=0) {
+	if(!this.dead) {
+		this.dead = true;
+		spawn_corpse(x, y, sprite_index, sprite_dir);
+		instance_destroy();
+		return;
+		/*
+		if(how == 1) {
+			
+		}
+		sprite_index = s_enemy_rat_dead;
+		this.vx = 0;
+		this.dead_fade = 0;
+		*/
+	}
+}
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = function() {
+with(this) {
+if(game_paused) return;
+if(x > room_viewport_x+room_viewport_width) return;
+if( y + 16 > room_height ) instance_destroy();
+if(x < room_viewport_x-despawn_margin) instance_destroy()
+
+if(this.grounded) {
+	if(place_meeting(x+this.vx*2, y, o_dev_solid) != null || place_meeting(x+this.vx, y+16, o_dev_solid) == null) {
+		this.vy = -this.jumppower;
+	}
+}
+
+if(abs(player_object.x - x) > 8) {
+	if(player_object.x < x) { this.vx = -this.vx_max; this.sprite_dir = -1}
+	if(player_object.x > x) { this.vx = this.vx_max; this.sprite_dir = 1 }
+} else {
+	this.vx = 0;
+}
+
+if(place_meeting(x-this.vx, y, o_dev_solid) != null || place_meeting(x+this.vx, y, o_dev_solid) != null) { this.vx = -this.vx; this.sprite_dir = -this.sprite_dir}
+this.vy += this.gravity;
+if(place_meeting(x, y+this.vy, o_dev_solid) != null) {
+	this.vy = 0;
+	//image_speed = this.image_speed_max;
+	this.grounded = true;
+} else {
+	image_speed = 0;
+	this.grounded = false
+}
+
+if(this.grounded && this.vx != 0) image_speed = this.image_speed_max;
+else { image_speed = 0; image_index = 0; }
+
+if(this.vx > this.vx_max) this.vx = this.vx_max;
+if(this.vx < -this.vx_max) this.vx = -this.vx_max;
+
+if(this.dead) {
+	if(this.dead_fade >= this.dead_fade_max) instance_destroy();
+	this.dead_fade += 1;
+}
+
+// Trampoline interaction
+let trmp = place_meeting(x, y+2, o_trampoline);
+if(trmp == null) trmp = place_meeting(x, y-2, o_trampoline); 
+if(trmp != null) {
+	sound_c_play(snd_trampoline);
+	this.vy = (-8)*trmp.dir;
+	trmp.image_speed = 0.5;
+}
+
+x += this.vx;
+y += this.vy;
+}
+};
+this.on_end_step = function() {
+with(this) {
+
+}
+};
+this.on_collision = function() {
+with(this) {
+this.other = this.place_meeting(this.x, this.y, o_enemy_spikes);
+if(this.other != null) {
+this.die(1);
+}
+this.other = this.place_meeting(this.x, this.y, o_enemy_cactus);
+if(this.other != null) {
+this.die(1);
+}
+this.other = this.place_meeting(this.x, this.y, o_enemy_crusher);
+if(this.other != null) {
+this.die();
+}
+}
+};
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = function() {
+if (this.visible == 1) {
+__handle_sprite__(this);
+with(this) {
+draw_sprite_ext(sprite_index, image_index, ceil(x), ceil(y), 1*this.sprite_dir, 1, 0, 1);
+}
+}
+};
+}; var o_enemy_robot = new __o_enemy_robot();
+
+function __o_enemy_bigbot() {
+__instance_init__(this, o_enemy_bigbot, null, 1, 2, s_enemy_bigbot, 1, 263);
+this.on_creation = function() {
+with(this) {
+x += character_spawn_offset_x;
+xstart += character_spawn_offset_x;
+y += character_spawn_offset_y;
+ystart += character_spawn_offset_y;
+
+this.reward = 300;
+
+this.vx = -0.5;
+this.vy = 0;
+this.sprite_dir = -1;
+this.grounded = false;
+this.dead = false;
+this.dead_fade = 0;
+this.dead_fade_max = 60;
+this.jumppower = 7;
+this.tick = 0;
+this.state = 0;
+
+this.vx_max = 1;
+this.vy_max = 4;
+this.gravity = 0.5;
+
+this.image_speed_max = image_speed = 0.2;
+
+this.die = function(how=0) {
+	if(!this.dead) {
+		this.dead = true;
+		spawn_corpse(x, y, sprite_index, sprite_dir);
+		instance_destroy();
+		return;
+		/*
+		if(how == 1) {
+			
+		}
+		sprite_index = s_enemy_rat_dead;
+		this.vx = 0;
+		this.dead_fade = 0;
+		*/
+	}
+}
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = function() {
+with(this) {
+if(game_paused) return;
+if(x > room_viewport_x+room_viewport_width) return;
+if( y + 16 > room_height ) instance_destroy();
+if(x < room_viewport_x-despawn_margin) instance_destroy()
+
+this.tick += 1;
+
+if(this.state == 0) { // chase player
+	sprite_index = s_enemy_bigbot;
+	
+	if(this.tick >= 60) {
+		this.tick = 0;
+		this.state = 1;
+	}
+	
+	if(this.grounded) {
+		if(place_meeting(x+this.vx*2, y, o_dev_solid) != null || place_meeting(x+this.vx, y+16, o_dev_solid) == null) {
+			this.vy = -this.jumppower;
+		}
+	}
+	
+	if(abs(player_object.x - x) > 8) {
+		if(player_object.x < x) { this.vx = -this.vx_max; this.sprite_dir = -1}
+		if(player_object.x > x) { this.vx = this.vx_max; this.sprite_dir = 1 }
+	} else {
+		this.vx = 0;
+	}
+
+	if(this.grounded && this.vx != 0) image_speed = this.image_speed_max;
+	else { image_speed = 0; image_index = 0; }
+	
+}
+if(this.state == 1) { // stand still before shooting
+	image_index = 0;
+	image_speed = 0;
+	this.vx *= 0.95;
+	
+	if(this.tick >= 5) {
+		this.tick = 0;
+		this.state = 2;
+	}
+}
+
+if(this.state == 2) { // prepare to shoot
+	this.vx = 0;
+	sprite_index = s_enemy_bigbot_shoot;
+	if(this.tick == 2) image_index = 1;
+	if(this.tick == 4) image_index = 2;
+	if(this.tick == 6) image_index = 3;
+	if(this.tick == 7) {
+		if(abs(player_object.y - y) > 8 && this.grounded) this.vy = -jumppower; //try to aim at the player if theyre standing above 
+	}
+	
+	if(this.tick >= 10) {
+		this.tick = 0;
+		image_speed = 0;
+		image_index = 3;
+		let nb = instance_create(x+(this.sprite_dir*4), y-2, o_enemy_bullet);
+		nb.vx = 4*this.sprite_dir;
+		this.state = 3;
+	}
+}
+if(this.state == 3) { // stand still after shooting
+	image_speed = 0;
+	
+	if(this.tick >= 5) {
+		this.tick = 0;
+		this.state = 4;
+	}
+}
+if(this.state == 4) { // reverse shooting animation and get back to chase mode
+	if(this.tick == 2) image_index = 2;
+	if(this.tick == 4) image_index = 1;
+	if(this.tick == 6) image_index = 0;
+	
+	if(this.tick >= 10) {
+		this.tick = 0;
+		this.state = 0;
+	}
+}
+
+if(place_meeting(x-this.vx, y, o_dev_solid) != null || place_meeting(x+this.vx, y, o_dev_solid) != null) { this.vx = -this.vx; this.sprite_dir = -this.sprite_dir}
+this.vy += this.gravity;
+if(place_meeting(x, y+this.vy, o_dev_solid) != null) {
+	this.vy = 0;
+	//image_speed = this.image_speed_max;
+	this.grounded = true;
+} else {
+	image_speed = 0;
+	this.grounded = false
+}
+
+if(this.vx > this.vx_max) this.vx = this.vx_max;
+if(this.vx < -this.vx_max) this.vx = -this.vx_max;
+
+if(this.dead) {
+	if(this.dead_fade >= this.dead_fade_max) instance_destroy();
+	this.dead_fade += 1;
+}
+
+// Trampoline interaction
+let trmp = place_meeting(x, y+2, o_trampoline);
+if(trmp == null) trmp = place_meeting(x, y-2, o_trampoline); 
+if(trmp != null) {
+	sound_c_play(snd_trampoline);
+	this.vy = (-8)*trmp.dir;
+	trmp.image_speed = 0.5;
+}
+
+x += this.vx;
+y += this.vy;
+}
+};
+this.on_end_step = function() {
+with(this) {
+
+}
+};
+this.on_collision = function() {
+with(this) {
+this.other = this.place_meeting(this.x, this.y, o_enemy_spikes);
+if(this.other != null) {
+this.die(1);
+}
+this.other = this.place_meeting(this.x, this.y, o_enemy_cactus);
+if(this.other != null) {
+this.die(1);
+}
+this.other = this.place_meeting(this.x, this.y, o_enemy_crusher);
+if(this.other != null) {
+this.die();
+}
+}
+};
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = function() {
+if (this.visible == 1) {
+__handle_sprite__(this);
+with(this) {
+draw_sprite_ext(sprite_index, image_index, ceil(x), ceil(y), 1*this.sprite_dir, 1, 0, 1);
+/*
+draw_sprite_text(x, y-32, this.state.toString());
+draw_sprite_text(x, y-24, this.tick.toString());
+draw_sprite_text(x, y-16, this.image_index.toString());
+*/
+}
+}
+};
+}; var o_enemy_bigbot = new __o_enemy_bigbot();
+
+function __o_enemy_bullet() {
+__instance_init__(this, o_enemy_bullet, null, 1, 0, s_enemy_bullet, 1, 264);
+this.on_creation = function() {
+with(this) {
+this.vx = 0;
+this.vy = 0;
+this.delete = false;
+this.sprite_dir = -1;
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = function() {
+with(this) {
+if(game_paused == true) return;
+if(this.delete == true) instance_destroy(); // just calling the instance destroy function from other objects didn't work for god knows what reason while i was working on the level editor so i'm doing things this way right away on this one
+if(x > room_viewport_x+room_viewport_width) instance_destroy();
+if(x < room_viewport_x-despawn_margin) instance_destroy();
+if(place_meeting(x, y, o_dev_solid)) instance_destroy();
+if(place_meeting(x, y, o_enemy_spikes)) instance_destroy();
+if(place_meeting(x, y, o_enemy_cactus)) instance_destroy();
+if(place_meeting(x, y, o_enemy_floatingspike)) instance_destroy();
+
+if(this.vx > 0) this.sprite_dir = 1;
+else this.sprite_dir = -1;
+
+x += this.vx;
+y += this.vy;
+}
+};
+this.on_end_step = on_end_step_i;
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = function() {
+if (this.visible == 1) {
+__handle_sprite__(this);
+with(this) {
+draw_sprite_ext(sprite_index, 0, ceil(x), ceil(y), this.sprite_dir, 1, 0, 1);
+}
+}
+};
+}; var o_enemy_bullet = new __o_enemy_bullet();
+
+function __o_bl_ground() {
+__instance_init__(this, o_bl_ground, null, 0, 0, s_woodenblock, 0, 265);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = function() {
+with(this) {
+let g = instance_create(x, y, o_autotile);
+g.tileset = ts_ground;
+instance_destroy();
+}
+};
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_bl_ground = new __o_bl_ground();
+
+function __o_titlescreen() {
+__instance_init__(this, o_titlescreen, null, 1, 0, s_dev_unknown, 1, 266);
+this.on_creation = function() {
+with(this) {
+this.sx = 8;
+this.sy = 8;
+this.sw = 320;
+this.sh = 160;
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = on_end_step_i;
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = function() {
+if (this.visible == 1) {
+__handle_sprite__(this);
+with(this) {
+if(game_started) return;
+
+if(keyboard_check(vk_backspace) || keyboard_check(vk_f1)) {
+	draw_dialog(this.sx, this.sy, this.sw, this.sh);
+	draw_sprite_text(this.sx, this.sy, "OSWALD " + game_meta_version);
+	draw_sprite_text(this.sx, this.sy+16, "Code, graphics, sound, design:");
+	draw_sprite_text(this.sx, this.sy+24, "MICAI");
+	
+	draw_sprite_text(this.sx, this.sy+40, "Additional graphics and design:");
+	draw_sprite_text(this.sx, this.sy+48, "AMANOJAKUCHOU");
+	
+	draw_sprite_text(this.sx, this.sy+64, "Additional graphics and testing:");
+	draw_sprite_text(this.sx, this.sy+72, "SOUP");
+	
+	draw_sprite_text(this.sx, this.sy+88, "Additional level design:");
+	draw_sprite_text(this.sx, this.sy+96, "MRADAM");
+	
+	draw_sprite_text(this.sx, this.sy+112, "Testers and contributors:");
+	draw_sprite_text(this.sx, this.sy+120, "NI240SX, MIZU, OSDEVER, AETHUS, MRDAWN");
+	
+	draw_sprite_text(this.sx, this.sy+136, "Made with Tululoo Game Maker");
+}
+}
+}
+};
+}; var o_titlescreen = new __o_titlescreen();
 
 
 
@@ -5313,7 +5532,8 @@ this.objects = [
 [{o:o_camera, x:124, y:0}],
 [{o:o_hud, x:0, y:16}],
 [{o:o_world_generator, x:0, y:0}],
-[{o:o_gamepad_test, x:0, y:32}]];
+[{o:o_gamepad_test, x:0, y:32}],
+[{o:o_titlescreen, x:0, y:48}]];
 this.start = function() {
 __room_start__(this, sc_game, 500000, 160, 60, 255, 255, 255, null, 1, 1, 0, 320, 160, o_camera, 320, 160);
 
@@ -5330,145 +5550,141 @@ this.tiles = [
 this.objects = [
 [{o:o_kot, x:64, y:112}],
 [{o:o_hud, x:0, y:0}],
-[{o:o_bl_ground, x:384, y:80}],
-[{o:o_bl_ground, x:384, y:48}],
-[{o:o_bl_ground, x:384, y:32}],
-[{o:o_bl_ground, x:384, y:16}],
-[{o:o_bl_ground, x:384, y:0}],
-[{o:o_bl_ground, x:400, y:48}],
-[{o:o_bl_ground, x:416, y:48}],
-[{o:o_bl_ground, x:400, y:80}],
-[{o:o_bl_ground, x:400, y:96}],
-[{o:o_bl_ground, x:400, y:112}],
-[{o:o_bl_ground, x:416, y:112}],
-[{o:o_bl_ground, x:432, y:64}],
-[{o:o_bl_ground, x:432, y:80}],
-[{o:o_bl_ground, x:432, y:48}],
-[{o:o_bl_ground, x:432, y:112}],
-[{o:o_bl_ground, x:448, y:112}],
-[{o:o_bl_ground, x:464, y:112}],
-[{o:o_bl_ground, x:464, y:96}],
-[{o:o_bl_ground, x:464, y:80}],
-[{o:o_bl_ground, x:464, y:64}],
-[{o:o_bl_ground, x:480, y:64}],
-[{o:o_bl_ground, x:464, y:32}],
-[{o:o_bl_ground, x:480, y:32}],
-[{o:o_bl_ground, x:464, y:16}],
-[{o:o_bl_ground, x:448, y:16}],
-[{o:o_bl_ground, x:432, y:16}],
-[{o:o_bl_ground, x:416, y:16}],
-[{o:o_bl_ground, x:496, y:32}],
-[{o:o_bl_ground, x:496, y:64}],
-[{o:o_bl_ground, x:464, y:128}],
-[{o:o_bl_ground, x:464, y:144}],
-[{o:o_bl_ground, x:480, y:144}],
-[{o:o_bl_ground, x:512, y:144}],
-[{o:o_bl_ground, x:496, y:80}],
-[{o:o_bl_ground, x:496, y:96}],
-[{o:o_bl_ground, x:480, y:128}],
-[{o:o_bl_ground, x:496, y:128}],
-[{o:o_bl_ground, x:512, y:128}],
-[{o:o_bl_ground, x:544, y:128}],
-[{o:o_bl_ground, x:528, y:128}],
-[{o:o_bl_ground, x:528, y:112}],
-[{o:o_bl_ground, x:528, y:96}],
-[{o:o_bl_ground, x:544, y:96}],
-[{o:o_bl_ground, x:512, y:32}],
-[{o:o_bl_ground, x:528, y:32}],
-[{o:o_bl_ground, x:528, y:64}],
-[{o:o_bl_ground, x:544, y:64}],
-[{o:o_bl_ground, x:528, y:48}],
-[{o:o_bl_ground, x:560, y:64}],
-[{o:o_bl_ground, x:560, y:96}],
-[{o:o_bl_ground, x:576, y:96}],
-[{o:o_bl_ground, x:592, y:96}],
-[{o:o_bl_ground, x:560, y:48}],
-[{o:o_bl_ground, x:560, y:32}],
-[{o:o_bl_ground, x:592, y:64}],
-[{o:o_bl_ground, x:592, y:48}],
-[{o:o_bl_ground, x:592, y:32}],
-[{o:o_bl_ground, x:592, y:16}],
-[{o:o_bl_ground, x:592, y:16}],
-[{o:o_bl_ground, x:592, y:0}],
-[{o:o_bl_ground, x:576, y:0}],
-[{o:o_bl_ground, x:576, y:0}],
-[{o:o_bl_ground, x:560, y:0}],
-[{o:o_bl_ground, x:544, y:0}],
-[{o:o_bl_ground, x:544, y:0}],
-[{o:o_bl_ground, x:544, y:0}],
-[{o:o_bl_ground, x:528, y:0}],
-[{o:o_bl_ground, x:512, y:0}],
-[{o:o_bl_ground, x:496, y:0}],
-[{o:o_bl_ground, x:496, y:0}],
-[{o:o_bl_ground, x:480, y:0}],
-[{o:o_bl_ground, x:608, y:96}],
-[{o:o_bl_ground, x:608, y:64}],
-[{o:o_bl_ground, x:624, y:64}],
-[{o:o_bl_ground, x:640, y:64}],
-[{o:o_bl_ground, x:640, y:80}],
-[{o:o_bl_ground, x:640, y:96}],
-[{o:o_bl_ground, x:640, y:128}],
-[{o:o_bl_ground, x:624, y:128}],
-[{o:o_bl_ground, x:608, y:128}],
-[{o:o_bl_ground, x:608, y:128}],
-[{o:o_bl_ground, x:592, y:128}],
-[{o:o_bl_ground, x:560, y:128}],
-[{o:o_bl_ground, x:576, y:128}],
-[{o:o_bl_ground, x:640, y:128}],
-[{o:o_bl_ground, x:656, y:128}],
-[{o:o_bl_ground, x:672, y:128}],
-[{o:o_bl_ground, x:688, y:128}],
-[{o:o_bl_ground, x:688, y:128}],
-[{o:o_bl_ground, x:704, y:128}],
-[{o:o_bl_ground, x:704, y:128}],
-[{o:o_bl_ground, x:704, y:128}],
-[{o:o_bl_ground, x:656, y:96}],
-[{o:o_bl_ground, x:688, y:96}],
-[{o:o_bl_ground, x:688, y:80}],
-[{o:o_bl_ground, x:688, y:64}],
-[{o:o_bl_ground, x:672, y:64}],
-[{o:o_bl_ground, x:672, y:48}],
-[{o:o_bl_ground, x:672, y:32}],
-[{o:o_bl_ground, x:656, y:32}],
-[{o:o_bl_ground, x:640, y:32}],
-[{o:o_bl_ground, x:624, y:32}],
-[{o:o_bl_ground, x:624, y:0}],
-[{o:o_bl_ground, x:640, y:0}],
-[{o:o_bl_ground, x:656, y:0}],
-[{o:o_bl_ground, x:672, y:0}],
-[{o:o_bl_ground, x:688, y:0}],
-[{o:o_bl_ground, x:704, y:0}],
-[{o:o_bl_ground, x:704, y:16}],
-[{o:o_bl_ground, x:704, y:32}],
-[{o:o_bl_ground, x:704, y:32}],
-[{o:o_bl_ground, x:720, y:32}],
-[{o:o_bl_ground, x:720, y:48}],
-[{o:o_bl_ground, x:720, y:48}],
-[{o:o_bl_ground, x:720, y:64}],
-[{o:o_bl_ground, x:720, y:80}],
-[{o:o_bl_ground, x:720, y:96}],
-[{o:o_bl_ground, x:720, y:96}],
-[{o:o_bl_ground, x:720, y:96}],
-[{o:o_bl_ground, x:720, y:128}],
-[{o:o_bl_ground, x:736, y:128}],
-[{o:o_bl_ground, x:752, y:128}],
-[{o:o_bl_ground, x:752, y:112}],
-[{o:o_bl_ground, x:752, y:96}],
-[{o:o_bl_ground, x:752, y:80}],
-[{o:o_bl_ground, x:768, y:80}],
-[{o:o_bl_ground, x:736, y:48}],
-[{o:o_bl_ground, x:752, y:48}],
-[{o:o_bl_ground, x:768, y:48}],
-[{o:o_bl_ground, x:368, y:80}],
-[{o:o_bl_metal, x:192, y:128}],
-[{o:o_bl_metal, x:192, y:144}],
+[{o:o_autotile, x:384, y:80}],
+[{o:o_autotile, x:384, y:48}],
+[{o:o_autotile, x:384, y:32}],
+[{o:o_autotile, x:384, y:16}],
+[{o:o_autotile, x:384, y:0}],
+[{o:o_autotile, x:400, y:48}],
+[{o:o_autotile, x:416, y:48}],
+[{o:o_autotile, x:400, y:80}],
+[{o:o_autotile, x:400, y:96}],
+[{o:o_autotile, x:400, y:112}],
+[{o:o_autotile, x:416, y:112}],
+[{o:o_autotile, x:432, y:64}],
+[{o:o_autotile, x:432, y:80}],
+[{o:o_autotile, x:432, y:48}],
+[{o:o_autotile, x:432, y:112}],
+[{o:o_autotile, x:448, y:112}],
+[{o:o_autotile, x:464, y:112}],
+[{o:o_autotile, x:464, y:96}],
+[{o:o_autotile, x:464, y:80}],
+[{o:o_autotile, x:464, y:64}],
+[{o:o_autotile, x:480, y:64}],
+[{o:o_autotile, x:464, y:32}],
+[{o:o_autotile, x:480, y:32}],
+[{o:o_autotile, x:464, y:16}],
+[{o:o_autotile, x:448, y:16}],
+[{o:o_autotile, x:432, y:16}],
+[{o:o_autotile, x:416, y:16}],
+[{o:o_autotile, x:496, y:32}],
+[{o:o_autotile, x:496, y:64}],
+[{o:o_autotile, x:464, y:128}],
+[{o:o_autotile, x:464, y:144}],
+[{o:o_autotile, x:480, y:144}],
+[{o:o_autotile, x:512, y:144}],
+[{o:o_autotile, x:496, y:80}],
+[{o:o_autotile, x:496, y:96}],
+[{o:o_autotile, x:480, y:128}],
+[{o:o_autotile, x:496, y:128}],
+[{o:o_autotile, x:512, y:128}],
+[{o:o_autotile, x:544, y:128}],
+[{o:o_autotile, x:528, y:128}],
+[{o:o_autotile, x:528, y:112}],
+[{o:o_autotile, x:528, y:96}],
+[{o:o_autotile, x:544, y:96}],
+[{o:o_autotile, x:512, y:32}],
+[{o:o_autotile, x:528, y:32}],
+[{o:o_autotile, x:528, y:64}],
+[{o:o_autotile, x:544, y:64}],
+[{o:o_autotile, x:528, y:48}],
+[{o:o_autotile, x:560, y:64}],
+[{o:o_autotile, x:560, y:96}],
+[{o:o_autotile, x:576, y:96}],
+[{o:o_autotile, x:592, y:96}],
+[{o:o_autotile, x:560, y:48}],
+[{o:o_autotile, x:560, y:32}],
+[{o:o_autotile, x:592, y:64}],
+[{o:o_autotile, x:592, y:48}],
+[{o:o_autotile, x:592, y:32}],
+[{o:o_autotile, x:592, y:16}],
+[{o:o_autotile, x:592, y:16}],
+[{o:o_autotile, x:592, y:0}],
+[{o:o_autotile, x:576, y:0}],
+[{o:o_autotile, x:576, y:0}],
+[{o:o_autotile, x:560, y:0}],
+[{o:o_autotile, x:544, y:0}],
+[{o:o_autotile, x:544, y:0}],
+[{o:o_autotile, x:544, y:0}],
+[{o:o_autotile, x:528, y:0}],
+[{o:o_autotile, x:512, y:0}],
+[{o:o_autotile, x:496, y:0}],
+[{o:o_autotile, x:496, y:0}],
+[{o:o_autotile, x:480, y:0}],
+[{o:o_autotile, x:608, y:96}],
+[{o:o_autotile, x:608, y:64}],
+[{o:o_autotile, x:624, y:64}],
+[{o:o_autotile, x:640, y:64}],
+[{o:o_autotile, x:640, y:80}],
+[{o:o_autotile, x:640, y:96}],
+[{o:o_autotile, x:640, y:128}],
+[{o:o_autotile, x:624, y:128}],
+[{o:o_autotile, x:608, y:128}],
+[{o:o_autotile, x:608, y:128}],
+[{o:o_autotile, x:592, y:128}],
+[{o:o_autotile, x:560, y:128}],
+[{o:o_autotile, x:576, y:128}],
+[{o:o_autotile, x:640, y:128}],
+[{o:o_autotile, x:656, y:128}],
+[{o:o_autotile, x:672, y:128}],
+[{o:o_autotile, x:688, y:128}],
+[{o:o_autotile, x:688, y:128}],
+[{o:o_autotile, x:704, y:128}],
+[{o:o_autotile, x:704, y:128}],
+[{o:o_autotile, x:704, y:128}],
+[{o:o_autotile, x:656, y:96}],
+[{o:o_autotile, x:688, y:96}],
+[{o:o_autotile, x:688, y:80}],
+[{o:o_autotile, x:688, y:64}],
+[{o:o_autotile, x:672, y:64}],
+[{o:o_autotile, x:672, y:48}],
+[{o:o_autotile, x:672, y:32}],
+[{o:o_autotile, x:656, y:32}],
+[{o:o_autotile, x:640, y:32}],
+[{o:o_autotile, x:624, y:32}],
+[{o:o_autotile, x:624, y:0}],
+[{o:o_autotile, x:640, y:0}],
+[{o:o_autotile, x:656, y:0}],
+[{o:o_autotile, x:672, y:0}],
+[{o:o_autotile, x:688, y:0}],
+[{o:o_autotile, x:704, y:0}],
+[{o:o_autotile, x:704, y:16}],
+[{o:o_autotile, x:704, y:32}],
+[{o:o_autotile, x:704, y:32}],
+[{o:o_autotile, x:720, y:32}],
+[{o:o_autotile, x:720, y:48}],
+[{o:o_autotile, x:720, y:48}],
+[{o:o_autotile, x:720, y:64}],
+[{o:o_autotile, x:720, y:80}],
+[{o:o_autotile, x:720, y:96}],
+[{o:o_autotile, x:720, y:96}],
+[{o:o_autotile, x:720, y:96}],
+[{o:o_autotile, x:720, y:128}],
+[{o:o_autotile, x:736, y:128}],
+[{o:o_autotile, x:752, y:128}],
+[{o:o_autotile, x:752, y:112}],
+[{o:o_autotile, x:752, y:96}],
+[{o:o_autotile, x:752, y:80}],
+[{o:o_autotile, x:768, y:80}],
+[{o:o_autotile, x:736, y:48}],
+[{o:o_autotile, x:752, y:48}],
+[{o:o_autotile, x:768, y:48}],
+[{o:o_autotile, x:368, y:80}],
 [{o:o_bl_metal, x:208, y:144}],
-[{o:o_bl_metal, x:192, y:128}],
 [{o:o_bl_metal, x:208, y:128}],
 [{o:o_bl_metal, x:224, y:128}],
 [{o:o_bl_metal, x:224, y:144}],
 [{o:o_bl_metal, x:208, y:144}],
-[{o:o_bl_metal, x:192, y:144}],
 [{o:o_bl_metal, x:240, y:128}],
 [{o:o_bl_metal, x:240, y:144}],
 [{o:o_bl_metal, x:256, y:144}],
@@ -5487,9 +5703,6 @@ this.objects = [
 [{o:o_conveyor_l, x:320, y:128}],
 [{o:o_conveyor_l, x:304, y:128}],
 [{o:o_conveyor_l, x:288, y:128}],
-[{o:o_conveyor_r, x:208, y:112}],
-[{o:o_conveyor_r, x:224, y:112}],
-[{o:o_conveyor_r, x:240, y:112}],
 [{o:o_bl_groundalt, x:16, y:128}],
 [{o:o_bl_groundalt, x:0, y:128}],
 [{o:o_bl_groundalt, x:0, y:144}],
@@ -5504,15 +5717,27 @@ this.objects = [
 [{o:o_bl_groundalt, x:80, y:144}],
 [{o:o_bl_groundalt, x:96, y:144}],
 [{o:o_bl_groundalt, x:96, y:128}],
-[{o:o_bl_groundalt, x:144, y:128}],
-[{o:o_bl_groundalt, x:144, y:128}],
-[{o:o_bl_groundalt, x:144, y:144}],
-[{o:o_bl_groundalt, x:160, y:144}],
-[{o:o_bl_groundalt, x:160, y:128}],
-[{o:o_bl_groundalt, x:176, y:128}],
-[{o:o_bl_groundalt, x:176, y:144}],
 [{o:o_water, x:112, y:128}],
-[{o:o_water, x:128, y:128}]];
+[{o:o_water, x:128, y:128}],
+[{o:o_enemy_robot, x:272, y:96}],
+[{o:o_bl_metal, x:240, y:112}],
+[{o:o_bl_metal, x:160, y:112}],
+[{o:o_bl_metal, x:160, y:112}],
+[{o:o_bl_metal, x:144, y:112}],
+[{o:o_bl_metal, x:176, y:112}],
+[{o:o_bl_metal, x:192, y:112}],
+[{o:o_bl_metal, x:208, y:112}],
+[{o:o_bl_metal, x:224, y:112}],
+[{o:o_bl_metal, x:144, y:128}],
+[{o:o_bl_metal, x:144, y:144}],
+[{o:o_bl_metal, x:160, y:144}],
+[{o:o_bl_metal, x:160, y:128}],
+[{o:o_bl_metal, x:176, y:128}],
+[{o:o_bl_metal, x:176, y:144}],
+[{o:o_bl_metal, x:192, y:144}],
+[{o:o_bl_metal, x:192, y:128}],
+[{o:o_bl_metal, x:208, y:128}],
+[{o:o_bl_metal, x:208, y:144}]];
 this.start = function() {
 __room_start__(this, sc_prototype, 3200, 160, 60, 255, 255, 255, null, 1, 1, 0, 320, 160, o_kot, 320, 50);
 
@@ -5538,6 +5763,7 @@ if(!high_score) high_score = 0;
 var game_started = false;
 var game_paused = false;
 var game_expert = false;
+var game_inmenu = false;
 var player_object;
 var player_character;
 var camera_object;
@@ -5562,12 +5788,13 @@ var player_costumes = {
 	"kenshin": s_kot_kenshin,
 	"dealer": s_kot_dealer,
 	"claymore": s_kot_claymore,
+	"bear": s_kot_bear
 };
 
 if(!change_costume(load_web_string("costume"))) player_character = s_kot;
 
-var character_spawn_offset_x = 4;
-var character_spawn_offset_y = 2;
+var character_spawn_offset_x = 6;
+var character_spawn_offset_y = 3;
 var mobile_controls_enabled = false;
 
 
@@ -5626,11 +5853,13 @@ function __mousemovelistener__(_e) {
  * CUSTOM GLOBAL FUNCTIONS
  ***********************************************************************/
 // - - PREFAB SYSTEM - - 
+var prefab_all = [];
 var prefab_len_last = 0;
 var prefab_len_total = 0;
 var previous_prefab;
 var prefab_ceiling = "";
 var previous_bank;
+var prefab_autotile_connect = false;
 
 var prefab_chars = {
 	// blocks
@@ -5662,8 +5891,12 @@ var prefab_chars = {
 	"g": o_enemy_rathuge,
 	"i": o_enemy_fish,
 	"j": o_enemy_fishjump,
+	"l": o_enemy_shark,
 	"z": o_enemy_fspike_l,
 	"x": o_enemy_fspike_u,
+	"q": o_enemy_floatingspike,
+	"b": o_enemy_robot,
+	"y": o_enemy_bigbot,
 	
 	// bonus
 	"c": o_coin,
@@ -5698,7 +5931,7 @@ var prefab_chars = {
 };
 
 function prefab_deploy(px, py, prefab, gap = 0, gapcei = "") { 
-	//console.time("prefab deploy time");
+	console.time("prefab deploy time");
 	var content = prefab.content;
 	if(prefab.content_alt != null) {
 		if(Math.random() > 0.5) content = prefab.content_alt;
@@ -5725,7 +5958,7 @@ function prefab_deploy(px, py, prefab, gap = 0, gapcei = "") {
 	prefab_len_total += prefab_len_last;
 	prefab_deploy_empty(prefab_len_total, gap, gapcei);
 	previous_prefab = prefab;
-	//console.timeEnd("prefab deploy time");
+	console.timeEnd("prefab deploy time");
 }
 
 function prefab_deploy_empty(px, len, cei="") {
@@ -5768,6 +6001,7 @@ function prefab(bank, tags, content) {
 	this.tags = tags;
 	this.content = content;
 	this.content_alt = null;
+	prefab_all.push(this);
 }
 
 // Prefabs
@@ -6151,6 +6385,29 @@ var pr_heli1_m5 = new prefab(0, 0, "\
 ......c......CCC.....CCC,\
 .............CCC.....CCC,\
 ");
+pr_heli1_m5.content_alt = "\
+CCC...........CCC,\
+CCC.......f...CCC,\
+CCC...........CCC,\
+CCC...........CCC,\
+CCC...........CCC,\
+CCC...CCC..C..CCC,\
+CCC...CCC........,\
+......CCC......c.,\
+.c....CCC........,\
+......CCC........";
+var pr_heli1_m6 = new prefab(0, 0, "\
+......................CCC.......................................,\
+.................m....CCC...........CCC..................m......,\
+......................CCC...........CCC.........................,\
+.........CCC........................CCC......CCCC...............,\
+.........CCC............c.........m.CCC......CCCC......CCCCCC...,\
+.........CCC........................CCC......CCCC...c..CCCCCC...,\
+.....m...CCC...........CCC......................................,\
+.......................CCC...........c..........m...............,\
+.....................m.CCC.....................................m,\
+................................................................");
+
 var pr_heli1_e1 = new prefab(0, 0, "\
 ,\
 ,\
@@ -6171,7 +6428,7 @@ pbank_heli1.gap_min = 6;
 pbank_heli1.gap_max = 7;
 pbank_heli1.repeat = false;
 pbank_heli1.start = [pr_heli1_s1];
-pbank_heli1.middle = [pr_heli1_m1, pr_heli1_m2, pr_heli1_m3, pr_heli1_m4, pr_heli1_m5];
+pbank_heli1.middle = [pr_heli1_m1, pr_heli1_m2, pr_heli1_m3, pr_heli1_m4, pr_heli1_m5, pr_heli1_m6];
 pbank_heli1.end = [pr_heli1_e1];
 
 
@@ -6487,7 +6744,7 @@ RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
 .RR..........RR...RRRR....RRRR,\
 .RR....RR....RR...RRRR,\
 tRR....RR....RR...RRRR....c.c.c...RRR,\
-RRR....RR....RR...RRRR....RRRRR...RRR,\
+RRR....RR....RR...RRRR...RRRRRR...RRR,\
 ");
 var pr_cave1_m6 = new prefab(0, 0, "\
 RRRRRRRRRR....RRRRRRRRRRRRRR,\
@@ -6702,7 +6959,7 @@ var pr_wood1_m7 = new prefab(0, 0, "\
 ......sDDDs.....DDD......DDD......DDD,\
 ......DDDDD...............D.......DDD,\
 DDD...DDDDD...............D.......DDD,\
-DDD...DDDDD.....DDDDDDDDDDD...W...DDD,\
+DDD...DDDDD....DDDDDDDDDDDD...W...DDD,\
 ");
 
 var pr_wood1_m8 = new prefab(0, 0, "\
@@ -6747,8 +7004,8 @@ var pr_panel1_m2 = new prefab(0, 0, "\
 ..................LL............,\
 ............LL....LL............,\
 LL....-.....LL....LL............,\
-LL..........LL....LL....cc....LL,\
-LL....cc....LL....LL..........LL,\
+LL.....c....LL....LL.....c....LL,\
+LL..........LL....LL..........LL,\
 "); 
 
 var pbank_panel1 = new prefab_bank("panel1");
@@ -7100,16 +7357,52 @@ SS...zSS}}}}}}SSz...SS{{{{SSSS,\
 SSSSSSSS}}}}}}SSSSSS..c..c....");
 
 var pr_water1_m4 = new prefab(0, 0, "\
-SSSSSSSSSSSSSSS,\
-..S....S....S..,\
-..S.........S..,\
-..x.........S..,\
-............x..,\
-.......x.......,\
-.......S.......,\
-..S....S.......,\
-..S....S....S..,\
-SSSSSSSSSSSSSSS");
+SSSSSSSSSSSSSSSSSS,\
+..S.....S.....S..,\
+..S...........S..,\
+..x...........S..,\
+..............x..,\
+........x........,\
+........S........,\
+..S.....S........,\
+..S.....S.....S...,\
+SSSSSSSSSSSSSSSSSS");
+
+var pr_water1_m5 = new prefab(0, 0, "\
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS,\
+SS..............SS.............SSSSSS.............SS..,\
+SS.l............SS.............SSSSSS.............SS..,\
+SS..............SS.............SSSSSS.............SS..,\
+SSSSSS....SS....SS........c.......SSS.........SS..SS..,\
+..........SS......................SSSwwwSSSSwwSSwwSS..,\
+..........SS.............}}}......SSS...SSSS}}SS......,\
+..........SS..........SSS}}}SSS.........SSSS}}SS......,\
+..........SS..........SSS}}}SSS....c....SSSS}}SS......,\
+SSSSSSSSSSSSSSSSSSSSSSSSS}}}SSS.........SSSS}}SSSSSSSS");
+
+var pr_water1_m6 = new prefab(0, 0, "\
+SSSSSSSSSSSSSSSSSSSSSSSSSSSS,\
+..SS........SSSS............,\
+..SS..i.....SSSS....i.......,\
+............SSSS............,\
+............................,\
+......SS......i....SSS......,\
+......SS...........SSS..i...,\
+......SS...........SSS......,\
+....i.SS..}}}......SSS......,\
+SSSSSSSSSS}}}SSSSSSSSSSSSSSS");
+
+var pr_water1_m7 = new prefab(0, 0, "\
+SSSSSSSSSSSSSSSSSSSSSSS{{{{SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS,\
+..SS..........SSSS.....{{{{.........SSSSSSSS......c..c......SSSS,\
+..SS..l.......SSSS..................SSSSSSSS................SSSS,\
+..SSSSSS......SSSS............]]....SSSSSSSS................SSSS,\
+..x...........SSSS............]]....SSSSSSSSwwwwSSwSSwSSwwwwSSSS,\
+..............SSSS..c..SSSS.....................SS}SS}SS........,\
+.......................SSSS.c.SS..]]..c.........SS}SS}SS........,\
+.......................SSSS...SS..]].....c......SS}SS}SS........,\
+.......x...............SSSS...SS................SS}SS}SS......i.,\
+SSSSSSSSSSSSSS}}}}SSSSSSSSSSSSSSSSSSSS}}}}SSSSSSSS}SS}SSSSSSSSSS");
 
 var pr_water1_e1 = new prefab(0, 0, "\
 SS......,\
@@ -7131,14 +7424,14 @@ pbank_water1.gap_max = 6;
 pbank_water1.repeat = false;
 pbank_water1.ceiling = "S........S";
 pbank_water1.start = [pr_water1_s1];
-pbank_water1.middle = [pr_water1_m1, pr_water1_m2, pr_water1_m3, pr_water1_m4];
+pbank_water1.middle = [pr_water1_m1, pr_water1_m2, pr_water1_m3, pr_water1_m4, pr_water1_m5, pr_water1_m6, pr_water1_m7];
 pbank_water1.end = [pr_water1_e1];
-
 
 var prefab_bank_first = pbank_grass1;
 var prefab_testing = null;
 var prefab_bank_testing = null;
 var prefab_testing_heli = false;
+var prefab_testing_water = false;
 var prefab_testing_speed = 0;
 //var prefab_list = [pr_simple1, pr_simple2, pr_simple3, pr_simple4, pr_simple5, pr_simple6, pr_simple7, pr_simple8, pr_castle1, pr_castle2, pr_castle3, pr_castle4, pr_castle4, pr_castle5, pr_cave2, pr_cave1, pr_cave3, pr_clouds1, pr_clouds2];
 
@@ -7168,8 +7461,6 @@ this.chc = keyboard_string.toLowerCase();
 
 // debug
 if(this.chc.endsWith("dbg")) { keyboard_string =  ""; debug = !debug  }
-if(this.chc.endsWith("cls")) keyboard_string = "";
-if(this.chc.endsWith("res")) { keyboard_string = ""; room_goto(room_current); }
 
 // characters
 if(this.chc.endsWith("strawberrymilk")) change_costume("sak1");
@@ -7186,6 +7477,7 @@ if(this.chc.endsWith("troll")) { keyboard_string = ""; sound_play(snd_bigheadhit
 if(this.chc.endsWith("milkcheesesymphony")) change_costume("kenshin");
 if(this.chc.endsWith("brokebadly")) change_costume("dealer");
 if(this.chc.endsWith("ghettobot")) change_costume("claymore");
+if(this.chc.endsWith("bannedfromchina")) change_costume("bear");
 }
 function highscore_update() { 
 save_web_integer("la", last_score);
@@ -7263,6 +7555,13 @@ function marker(xn, yn, txt="") {
 if(!debug) return;
 let mark = instance_create(xn, yn, o_debug_marker);
 mark.text = txt;
+}
+function draw_dialog(x, y, w, h) { 
+//draw_set_color(0,0,0);
+//draw_rectangle(x,y,w,h,true);
+draw_set_color(255,255,255);
+//draw_rectangle(x-1,y-1,w+1,h+1,true);
+draw_rectangle(x,y,w,h,false);
 }
 
 
