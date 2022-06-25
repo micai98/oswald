@@ -3364,6 +3364,7 @@ image_speed = 0;
 this.dir = 0;
 this.yoffset = 0;
 this.jumpmult = 1.6;
+this.tick = 0;
 instance_create(x, y, o_dev_solid);
 }
 };
@@ -3371,8 +3372,9 @@ this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
+if(this.dir == 0) this.tick += 1;
 if(x < room_viewport_x-48) instance_destroy();
-if(this.dir == 0) {
+if(this.tick == 1) {
 	if(place_meeting(x, y-16, o_dev_solid) != null) {
 		this.dir = -1;
 		this.yoffset = 16;
@@ -5515,6 +5517,10 @@ this.objects = [
 this.start = function() {
 __room_start__(this, sc_init, 320, 160, 60, 255, 255, 255, null, 0, 0, 0, 320, 160, null, 50, 50);
 
+if(typeof screen !== "undefined") {
+	screen.orientation.lock("landscape");
+}
+
 if(typeof dispconfLoad !== "undefined") {
 	dispconfLoad();
 }
@@ -5795,7 +5801,7 @@ if(!change_costume(load_web_string("costume"))) player_character = s_kot;
 
 var character_spawn_offset_x = 6;
 var character_spawn_offset_y = 3;
-var mobile_controls_enabled = false;
+var mobile_controls_enabled = true;
 
 
 var gpad_active = 0;
