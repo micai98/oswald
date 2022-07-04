@@ -5544,29 +5544,18 @@ mobb_left.addEventListener("touchend", function() { key_down[k_left] = false; })
 mobb_right.addEventListener("touchstart", function() { key_down[k_right] = true; });
 mobb_right.addEventListener("touchend", function() { key_down[k_right] = false; });
 
-mobb_left.addEventListener("mouseenter", function() {
-	mobb_left_hover = true;
+mobb_right.addEventListener("touchstart", function() { 
+	key_down[k_jump] = true; 
+	key_pressed[k_jump] = true; 
+	key_released[k_jump] = false; 
+});
+	
+mobb_right.addEventListener("touchend", function() { 
+	key_down[k_jump] = false; 
+	key_pressed[k_jump] = false; 
+	key_released[k_jump] = true;
 });
 
-mobb_left.addEventListener("mouseleave", function() {
-	mobb_left_hover = false;
-});
-
-mobb_right.addEventListener("mouseenter", function() {
-	mobb_right_hover = true;
-});
-
-mobb_right.addEventListener("mouseleave", function() {
-	mobb_right_hover = false;
-});
-
-mobb_jump.addEventListener("mouseenter", function() {
-	mobb_jump_hover = true;
-});
-
-mobb_jump.addEventListener("mouseleave", function() {
-	mobb_jump_hover = false;
-});
 }
 };
 this.on_destroy = on_destroy_i;
@@ -5583,42 +5572,13 @@ function __o_mobile_controls_step() {
 __instance_init__(this, o_mobile_controls_step, null, 1, 0, s_dev_unknown, 1, 270);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
-this.on_step = function() {
+this.on_step = on_step_i;
+this.on_end_step = function() {
 with(this) {
+key_pressed[k_jump] = false; 
 key_released[k_jump] = false;
-key_pressed[k_jump] = false;
-
-if(mobb_left_hover) {
-	key_down[vk_left] = true;
-} else {
-	key_down[vk_left] = false;
-}
-	
-if(mobb_right_hover) {
-	key_down[vk_right] = true;
-} else {
-	key_down[vk_right] = false;
-}
-
-if(mouse_down) {
-	
-	if(mobb_jump_hover) {
-		key_down[k_jump] = true;
-		key_pressed[k_jump] = true;
-		key_released[k_jump] = false;
-	} else {
-		key_down[k_jump] = false;
-		key_pressed[k_jump] = false;
-	}
-} else {
-	key_down[vk_left] = false;
-	key_down[vk_right] = false;
-	if(key_down[k_jump]) key_released[k_jump] = true;
-	key_down[k_jump] = false;
-}
 }
 };
-this.on_end_step = on_end_step_i;
 this.on_collision = on_collision_i;
 this.on_roomstart = on_roomstart_i;
 this.on_roomend = on_roomend_i;
