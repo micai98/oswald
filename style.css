@@ -1,3 +1,40 @@
+/* oswald mobile buttons */
+.mobbutton {
+	width: 256px;
+	height: 256px;
+	z-index: 9999;
+	position: absolute;
+	bottom: 16px;
+	
+	opacity: 0.5;
+	background-color: #666666;
+	border: 1px solid #dddddd;
+	border-radius: 16px;
+	
+	vertical-align: middle;
+	text-align: center;
+	font-size: 32px;
+	padding-top: 112px;
+	user-select: none;
+	color: #dddddd;
+}
+
+.mobbutton.active {
+	opacity: 0.75;
+}
+
+.mobbutton.mbleft {
+	left: 16px;
+}
+
+.mobbutton.mbright {
+	left: 288px;
+}
+
+.mobbutton.mbjump {
+	right: 16px;
+}
+
 /* oswald */
 #tululoogame canvas{
 	image-rendering: pixelated;
@@ -27,7 +64,7 @@
 	box-shadow: 4px 4px rgba(0, 0, 0, .5);
 }
 
-.window header {
+.window .winheader {
 	background-color: #333333;
 	padding: 0.5rem;
 	border-radius: 0.25rem;
@@ -37,7 +74,7 @@
 	align-items: center;
 }
 
-.window header h1 {
+.window .winheader h1 {
 	margin: 0;
 	padding: 0;
 	font-size: 1.5rem;
@@ -49,23 +86,23 @@
 	user-select: none;
 }
 
-.window header h1.close {
+.window .winheader h1.close {
 	font-weight: normal;
 	color: #888888;
 	width: 1.5rem;
 }
 
-.window header h1.close:hover {
+.window .winheader h1.close:hover {
 	color: #AAAAAA;
 }
 
-.window section {
+.window .winmain {
 	max-height: 75vh;
 	overflow: auto;
 	margin: 0.5rem 0 0.5rem 0;
 }
 
-.window article {
+.window .winsection {
 	padding: 0.5rem;
 	margin-bottom: 1rem;
 }

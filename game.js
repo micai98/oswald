@@ -1656,6 +1656,10 @@ function __s_kot_bear() {
 __sprite_init__(this, s_kot_bear, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_bear_0.png','img/s_kot_bear_1.png','img/s_kot_bear_2.png','img/s_kot_bear_3.png']);
 }; var s_kot_bear = new __s_kot_bear();
 
+function __s_kot_skull() { 
+__sprite_init__(this, s_kot_skull, 16, 22, 8, 11, 'Box', 8, 3, 13, 8, 22, ['img/s_kot_skull_0.png','img/s_kot_skull_1.png','img/s_kot_skull_2.png','img/s_kot_skull_3.png']);
+}; var s_kot_skull = new __s_kot_skull();
+
 
 
 /***********************************************************************
@@ -1693,10 +1697,6 @@ function __snd_float() {
 __audio_init__(this, snd_float, '', '', 'aud/float.ogg');
 }; var snd_float = new __snd_float();
 
-function __snd_bong() { 
-__audio_init__(this, snd_bong, '', '', 'aud/bong.ogg');
-}; var snd_bong = new __snd_bong();
-
 function __snd_vehicledie() { 
 __audio_init__(this, snd_vehicledie, '', '', 'aud/vehicledie.ogg');
 }; var snd_vehicledie = new __snd_vehicledie();
@@ -1708,10 +1708,6 @@ __audio_init__(this, snd_thump, '', '', 'aud/thump.ogg');
 function __snd_missile() { 
 __audio_init__(this, snd_missile, '', '', 'aud/missile.ogg');
 }; var snd_missile = new __snd_missile();
-
-function __snd_bigheadhit() { 
-__audio_init__(this, snd_bigheadhit, '', '', 'aud/big_head_hit.ogg');
-}; var snd_bigheadhit = new __snd_bigheadhit();
 
 
 
@@ -4431,14 +4427,46 @@ with(this) {
 }; var o_gamepad_test = new __o_gamepad_test();
 
 function __o_bl_pipe() {
-__instance_init__(this, o_bl_pipe, null, 0, 0, s_woodenblock, 0, 209);
+__instance_init__(this, o_bl_pipe, null, 0, 0, s_woodenblock, 1, 209);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
 this.on_end_step = function() {
 with(this) {
-let g = instance_create(x, y, o_autotile);
-g.tileset = ts_pipe;
+image_speed = 0;
+image_index = 0;
+
+this.hor = 0;
+this.ver = 0;
+this.bls = 16;
+this.tileset = ts_pipe;
+
+if(y == 0) instance_create(x, y-this.bls, object_index);
+if(y == room_height-this.bls) instance_create(x, y+this.bls, object_index);
+
+if(place_meeting(x+this.bls, y, object_index)){this.hor = 1}
+if(place_meeting(x-this.bls, y, object_index))
+{
+    if(this.hor == 1){this.hor = 2}
+    else{this.hor = 3}
+}
+
+if(place_meeting(x, y+this.bls, object_index)){this.ver = 1}
+if(place_meeting(x, y-this.bls, object_index))
+{
+    if(this.ver == 1){this.ver = 2}
+    else{this.ver = 3}
+}
+
+//if(prefab_autotile_connect) this.hor = 2;
+
+image_index = 4*this.ver + this.hor;
+tile_add(this.tileset, image_index*this.bls, 0, this.bls, this.bls, x, y, 1);
+if(!(y + 16 >= room_height && image_index == 14)) {
+	if(image_index != 10) {
+		let s = instance_create(x, y, o_dev_solid);
+	}
+}
 instance_destroy();
 }
 };
@@ -4812,7 +4840,7 @@ this.reward = 300;
 this.vx = 0;
 this.vy = 0;
 this.vx_accel = -0.3;
-this.vx_max = 2.5;
+this.vx_max = 2;
 
 this.gravity = 0.3;
 
@@ -4844,7 +4872,7 @@ if(this.vx < -this.vx_max) this.vx = -this.vx_max;
 
 if(!this.fired) {
 	this.fired = true;
-	this.vy = -5;
+	this.vy = -4.5;
 }
 
 if(!this.falling && y <= ystart) {
@@ -5110,7 +5138,7 @@ if(x < room_viewport_x-despawn_margin) instance_destroy()
 
 if(this.grounded) {
 	if(place_meeting(x+this.vx*2, y, o_dev_solid) != null || place_meeting(x+this.vx, y+16, o_dev_solid) == null) {
-		this.vy = -this.jumppower;
+		if(place_meeting(x, y-32, o_dev_solid) == null) this.vy = -this.jumppower;
 	}
 }
 
@@ -5152,7 +5180,7 @@ if(trmp != null) {
 	trmp.image_speed = 0.5;
 }
 
-x += this.vx;
+if(place_meeting(x+this.vx*2, y, o_dev_solid) == null) x += this.vx;
 y += this.vy;
 }
 };
@@ -5502,6 +5530,95 @@ if(keyboard_check(vk_backspace) || keyboard_check(vk_f1)) {
 };
 }; var o_titlescreen = new __o_titlescreen();
 
+function __o_mobile_controls_setup() {
+__instance_init__(this, o_mobile_controls_setup, null, 1, 0, s_dev_unknown, 1, 268);
+this.on_creation = function() {
+with(this) {
+var mobb_left = document.getElementById("mbleft");
+var mobb_right = document.getElementById("mbright");
+var mobb_jump = document.getElementById("mbjump");
+
+mobb_left.addEventListener("mouseenter", function() {
+	mobb_left_hover = true;
+});
+
+mobb_left.addEventListener("mouseleave", function() {
+	mobb_left_hover = false;
+});
+
+mobb_right.addEventListener("mouseenter", function() {
+	mobb_right_hover = true;
+});
+
+mobb_right.addEventListener("mouseleave", function() {
+	mobb_right_hover = false;
+});
+
+mobb_jump.addEventListener("mouseenter", function() {
+	mobb_jump_hover = true;
+});
+
+mobb_jump.addEventListener("mouseleave", function() {
+	mobb_jump_hover = false;
+});
+}
+};
+this.on_destroy = on_destroy_i;
+this.on_step = on_step_i;
+this.on_end_step = on_end_step_i;
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_mobile_controls_setup = new __o_mobile_controls_setup();
+
+function __o_mobile_controls_step() {
+__instance_init__(this, o_mobile_controls_step, null, 1, 0, s_dev_unknown, 1, 270);
+this.on_creation = on_creation_i;
+this.on_destroy = on_destroy_i;
+this.on_step = function() {
+with(this) {
+key_released[k_jump] = false;
+key_pressed[k_jump] = false;
+
+if(mouse_down) {
+	if(mobb_left_hover) {
+		key_down[vk_left] = true;
+	} else {
+		key_down[vk_left] = false;
+	}
+	
+	if(mobb_right_hover) {
+		key_down[vk_right] = true;
+	} else {
+		key_down[vk_right] = false;
+	}
+	
+	if(mobb_jump_hover) {
+		key_down[k_jump] = true;
+		key_pressed[k_jump] = true;
+		key_released[k_jump] = false;
+	} else {
+		key_down[k_jump] = false;
+		key_pressed[k_jump] = false;
+	}
+} else {
+	key_down[vk_left] = false;
+	key_down[vk_right] = false;
+	if(key_down[k_jump]) key_released[k_jump] = true;
+	key_down[k_jump] = false;
+}
+}
+};
+this.on_end_step = on_end_step_i;
+this.on_collision = on_collision_i;
+this.on_roomstart = on_roomstart_i;
+this.on_roomend = on_roomend_i;
+this.on_animationend = on_animationend_i;
+this.on_draw = on_draw_i;
+}; var o_mobile_controls_step = new __o_mobile_controls_step();
+
 
 
 /***********************************************************************
@@ -5513,13 +5630,15 @@ this.tiles = [
 [ts_brick,
 [0,0,1,1,16,48]]]];
 this.objects = [
-[{o:o_hud, x:0, y:0}]];
+[{o:o_hud, x:0, y:0}],
+[{o:o_mobile_controls_setup, x:0, y:20}]];
 this.start = function() {
 __room_start__(this, sc_init, 320, 160, 60, 255, 255, 255, null, 0, 0, 0, 320, 160, null, 50, 50);
 
+/*
 if(typeof screen !== "undefined") {
 	screen.orientation.lock("landscape");
-}
+}*/
 
 if(typeof dispconfLoad !== "undefined") {
 	dispconfLoad();
@@ -5539,7 +5658,8 @@ this.objects = [
 [{o:o_hud, x:0, y:16}],
 [{o:o_world_generator, x:0, y:0}],
 [{o:o_gamepad_test, x:0, y:32}],
-[{o:o_titlescreen, x:0, y:48}]];
+[{o:o_titlescreen, x:0, y:48}],
+[{o:o_mobile_controls_step, x:0, y:64}]];
 this.start = function() {
 __room_start__(this, sc_game, 500000, 160, 60, 255, 255, 255, null, 1, 1, 0, 320, 160, o_camera, 320, 160);
 
@@ -5794,7 +5914,8 @@ var player_costumes = {
 	"kenshin": s_kot_kenshin,
 	"dealer": s_kot_dealer,
 	"claymore": s_kot_claymore,
-	"bear": s_kot_bear
+	"bear": s_kot_bear,
+	"skull": s_kot_skull
 };
 
 if(!change_costume(load_web_string("costume"))) player_character = s_kot;
@@ -5822,7 +5943,7 @@ var k_expert = vk_e;
 
 tu_unpausekey = k_pause;
 
-var camera_speed_start = 1.2;
+var camera_speed_start = 1.35;
 var camera_speed_expert = 1.5;
 var camera_speedup_interval = 110;
 var camera_speedup_increment = 3;
@@ -5858,6 +5979,10 @@ function __mousemovelistener__(_e) {
 /***********************************************************************
  * CUSTOM GLOBAL FUNCTIONS
  ***********************************************************************/
+mobb_left_hover = false;
+mobb_right_hover = false;
+mobb_jump_hover = false;
+
 // - - PREFAB SYSTEM - - 
 var prefab_all = [];
 var prefab_len_last = 0;
@@ -6434,7 +6559,7 @@ pbank_heli1.gap_min = 6;
 pbank_heli1.gap_max = 7;
 pbank_heli1.repeat = false;
 pbank_heli1.start = [pr_heli1_s1];
-pbank_heli1.middle = [pr_heli1_m1, pr_heli1_m2, pr_heli1_m3, pr_heli1_m4, pr_heli1_m5, pr_heli1_m6];
+pbank_heli1.middle = [pr_heli1_m4, pr_heli1_m5, pr_heli1_m6, pr_heli1_m1, pr_heli1_m2, pr_heli1_m3];
 pbank_heli1.end = [pr_heli1_e1];
 
 
@@ -6731,7 +6856,7 @@ RRRRRRRRRRRRRRRRRRRRRRRRRRR,\
 var pr_cave1_m4 = new prefab(0, 0, "\
 RRRRRRRRRRRRRRRRRRRRR,\
 RRRRR...RRRRR...RRRRR,\
-RRRRR...sRRRs...RRRRR,\
+RRRRR....RRRs...RRRRR,\
 RRRRs...........RRRRR,\
 ................RRRRR,\
 ..........c.....RRRR.,\
@@ -6778,7 +6903,7 @@ RRRRR....R....R....R....R....RR,\
 ");
 pr_cave1_m7.content_alt = "\
 RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
-RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
+RRRRRRRRRRRRRR...............RR,\
 .............................RR,\
 ...................c.........RR,\
 ..............c.....,\
@@ -6790,13 +6915,13 @@ RRRRR....R....R....R....R....RR,\
 ";
 var pr_cave1_m8 = new prefab(0, 0, "\
 RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR,\
-........R....R....R....R....R....R....R..,\
-........R....s....R....R....R....R....s..,\
-........s.........R....s....R....s.......,\
-.............c....s.........s.........c..,\
-........c..............c.........c.......,\
-.....r.......s....c.........c.........s..,\
-RRRRRR..s....R.........s.........s....R..RRR,\
+........R....R....R....R....R....R....R.....,\
+........R....s....R....R....R....R....s.....,\
+........s.........R....s....R....s..........,\
+.............c....s.........s.........c.....,\
+........c..............c.........c..........,\
+.............s....c.........c.........s.....,\
+.....r..s....R.........s.........s....R..RRR,\
 RRRRRR..R....R....s....R....s....R.RR.R..RRR,\
 RRRRRR..R.RR.R.RR.R.RR.R.RR.R.RR.R.RR.R..RRR");
 
@@ -7014,26 +7139,50 @@ LL.....c....LL....LL.....c....LL,\
 LL..........LL....LL..........LL,\
 "); 
 
+var pr_panel1_m3 = new prefab(0, 0, "\
+.........cc,\
+,\
+,\
+,\
+,\
+............tttttt..........................,\
+............LLLLLL...........r...r...r.....t,\
+....tttt....LLLLLL.........................L,\
+LL..LLLL....LLLLLL...ttttttttttttttttt.....L,\
+LL..LLLL....LLLLLL...LLLLLLLLLLLLLLLLL.....L");
+
 var pbank_panel1 = new prefab_bank("panel1");
 pbank_panel1.length_min = 1;
 pbank_panel1.length_max = 2;
 pbank_panel1.gap_min = 4;
 pbank_panel1.gap_max = 4;
 pbank_panel1.repeat = false;
-pbank_panel1.middle = [pr_panel1_m1, pr_panel1_m2];
+pbank_panel1.middle = [pr_panel1_m1, pr_panel1_m2, pr_panel1_m3];
 
 
 var pr_ground1_m1 = new prefab(0, 0, "\
-..............,\
-..............,\
-......FF......,\
-.......F......,\
-......cF......,\
-......FF.....c,\
-.......F......,\
-.......F.....F,\
-F.F.FFFF.....F,\
-FFFFFFFF.....F");
+,\
+,\
+....................FF......,\
+.....................F......,\
+.....c..............cF......,\
+....................FF.....c,\
+.....F...............F......,\
+FF...F...FF..........F.....F,\
+FF...F...FF...F.F.FFFF.....F,\
+FF...F...FF...FFFFFFFF.....F");
+
+pr_ground1_m1.alt_content = "\
+.............................,\
+.............................,\
+.....................FF......,\
+......................F......,\
+.....................cF......,\
+.....................FF.....c,\
+......................F......,\
+-....-....-...........F.....F,\
+...............F.F.FFFF.....F,\
+...............FFFFFFFF.....F";
 
 var pr_ground1_m2 = new prefab(0, 0, "\
 .........FF,\
@@ -7087,9 +7236,9 @@ var pr_ground1_m6 = new prefab(0, 0, "\
 ......FF...........,\
 ......FF...........,\
 ..................r,\
+...............FFFF,\
 ......cc.......FFFF,\
 ......FF.......FFFF,\
-...............FFFF,\
 ...............FFFF,\
 ..r............FFFF,\
 FFF...FF...t...FFFF,\
@@ -7164,28 +7313,28 @@ P.........P....P....P,\
 P....P....P....P....P";
 
 var pr_factory1_m4 = new prefab(0, 0, "\
-MMMMMMMMMMMMMMMPMMMMMMMMMMMMMMMMM,\
-..............cP.................,\
-...............P.................,\
-.........PPPP..P.................,\
-..........Pc...P................r,\
-..........P....P.............MMMM,\
-.........PP..PPP........-....MMMM,\
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM,\
+.................................,\
+.................................,\
+.........PPPP....................,\
+..........P.....................r,\
+.........cP..................MMMM,\
+.........PP.............-....MMMM,\
 ..........P..................MMMM,\
 ...r......P........-.........MMMM,\
-MMMM..MMMMPMMMMM.............MMMM");
+MMMM..MMMMP....P.............MMMM");
 
 var pr_factory1_m5 = new prefab(0, 0, "\
-MMMMMM..............MMMMMMMMMMMMMMMMMMMM,\
-......p.......p.....................MMMM,\
+MMMMMM........MMMMMMMMMMMMMMMMMMMMMMMMMM,\
+......p.............................MMMM,\
 ....................................MMMM,\
 ....................................MMMM,\
 ..............................MM........,\
 ........................MM....MM........,\
 ..........p.............MM....MM........,\
-..MMMMMM..MM..MMMMMM....MM....MM....c...,\
-MMMMMMMM..MM..MMMMMMMM..MM....MM.......P,\
-MMMMMMMM..MM..MMMMMMMM..MM....MM....P..P");
+..MMMMMM..MM..MM..MM....MM....MM....c...,\
+MMMMMMMM..MM..MM..MMMM..MM....MM.......P,\
+MMMMMMMM..MM..MM..MMMM..MM....MM....P..P");
 
 var pr_factory1_m6 = new prefab(0, 0, "\
 MMMMMMMMMMMMPMMMMMMM......................MMMM,\
@@ -7197,19 +7346,19 @@ MMMMMMMMMMMMPMMMMMMM......................MMMM,\
 ...............P..........................P..P,\
 PPPPP..............P......................P..P,\
 P...P....PP........P....^.....v.....^.....P..P,\
-P...P.....P....P...P......................P..P");
+P...P.....P...PP...P......................P..P");
 
 var pr_factory1_m7 = new prefab(0, 0, "\
-MMMMMMMMMMMMMMMMMMMMMMMMMMM,\
-...........................,\
-...........................,\
-...........................,\
-..............s............,\
-............PPP.........s..,\
-.......s.....P.....s....PPP,\
-......PPP....P...PPPP....P.,\
-.......P.....P...P..P....P.,\
-PPP....P.....P...P..P....P.");
+MMMMMMMMMMMMMMMMMMMMMMMMMMMM,\
+,\
+,\
+,\
+..............s,\
+............PPP..........s..,\
+.......s.....P...........PPP,\
+......PPP....P...PPPPP....P.,\
+.......P.....P...P...P....P.,\
+PPP....P.....P...P...P....P.");
 
 var pr_factory1_m8 = new prefab(0, 0, "\
 MMMMMMMMMMMMMMMMMPMMMMMMP..PMMMMM,\
@@ -7219,18 +7368,54 @@ MMMMMMMMMMMMMMMMMPMMMMMMP..PMMMMM,\
 ..........P..P.............PP....,\
 ..........P..P...................,\
 ..........P..P...................,\
-(((((.....P..P.........r.........,\
+M(((M.....P..P.........r.........,\
 MMMMM..t..P..PP..PPPPPPPP|.PPPPPP,\
 MMMMM..M..P..P....P....P....P..P.");
 
+var pr_factory1_m9 = new prefab(0, 0, "\
+MMMMMMMMMMMMMPMMMMMMMMMMMMMMMMMMMMMMMMMPMMMMMMMMM,\
+.............P.........................P.........,\
+.............P...b.....................P.........,\
+.............PPPPP....................bP.........,\
+......c..............................PPP.........,\
+.................................................,\
+......P..........................y...............,\
+MMM...P........MMMMMMMM........MMMM.............P,\
+MMM...P....MMMMMMMMMMMM...MMMM.MMMM..........P..P,\
+MMM...P....MMMMMMMMMMMM...MMMM.MMMM..MMM..P..P..P");
+
+pr_factory1_m9.alt_content = "\
+MMMMMMMMMMMMMPMMMMMMMMMMMMMMMMMMMMMMMMMPMMMMMPMMMMM,\
+.............P.........................P.....P.....,\
+.............P...b.....................P.....P.....,\
+.............PPPPP....................bP.....P.....,\
+.....................................PPP...........,\
+...................................................,\
+.................................y...............-.,\
+-.....-..........MMMMMM........MMMM..........P.....,\
+............MMM..MMMMMM...MMMMMMMMM..........P.....,\
+............MMM..MMMMMM...MMMMMMMMM..MMM..P..P.....";
+
+var pr_factory1_m10 = new prefab(0, 0, "\
+MMMMMMMMMMMMMMMMMMMMMM,\
+......................,\
+......................,\
+......................,\
+..........b...........,\
+.....PPPPPP..........y,\
+.....P....P.......PPPP,\
+-....P....P..P.P..P..P,\
+.....P....P..P.P..P..P,\
+.....P....P..P.P..P..P");
+
 var pbank_factory1 = new prefab_bank("factory1");
 pbank_factory1.length_min = 4;
-pbank_factory1.length_max = 5;
+pbank_factory1.length_max = 7;
 pbank_factory1.gap_min = 3;
 pbank_factory1.gap_max = 3;
 pbank_factory1.repeat = false;
 pbank_factory1.ceiling = "M";
-pbank_factory1.middle = [pr_factory1_m1, pr_factory1_m2, pr_factory1_m3, pr_factory1_m4, pr_factory1_m5, pr_factory1_m6, pr_factory1_m7, pr_factory1_m8];
+pbank_factory1.middle = [pr_factory1_m1, pr_factory1_m2, pr_factory1_m3, pr_factory1_m4, pr_factory1_m5, pr_factory1_m6, pr_factory1_m7, pr_factory1_m8, pr_factory1_m9,  pr_factory1_m10];
 
 var pr_bridge1_m1 = new prefab(0, 0, "\
 ,\
@@ -7326,6 +7511,18 @@ var pr_water1_s1 = new prefab(0, 0, "\
 ....t...SS....}},\
 W..GG...SSSSSS}}");
 
+var pr_water1_s2 = new prefab(0, 0, "\
+..........SSSSSSSS,\
+...............cSS,\
+................SS,\
+................SS,\
+..........SSwwwwSS,\
+......W...SS....SS,\
+......W...SS......,\
+SSS...W...SS......,\
+SSS...W...SS......,\
+SSS...W...SSSSSSSS");
+
 var pr_water1_m1 = new prefab(0, 0, "\
 SSSSSSSSSSSSSSS,\
 SS.............,\
@@ -7366,11 +7563,11 @@ var pr_water1_m4 = new prefab(0, 0, "\
 SSSSSSSSSSSSSSSSSS,\
 ..S.....S.....S..,\
 ..S...........S..,\
-..x...........S..,\
-..............x..,\
+..x...........x..,\
+.................,\
+.................,\
 ........x........,\
 ........S........,\
-..S.....S........,\
 ..S.....S.....S...,\
 SSSSSSSSSSSSSSSSSS");
 
@@ -7410,6 +7607,18 @@ SSSSSSSSSSSSSSSSSSSSSSS{{{{SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS,\
 .......x...............SSSS...SS................SS}SS}SS......i.,\
 SSSSSSSSSSSSSS}}}}SSSSSSSSSSSSSSSSSSSS}}}}SSSSSSSS}SS}SSSSSSSSSS");
 
+var pr_water1_m8 = new prefab(0, 0, "\
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS,\
+]]]]}}}SSS]]]]]]]]...SSSSSSSSSSS......SSSSSSSSSSSSSS....,\
+]]]]}}}SSS]]]]]]]]...SSSSSSS]]]]......SS]]]]}}SS]]]]....,\
+]]]]}}}SSS]]]]]]]]...SSSSSSS]]]]......SS]]]]}}SS]]]]....,\
+SSSS...]]]....SSSS...]]]}}SS{{SS......]]{{SS}}SS{{SS....,\
+SSSS...]]]....SSSS...]]]}}SS{{SS......]]{{SS}}SS{{SS....,\
+]]]]{{{SSS]]]]]]]]...SSS}}SS{{SS......SSSSSS}}SS{{SS....,\
+]]]]{{{SSS]]]]]]]]...SSS]]]]{{SS......SSSSSS]]]]{{SS....,\
+]]]]{{[SSS]]]]]]]]...SSS]]]]{{SS......SSSSSS]]]]{{SS....,\
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
+
 var pr_water1_e1 = new prefab(0, 0, "\
 SS......,\
 SS......,\
@@ -7429,8 +7638,8 @@ pbank_water1.gap_min = 5;
 pbank_water1.gap_max = 6;
 pbank_water1.repeat = false;
 pbank_water1.ceiling = "S........S";
-pbank_water1.start = [pr_water1_s1];
-pbank_water1.middle = [pr_water1_m1, pr_water1_m2, pr_water1_m3, pr_water1_m4, pr_water1_m5, pr_water1_m6, pr_water1_m7];
+pbank_water1.start = [pr_water1_s1, pr_water1_s2];
+pbank_water1.middle = [pr_water1_m1, pr_water1_m2, pr_water1_m3, pr_water1_m4, pr_water1_m5, pr_water1_m6, pr_water1_m7, pr_water1_m8];
 pbank_water1.end = [pr_water1_e1];
 
 var prefab_bank_first = pbank_grass1;
@@ -7478,12 +7687,13 @@ if(this.chc.endsWith("imissmywife")) change_costume("girl");
 if(this.chc.endsWith("howdy")) change_costume("hat");
 if(this.chc.endsWith("weeder")) change_costume("soup");
 if(this.chc.endsWith("agent")) change_costume("agent");
-if(this.chc.endsWith("chinesebbq")) { keyboard_string = ""; sound_play(snd_bong); change_costume("burnt") };
-if(this.chc.endsWith("troll")) { keyboard_string = ""; sound_play(snd_bigheadhit); change_costume("troll") };
+if(this.chc.endsWith("chinesebbq")) change_costume("burnt");
+if(this.chc.endsWith("troll")) change_costume("troll");
 if(this.chc.endsWith("milkcheesesymphony")) change_costume("kenshin");
 if(this.chc.endsWith("brokebadly")) change_costume("dealer");
 if(this.chc.endsWith("ghettobot")) change_costume("claymore");
 if(this.chc.endsWith("bannedfromchina")) change_costume("bear");
+if(this.chc.endsWith("realisation")) change_costume("skull");
 }
 function highscore_update() { 
 save_web_integer("la", last_score);

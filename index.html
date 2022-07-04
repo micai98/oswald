@@ -1,35 +1,40 @@
-<html lang='en'>
+<!DOCTYPE html>
+<html lang="en">
 <head>
 	<title>OSWALD Beta</title>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta http-equiv="pragma" content="no-cache" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
-	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0, width=device-width, height=device-height" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 	<meta charset="utf-8" />
-	<meta name="description" content="OSWALD Beta - v. 0.9" />
+	<meta name="description" content="OSWALD Beta - v. 0.10-wip" />
 	<meta name="author" content="micai" />
-	<meta property="og:site_name" content="OSWALD Beta">
 	<link rel="icon" href="favicon.ico" />
 	<link rel="stylesheet" href="style.css" />
 	
 	<meta property="og:title" content="OSWALD Beta"/>
+	<meta property="og:site_name" content="OSWALD">
 	<meta property="og:image" content="https://oswaldgame.netlify.app/image.png"/>
 	<meta property="og:description" content="OSWALD Beta v 0.9 - by micai"/>
 	<meta property="og:url" content="https://oswaldgame.netlify.app/"/>
 	<meta property="og:image:width" content="1200" />
-	<meta property="og:image:height" content="627" />
+	<meta property="og:image:height" content="630" />
 	<meta property="og:type" content="website"/>
 </head>
 <body style="background: black; overflow: hidden" onkeydown="if(event.key == '9' || event.key == '`') toggleDispconf();">
 	<!-- CANVAS --> 
 	<div id="tululoogame"></div>
 	
+	<!-- MOBILE CONTROLS -->
+	<div id="mbleft" class="mobbutton mbleft"> LEFT </div>
+	<div id="mbright" class="mobbutton mbright"> RIGHT </div>
+	<div id="mbjump" class="mobbutton mbjump"> JUMP </div>
+	
 	<!-- CONFIG DIALOG -->
 	<div id="w_dispconf" class="window" style="width: 50%; min-width: 20rem; display: none">
-		<header> <h1>Settings</h1> <h1 class="close" onclick="wDispconf.style.display = 'none'">✖</h1> </header>
-		<section>
-		<article>
+		<div class="winheader"> <h1>Settings</h1> <h1 class="close" onclick="wDispconf.style.display = 'none'">✖</h1> </div>
+		<div class="winmain">
+		<div class="winsection">
 			<h3>Basic</h3>
 			<div class="row">
 				<p>Current settings</p>
@@ -48,8 +53,8 @@
 					<button onclick="tu_canvas.style.width = '100%'">Auto</button>
 				</div>
 			</div>
-		</article>
-		<article>
+		</div>
+		<div class="winsection">
 			<h3>Filters</h3>
 			<div style="color: gray; font-size: 10px; margin-bottom: 1rem">
 				<b>NOTE: </b>filters may make the game run poorly, especially on Firefox and slower PCs<br />
@@ -74,8 +79,8 @@
 					<button style="width: 2rem" onclick="bCssvHue.value = parseFloat(bCssvHue.value) + 5; cssvApplyFilter()">+</button>
 				</div>
 			</div>
-		</article>
-		<article>
+		</div>
+		<div class="winsection">
 			<h3>Credits</h3>
 			<p><b>OSWALD by micai</b> <br /><br />
 				Made with Tululoo Game Maker<br />
@@ -87,15 +92,15 @@
 				<p>version <span id="b_versiontext"></span></p>
 				<button onclick="wChangelog.style.display = 'block'">View changelog</button>
 			</div>
-		</article>
-		</section>
+		</div>
+		</div>
 	</div>
 
 	<!-- CHANGELOG DIALOG -->
 	<div id="w_changelog" class="window" style="width: 80%; min-width: 10rem; display: none">
-		<header> <h1>Changelog</h1> <h1 class="close" onclick="wChangelog.style.display = 'none'">✖</h1> </header>
-		<section style="overflow: hidden">
-		<article>
+		<div class="winheader"> <h1>Changelog</h1> <h1 class="close" onclick="wChangelog.style.display = 'none'">✖</h1> </div>
+		<div class="winmain" style="overflow: hidden">
+		<div class="winsection">
 		<textarea id="changelog_text" readonly style="width: 100%; height: 70vh; resize: none; margin-bottom: 1rem">
 0.9.3:
   - fixed a bug that made it possible to gain score after player's death
@@ -345,8 +350,9 @@
  - added basic collision detection
  - added auto-tile blocks
 		</textarea>
-		<article>
-		</section>
+		</div>
+		</div>
+		
 	</div>
 	
 	<!-- SCRIPTS -->
@@ -405,7 +411,7 @@
 		}
 	</script>
 	<!-- THE GAME -->
-	<script type="text/javascript" src="game.js"></script>	
+	<script src="game.js"></script>	
 	<script>
 		document.getElementById("b_versiontext").innerHTML = game_meta_version;
 	</script>
