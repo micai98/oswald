@@ -5538,6 +5538,12 @@ var mobb_left = document.getElementById("mbleft");
 var mobb_right = document.getElementById("mbright");
 var mobb_jump = document.getElementById("mbjump");
 
+mobb_left.addEventListener("mousedown", function() { key_down[k_left] = true; });
+mobb_left.addEventListener("mouseup", function() { key_down[k_left] = false; });
+
+mobb_right.addEventListener("mousedown", function() { key_down[k_right] = true; });
+mobb_right.addEventListener("mouseup", function() { key_down[k_right] = false; });
+
 mobb_left.addEventListener("mouseenter", function() {
 	mobb_left_hover = true;
 });
