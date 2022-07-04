@@ -5569,7 +5569,7 @@ this.on_draw = on_draw_i;
 }; var o_mobile_controls_setup = new __o_mobile_controls_setup();
 
 function __o_mobile_controls_step() {
-__instance_init__(this, o_mobile_controls_step, null, 1, 0, s_dev_unknown, 1, 270);
+__instance_init__(this, o_mobile_controls_step, null, 1, 0, s_dev_unknown, 1, 269);
 this.on_creation = on_creation_i;
 this.on_destroy = on_destroy_i;
 this.on_step = on_step_i;
@@ -5597,8 +5597,7 @@ this.tiles = [
 [ts_brick,
 [0,0,1,1,16,48]]]];
 this.objects = [
-[{o:o_hud, x:0, y:0}],
-[{o:o_mobile_controls_setup, x:0, y:20}]];
+[{o:o_hud, x:0, y:0}]];
 this.start = function() {
 __room_start__(this, sc_init, 320, 160, 60, 255, 255, 255, null, 0, 0, 0, 320, 160, null, 50, 50);
 
@@ -5625,8 +5624,7 @@ this.objects = [
 [{o:o_hud, x:0, y:16}],
 [{o:o_world_generator, x:0, y:0}],
 [{o:o_gamepad_test, x:0, y:32}],
-[{o:o_titlescreen, x:0, y:48}],
-[{o:o_mobile_controls_step, x:0, y:64}]];
+[{o:o_titlescreen, x:0, y:48}]];
 this.start = function() {
 __room_start__(this, sc_game, 500000, 160, 60, 255, 255, 255, null, 1, 1, 0, 320, 160, o_camera, 320, 160);
 
