@@ -5544,13 +5544,13 @@ mobb_left.addEventListener("touchend", function() { key_down[k_left] = false; })
 mobb_right.addEventListener("touchstart", function() { key_down[k_right] = true; });
 mobb_right.addEventListener("touchend", function() { key_down[k_right] = false; });
 
-mobb_right.addEventListener("touchstart", function() { 
+mobb_jump.addEventListener("touchstart", function() { 
 	key_down[k_jump] = true; 
 	key_pressed[k_jump] = true; 
 	key_released[k_jump] = false; 
 });
 	
-mobb_right.addEventListener("touchend", function() { 
+mobb_jump.addEventListener("touchend", function() { 
 	key_down[k_jump] = false; 
 	key_pressed[k_jump] = false; 
 	key_released[k_jump] = true;
