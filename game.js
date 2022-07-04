@@ -2281,6 +2281,7 @@ if(y < -10) y = -10;
 
 /* debug shit delete later */
 //if(y+11 > room_height) { y = room_height-11; this.grounded = true }
+/*
 if(keyboard_check(vk_ctrl) && debug) { x = camera_object.x; y = camera_object.y+43; vx = 0; vy = 0; }
 
 if(keyboard_check_pressed(vk_v)) {
@@ -2291,6 +2292,7 @@ if(keyboard_check_pressed(vk_v)) {
 	this.vy = 3;
 	
 }
+*/
 }
 };
 this.on_collision = function() {
@@ -2499,10 +2501,12 @@ if(!this.dead) {
 	}
 }
 
+/*
 if(debug) {
 	draw_sprite_text(room_viewport_x+8, room_viewport_y+24, this.mode.name.toUpperCase() + " X: " + x.toFixed(2).toString() + " Y: " + y.toFixed(2).toString() + " J: " + this.jumpbuffer.toString() + " C: " + this.coyote.toString() + (this.jumpbrake_disabled ? " BD" : ""));
 	//draw_sprite_text(ceil(x)-4, ceil(y)-16, this.distance_travelled.toString());
 }
+*/
 }
 }
 };
@@ -2556,6 +2560,7 @@ if(x+2000 > room_width) {
 }
 
  //debug
+ /*
 if(debug) {
 if(keyboard_check(vk_z)) {
 	x -= this.vx*(camera_debug_speed*2);
@@ -2569,6 +2574,7 @@ if(keyboard_check(vk_c)) {
 	x += this.vx*camera_debug_speed;
 }
 }
+*/
 }
 };
 this.on_end_step = on_end_step_i;
@@ -2580,10 +2586,12 @@ this.on_draw = function() {
 if (this.visible == 1) {
 __handle_sprite__(this);
 with(this) {
+/*
 if(debug) {
 	draw_sprite(sprite_index, image_index, ceil(x), y);
 	draw_sprite_text(room_viewport_x+8, room_viewport_y+32, "CAM: " + this.tick.toString() + "/" + this.interval.toString() + "(+" + this.increment.toString() + ") " + this.vx.toFixed(2).toString() + "/" + camera_speedup_maxspeed.toString() + " " + x.toFixed(3).toString());
 }
+*/
 }
 }
 };
@@ -2648,6 +2656,7 @@ with(this) {
 ccheck();
 if(keyboard_check_pressed(vk_f2)) sound_enabled = !sound_enabled;
 
+/*
 if(keyboard_check_pressed(vk_f11)) debug = !debug;
 if(keyboard_check_pressed(vk_1)) debug = !debug;
 if(debug) {
@@ -2656,6 +2665,7 @@ if(debug) {
 	if(keyboard_check_pressed(vk_4)) debug_showsolids = !debug_showsolids;
 	if(keyboard_check(vk_0)) room_goto(sc_init);
 }
+*/
 }
 };
 this.on_collision = on_collision_i;
@@ -2679,11 +2689,13 @@ draw_sprite_text(room_viewport_x + 8, room_viewport_y + 8 ,  score_str);
 
 if(game_expert) draw_sprite_text(room_viewport_x + 88, room_viewport_y + 8,  "EX");
 
+/*
 if(debug) {
 	draw_set_color(255, 255, 255);
 	draw_sprite_text(room_viewport_x + 8, room_viewport_y + 138, "v. " + game_meta_version);
 	draw_sprite_text(room_viewport_x + 8, room_viewport_y + 146, "by micai");
 }
+*/
 
 if(game_paused) {
 	draw_set_color(255, 255, 255);
@@ -3220,10 +3232,12 @@ this.on_draw = function() {
 if (this.visible == 1) {
 __handle_sprite__(this);
 with(this) {
+/*
 if(debug) {
 	draw_sprite_text(room_viewport_x+8, room_viewport_y+40, "PLX: " + (prefab_len_total*16).toString() + " PLT: " + prefab_len_total.toString() + " PLL: " + prefab_len_last.toString());
 	draw_sprite_text(room_viewport_x+8, room_viewport_y+48, this.current_name.toUpperCase() + " " + ((this.start != null) ? "S " : "") + ((this.end != null) ? "E " : "") + this.current.toString() + "/" + this.limit.toString() + " " + this.next_prefab_index.toString() + "/" + this.rotation.length.toString() + " T: " + this.tick.toString() + "/" + this.bigtick.toString());
 }
+*/
 }
 }
 };
@@ -7640,7 +7654,7 @@ function ccheck() {
 this.chc = keyboard_string.toLowerCase();
 
 // debug
-if(this.chc.endsWith("dbg")) { keyboard_string =  ""; debug = !debug  }
+//if(this.chc.endsWith("dbg")) { keyboard_string =  ""; debug = !debug  }
 
 // characters
 if(this.chc.endsWith("strawberrymilk")) change_costume("sak1");
