@@ -5588,18 +5588,19 @@ with(this) {
 key_released[k_jump] = false;
 key_pressed[k_jump] = false;
 
-if(mouse_down) {
-	if(mobb_left_hover) {
-		key_down[vk_left] = true;
-	} else {
-		key_down[vk_left] = false;
-	}
+if(mobb_left_hover) {
+	key_down[vk_left] = true;
+} else {
+	key_down[vk_left] = false;
+}
 	
-	if(mobb_right_hover) {
-		key_down[vk_right] = true;
-	} else {
-		key_down[vk_right] = false;
-	}
+if(mobb_right_hover) {
+	key_down[vk_right] = true;
+} else {
+	key_down[vk_right] = false;
+}
+
+if(mouse_down) {
 	
 	if(mobb_jump_hover) {
 		key_down[k_jump] = true;
