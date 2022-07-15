@@ -36,17 +36,23 @@
 }
 
 /* oswald */
+#tululoogame {
+	text-align: center;
+}
+
 #tululoogame canvas{
 	image-rendering: pixelated;
 	image-rendering: crisp-edges;
 	position: absolute;
-	width: 100%;
+	width: 95% !important;
 	/*top: 50%;
 	left: 50%;
-	transform: translate(-50%, -50%);	
+	
 	*/
+	transform: translate(-50%, 0);	
 	max-width: initial !important;
-	max-height: 100vh;
+	height: 90vh;
+	max-height: 90vh;
 }
 
 .window {

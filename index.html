@@ -26,6 +26,18 @@
 </head>
 <body style="background: black" onkeydown="if(event.key == '9' || event.key == '`') toggleDispconf();">
 	<!-- CANVAS --> 
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5582052227431997"
+     crossorigin="anonymous"></script>
+<!-- oswjs in-game top -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-5582052227431997"
+     data-ad-slot="6901604987"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
 	<div id="tululoogame"></div>
 	
 	<!-- MOBILE CONTROLS 
@@ -46,16 +58,16 @@
 					<button onclick="dispconfLoad()">Load</button>
 				</div>
 			</div>
-			<div class="row">
+			<!--<div class="row">
 				<p>Scale</p>
 				<div>
 					<button onclick="tu_canvas.style.width = '320px'">1x</button>
 					<button onclick="tu_canvas.style.width = '640px'">2x</button>
 					<button onclick="tu_canvas.style.width = '1280px'">3x</button>
 					<button onclick="tu_canvas.style.width = '1920px'">4x</button>
-					<button onclick="tu_canvas.style.width = '100%'">Auto</button>
+					<button onclick="tu_canvas.style.width = '95%'">Auto</button>
 				</div>
-			</div>
+			</div>-->
 		</div>
 		<div class="winsection">
 			<h3>Filters</h3>
@@ -105,6 +117,56 @@
 		<div class="winmain" style="overflow: hidden">
 		<div class="winsection">
 		<textarea id="changelog_text" readonly style="width: 100%; height: 70vh; resize: none; margin-bottom: 1rem">
+0.10:
+  - made a proper level editor for the game (it's separate from the game itself)
+  - the game can read level data from URL query strings (it's used by the level editor to play exported levels)
+
+  - added 4 new player costumes by Amanojakuchou
+  - player's walking speed is no longer taken into consideration while applying score reward for distance travelled
+  - made changes to player character's code, mostly fixes
+    - added air friction, the player decelerates slower while airborne
+    - fixed a coyote timer bug that made it possible to do multiple jumps in a row
+	- fixed a stupid oversight that caused bouncing off of enemies to not work if the player used something else than the UP arrow to jump
+	- rewards for killing enemies are no longer hardcoded inside player character's code (each enemy has a variable for that now)
+    - collision detection improvements 
+
+  - deleted some unused graphics and unused lines of code
+  - each trampoline can now have its own unique jump strength
+  - crushers now collide with the "platform reverser" object and the bottom of the screen
+  
+  - added new terrain types
+    - metal
+	- pipe
+	- ground alt
+	- bridge
+
+  - updated ground and wood tilesets
+
+  - added conveyor belts
+  - added water
+    - player enters swim mode upon touching the water's surface and exits it upon jumping out of it
+	- added water currents that move the player around underwater in one of four directions
+  
+  - added new enemies:
+    - static heli rat
+	- moving spike ball
+	- fish
+	- jumping fish
+	- shark (sprite by Amanojakuchou)
+	- robo-oswald (first "smart" enemy, chases the player and can jump over SOME pits and obstacles, big thanks to Amanojakuchou for the sprite and idea)
+	- armed robo-oswald (same as robo-oswald, but instead of chasing the player all the time, he sometimes stops and shoots bullets) (sprite by Amanojakuchou)
+	
+  - added new prefab banks using newly added terrain types (factory, pipe, ground, bridge) [thanks to MrAdam for level ideas]
+  - updated existing prefab banks
+  - added alternative prefab content: one prefab can now have 2 different variations, each has 50% chance of spawning
+  - updated prefab bank "ceilings": they're way more flexible now and can be used to make floors in gaps between prefabs
+  - fixed prefab bank ceilings not appearing on the last middle prefab of the bank
+  
+  - added "heli test mode" for testing heli prefabs
+  - added "water test mode" for testing underwater prefabs
+  - added "prefab testing speed" for testing prefabs at different speeds
+  - aforementioned test modes can be enabled with query string parameters
+
 0.9.3:
   - fixed a bug that made it possible to gain score after player's death
   - fixed high score display not flashing when a new high score is achieved

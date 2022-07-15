@@ -5933,7 +5933,7 @@ var camera_speedup_stage2increment = 240;
 var camera_debug_speed = 2;
 
 var game_meta_author = "micai";
-var game_meta_version = "0.10-wip";
+var game_meta_version = "0.10";
 var debug = false;
 var debug_showsolids = false;
 var sound_enabled = true;
