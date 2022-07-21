@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>OSWALD Level Editor</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="pragma" content="no-cache" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0, width=device-width, height=device-height" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+	<meta charset="utf-8" />
+	<link rel="stylesheet" href="style.css" />
+	<link rel="icon" href="favicon.ico" />
+	
+	<meta property="og:title" content="OSWALD Level Editor"/>
+	<meta property="og:image" content="https://oswaldeditor.netlify.app/image.png"/>
+	<meta property="og:description" content="OSWALD Level Editor v. 1.1 - by micai"/>
+	<meta property="og:url" content="https://oswaldeditor.netlify.app/"/>
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="627" />
+	<meta property="og:type" content="website"/>
+</head>
+<body>
+	<main>
+		<div class="statusbar noselect">
+			<h2>OSWALD Level Editor</h2>
+			<div style="color: gray; text-align: right" class="column">
+				<div>v 1.1 (for v.0.10-wip)</div><div>by micai</div>
+			</div>
+		</div>
+		<div id="tululoogame"></div>
+		<div class="statusbar noselect">
+			<div style="font-size: 1.5rem; font-weight: bold" id="domo_keyboardchar">.</div>
+			<div >Objects: <b><span id="domo_objectsplaced">0</span></b></div>
+			<div >Camera: <b><span id="domo_camx">0</span></b></div>
+			<div>
+				<button onclick="editor_paused = !editor_paused">Pause</button>
+				<button onclick="levelClear()">New</button>
+				<button onclick="levelLoad(domoLvlOutput.value); localStorage['oswed_savedlevel'] = domoLvlOutput.value">Import</button>
+				<button onclick="levelSave(); localStorage['oswed_savedlevel'] = domoLvlOutput.value">Export</button>
+			</div>
+		</div>
+		<div id="lvloutput"><textarea id="domo_lvloutput"></textarea></div>
+		<div class="statusbar noselect">
+			<div>
+				<button onclick="domoCopyOutput()">Copy</button>
+				<button onclick="domoClearOutput()">Clear</button>
+				<button onclick="toggleHelp()">Help</button>
+			</div>
+			<div>
+				<input id="b_path" type="text" value="https://oswaldgame.netlify.app" oninput="game_url = this.value; localStorage['oswed_savedpath'] = this.value"/>
+				<label><input id="b_heli" type="checkbox" oninput="helitest = this.checked; localStorage['oswed_helitest'] = this.checked" /> Heli </label>
+				<label><input id="b_water" type="checkbox" oninput="watertest = this.checked; localStorage['oswed_watertest'] = this.checked" /> Water </label>
+				<label><input id="b_spd1" type="checkbox" oninput="speedtest1 = this.checked; localStorage['oswed_fast'] = this.checked" /> Fast </label>
+				<label><input id="b_spd2" type="checkbox" oninput="speedtest2 = this.checked; localStorage['oswed_fullspeed'] = this.checked" /> Full speed </label>
+				<button onclick="levelPlay()">Play</button>
+			</div>
+		</div>
+	</main>
+	
+	<div id="w_help" class="window" style="width: 80%; min-width: 10rem; display: none">
+		<header> <h1>Manual</h1> <h1 class="close" onclick="toggleHelp()">✖</h1> </header>
+		<section style="overflow: auto">
+		<article>
+			<h2>Controls</h2>
+			<p>Press a character on the keyboard to set it as the brush</p>
+			<table class="tab-s2 tab-zebra">
+				<tr><td>Left mouse</td><td>Draw</td></tr>
+				<tr><td>Arrow keys</td><td>Move the camera</td></tr>
+				<tr><td>End</td><td>Set level end</td></tr>
+				<tr><td>Control</td><td>Delete selected</td></tr>
+			</table>
+			<br />
+			<h2>Interface</h2>
+			<table class="tab-s2 tab-zebra">
+				<tr><td>Pause</td><td>Pauses the editor, useful while editing the level's code directly</td></tr>
+				<tr><td>New</td><td>Deletes everything and starts a new level</td></tr>
+				<tr><td>Import</td><td>Imports pasted code to the editor</td></tr>
+				<tr><td>Export</td><td>Exports level's code</td></tr>
+				<tr><td>Copy</td><td>Copies exported or pasted level code</td></tr>
+				<tr><td>Clear</td><td>Clears exported or pasted level code</td></tr>
+				<tr><td>Help</td><td>Shows the manual</td></tr>
+				<tr><td>Play</td><td>Runs the game and loads the edited level (use 'Export' before playing)</td></tr>
+			</table>
+			<p>The text box next to the 'Play' button contains the game's URL <br/>
+				If you're using a local copy paste its URL there <br/><br/>
+				The URL and the last exported level will be saved in your browser's local storage
+			</p>
+			<br />
+			<h2>Reference</h2>
+			<div class="row" style="justify-content: space-evenly; align-items: flex-start">
+			<table class="tab-s2 tab-zebra">
+				<tr><th colspan="2" style="color: #33DD33">Blocks</th></tr>
+				<tr><td>G</td><td>ground</td></tr>
+				<tr><td>B</td><td>brick</td></tr>
+				<tr><td>C</td><td>cloud</td></tr>
+				<tr><td>R</td><td>cave</td></tr>
+				<tr><td>W</td><td>woodenblock</td></tr>
+				<tr><td>S</td><td>sand</td></tr>
+				<tr><td>Z</td><td>bigbrick</td></tr>
+				<tr><td>T</td><td>tree</td></tr>
+				<tr><td>L</td><td>panel</td></tr>
+				<tr><td>D</td><td>wood</td></tr>
+				<tr><td>H</td><td>huge</td></tr>
+				<tr><td>J</td><td>woodenhuge</td></tr>
+				<tr><td>F</td><td>groundalt</td></tr>
+				<tr><td>M</td><td>metal</td></tr>
+				<tr><td>P</td><td>pipe</td></tr>
+			</table>
+			<table class="tab-s2 tab-zebra">
+				<tr><th colspan="2" style="color: #DD3366">Enemies and hazards</th></tr>
+				<tr><td>r</td><td>rat</td></tr>
+				<tr><td>s</td><td>spikes</td></tr>
+				<tr><td>f</td><td>ratheli</td></tr>
+				<tr><td>d</td><td>ratheli stay</td></tr>
+				<tr><td>k</td><td>cactus</td></tr>
+				<tr><td>p</td><td>crusher</td></tr>
+				<tr><td>m</td><td>missile</td></tr>
+				<tr><td>g</td><td>rathuge</td></tr>
+				<tr><td>i</td><td>fish</td></tr>
+				<tr><td>j</td><td>jumping fish</td></tr>
+			</table>
+			<table class="tab-s2 tab-zebra">
+				<tr><th colspan="2" style="color: #DDDD33">Interactive objects</th></tr>
+				<tr><td>c</td><td>coin</td></tr>
+				<tr><td>t</td><td>trampoline</td></tr>
+				<tr><td>h</td><td>heli</td></tr>
+				<tr><td>n</td><td>noheli</td></tr>
+				<tr><td>(</td><td>conveyor left</td></tr>
+				<tr><td>)</td><td>conveyor right</td></tr>
+			</table>
+			<table class="tab-s2 tab-zebra">
+				<tr><th colspan="2" style="color: #229922">Platforms</th></tr>
+				<tr><td>&lt;</td><td>left</td></tr>
+				<tr><td>&gt;</td><td>right</td></tr>
+				<tr><td>^</td><td>up</td></tr>
+				<tr><td>v</td><td>down</td></tr>
+				<tr><td>-</td><td>fall</td></tr>
+				<tr><td>+</td><td>lift</td></tr>
+				<tr><td>=</td><td>stay</td></tr>
+				<tr><td>|</td><td>reverse</td></tr>
+			</table>
+			<table class="tab-s2 tab-zebra">
+				<tr><th colspan="2" style="color: #6666EE">Water</th></tr>
+				<tr><td>w</td><td>water</td></tr>
+				<tr><td>[</td><td>current left</td></tr>
+				<tr><td>]</td><td>current right</td></tr>
+				<tr><td>{</td><td>current up</td></tr>
+				<tr><td>}</td><td>current down</td></tr>
+			</table>
+			</div>
+		</article>
+		</section>
+	</div>
+	
+	
+	<script type="text/javascript" src="game.js"></script>
+	<script>
+			if(localStorage["oswed_savedlevel"]) {
+				levelLoad(localStorage["oswed_savedlevel"]);
+				domo_lvloutput.innerHTML = localStorage["oswed_savedlevel"];
+				domo_lvloutput.innerText = localStorage["oswed_savedlevel"];
+				domo_lvloutput.value = localStorage["oswed_savedlevel"];
+				lvloutput = localStorage["oswed_savedlevel"];
+			}
+
+			if(localStorage["oswed_savedpath"]) {
+				document.getElementById("b_path").value = localStorage["oswed_savedpath"];
+				game_url = localStorage["oswed_savedpath"];
+			}
+			
+			document.getElementById("b_heli").checked = (localStorage["oswed_helitest"] === "true");
+			helitest = (localStorage["oswed_helitest"] === "true");
+			
+			document.getElementById("b_heli").checked = (localStorage["oswed_watertest"] === "true");
+			watertest = (localStorage["oswed_watertest"] === "true");
+			
+			document.getElementById("b_spd1").checked = (localStorage["oswed_fast"] === "true");
+			speedtest1 = (localStorage["oswed_fast"] === "true");
+			
+			document.getElementById("b_spd2").checked = (localStorage["oswed_fullspeed"] === "true");
+			speedtest2 = (localStorage["oswed_fullspeed"] === "true");
+			
+			var wHelp = document.getElementById("w_help");
+			function toggleHelp() {
+				if(wHelp.style.display == "block") {
+					wHelp.style.display = "none";
+				} else wHelp.style.display = "block";
+			}
+	</script>
+</body>
+</html>
