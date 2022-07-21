@@ -43,23 +43,20 @@
 #tululoogame canvas{
 	image-rendering: pixelated;
 	image-rendering: crisp-edges;
-	position: absolute;
-	width: 95% !important;
+	/*position: absolute;*/
+	width: 85% !important;
 	/*top: 50%;
-	left: 50%;
-	
-	*/
-	transform: translate(-50%, 0);	
+	left: 50%;*/
+	/*transform: translate(-50%, 0);	*/
 	max-width: initial !important;
-	height: 90vh;
-	max-height: 90vh;
+	border: 2px solid #000 !important;
 }
 
 .window {
 	z-index: 100;
 	top: 50%;
 	left: 50%;
-	position: absolute;
+	position: fixed;
 	transform: translate(-50%, -50%);	
 	
 	padding: 0.5rem;
@@ -163,17 +160,89 @@ html {
 
 body {
 	color: #dedede;
-	background-color: #222222;
+	background-color: #17171b;
 }
 
 /* layout */
+.panel {
+	line-height: 2rem;
+	margin: auto;
+	margin-top: 4rem;
+	margin-bottom: 4rem;
+	text-align: left;
+	
+	
+	display: flex;
+	align-items: middle;
+	user-select: none;
+	justify-content: space-evenly;
+	
+}
+
+.panel.l img {
+	margin-right: 1rem;
+}
+
+.panel.r img {
+	margin-left: 1rem;
+}
+
+.panel div {
+	vertical-align: center;
+}
+
+.panel img {
+	align-self: center;
+	min-width: 25%;
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+}
+
+.panel h1 {
+	color: #eee;
+	margin-bottom: 0.5rem;
+}
+
+.panel p {
+	margin: 0;
+	font-size: 1.25rem;
+	color: #95a1b1;
+}
+
+.panel b {
+	color: #b6bec9;
+}
+
+@media (max-width: 1200px) {
+	.panel {
+		line-height: 1.5rem;
+	}
+	
+	.panel p {
+		font-size: 1rem;
+	}
+	
+	#tululoogame canvas {
+		width: 90% !important;
+	}
+}
+
 main {
 	margin: auto;
-	/*max-width: 45rem;*/
+	margin-top: 2rem;
+	max-width: 70rem;
+	text-align: center;
+}
+
+header {
+	text-align: center;
+	margin: 1rem;
+	user-select: none;
 }
 
 footer {
-	color: #474747;
+	color: #575757;
+	text-align: center;
 }
 
 /* basic */
