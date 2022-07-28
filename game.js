@@ -1883,11 +1883,11 @@ this.modetick = 0;
 this.nogravity = false;
 
 // Properties
-this.friction = 0.8;
-this.airfriction = 0.95;
+this.friction = 0.65;
+this.airfriction = 0.85;
 this.gravity = 0.5;
 this.jumppower = 8;
-this.accel = 0.5;
+this.accel = 0.4;
 this.jumpbrake = 0.6;
 this.vx_max = 3;
 this.vy_max = 3;
@@ -1907,8 +1907,8 @@ function playermode(name) {
 	this.name = name;
 	// Properties
 	this.gravity = 0.5;
-	this.friction = 0.8;
-	this.airfriction = 0.95;
+	this.friction = 0.75;
+	this.airfriction = 0.85;
 	this.jumppower = 8;
 	this.jumpbrake = 0.6;
 	this.accel = 0.5;
