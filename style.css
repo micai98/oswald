@@ -175,7 +175,7 @@ body {
 	display: flex;
 	align-items: middle;
 	user-select: none;
-	justify-content: space-evenly;
+	justify-content: space-between;
 	
 }
 
@@ -368,6 +368,50 @@ button:active, .bigbutton:active {
 	border-color: #323232;
 }
 
+.biggerbuttonwrapper {
+	display: flex;
+	justify-content: space-between;
+	align-content: stretch;
+	gap: 0.5rem 0.5rem;
+}
+
+.biggerbutton {
+	font-weight: bold;
+	color: #c9c9c9;
+	background-color: #2c2c33;
+	border: 0px;
+	border-radius: 0.25rem;
+	flex-grow: 1;
+	padding: 1rem 0rem;
+	text-align: center;
+	font-size: 1.1rem;
+	text-decoration: none;
+	display: block;
+	user-select: none;
+}
+
+.biggerbutton img {
+	user-select: none;
+	user-drag: none;
+
+	vertical-align: middle;
+
+	margin-left: 0.5rem;
+	margin-right: 0.5rem;
+
+	min-width: auto;
+	width: 1.5rem;
+}
+
+.biggerbutton:hover {
+	background-color: #303038;
+}
+
+.biggerbutton:active {
+	background-color: #2a2a30;
+	color: #bababa;
+}
+
 select, input[type="radio"], input[type="checkbox"] {
 	appearance: none;
 	-moz-appearance: none;
@@ -422,9 +466,19 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 .bigbutton p { 	margin: 0; }
 .bigbutton a { text-decoration: none; }
 
-@media only screen and (max-width: 499px)
+@media only screen and (max-width: 800px)
 {
 	input, button, textarea, select {
 		font-size: 0.8rem;
+	}
+
+	.biggerbutton {
+		font-size: 1rem;
+		padding: 0.5rem;
+		width: auto !important;
+	}
+
+	.biggerbuttonwrapper {
+		flex-direction: column;
 	}
 }

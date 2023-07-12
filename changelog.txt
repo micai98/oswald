@@ -199,9 +199,9 @@
   - the character costume, last score and high score are now saved to local web storage
   - updated the title screen
     - cheat codes can now be entered there
- - current character costume is displayed 
+    - current character costume is displayed 
  - added high score display
-    - cleaned up some mess in world generator's code
+ - cleaned up some mess in world generator's code
 
 
 
